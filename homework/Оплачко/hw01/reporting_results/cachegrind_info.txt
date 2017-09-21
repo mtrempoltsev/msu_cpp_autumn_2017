@@ -1,0 +1,35 @@
+===ROWS===
+
+ I   refs:      39,378,935,524
+ I1  misses:             1,838
+ LLi misses:             1,821
+ I1  miss rate:           0.00%
+ LLi miss rate:           0.00%
+
+ D   refs:      16,875,760,284  (11,250,559,322 rd   + 5,625,200,962 wr)
+ D1  misses:       351,579,794  (   351,577,317 rd   +         2,477 wr)
+ LLd misses:       351,573,260  (   351,571,584 rd   +         1,676 wr)
+ D1  miss rate:            2.1% (           3.1%     +           0.0%  )
+ LLd miss rate:            2.1% (           3.1%     +           0.0%  )
+
+ LL refs:          351,581,632  (   351,579,155 rd   +         2,477 wr)
+ LL misses:        351,575,081  (   351,573,405 rd   +         1,676 wr)
+ LL miss rate:             0.6% (           0.7%     +           0.0%  )
+
+===COLUMNS===
+
+ I   refs:      39,379,535,959
+ I1  misses:             1,840
+ LLi misses:             1,822
+ I1  miss rate:           0.00%
+ LLi miss rate:           0.00%
+
+ D   refs:      16,875,760,408  (11,250,559,402 rd   + 5,625,201,006 wr)
+ D1  misses:     5,625,017,269  ( 5,625,014,792 rd   +         2,477 wr)
+ LLd misses:       351,580,759  (   351,579,083 rd   +         1,676 wr)
+ D1  miss rate:           33.3% (          50.0%     +           0.0%  )
+ LLd miss rate:            2.1% (           3.1%     +           0.0%  )
+
+ LL refs:        5,625,019,109  ( 5,625,016,632 rd   +         2,477 wr)
+ LL misses:        351,582,581  (   351,580,905 rd   +         1,676 wr)
+ LL miss rate:             0.6% (           0.7%     +           0.0%  )
