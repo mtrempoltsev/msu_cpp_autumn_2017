@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+#include <iomanip>
+#include <chrono>
+
 class Timer {
 public:
 	static std::chrono::microseconds::rep durationsSum;
