@@ -20,13 +20,14 @@ private:
 };
 
 
-const int dim_size = 1200;
+const int dim_size = 15000;
 
+// 15219313 us
 int main()
 {
-    // init section
-    volatile int a[dim_size][dim_size];
-    long int sum1 = 0;
+    // volatile auto a = new int[dim_size][dim_size];
+    volatile static int a[dim_size][dim_size];
+    volatile long int sum1 = 0;
 
     for(int i = 0; i < dim_size; ++i) {
         for(int j = 0; j < dim_size; ++j) {
@@ -34,12 +35,6 @@ int main()
         }
     }
 
-    // warming-up
-//    for (int i = 0; i < 10000000; ++i) {
-//        volatile int c = i / 3;
-//    }
-
-    // first loop
     auto t1 = new Timer();
     for(int i = 0; i < dim_size; ++i) {
         for(int j = 0; j < dim_size; ++j) {

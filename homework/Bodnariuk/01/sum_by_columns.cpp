@@ -20,30 +20,21 @@ private:
 };
 
 
-const int dim_size = 1200;
+const int dim_size = 15000;
 
+// 23849126 us
 int main()
 {
-    // std::cout << "start";
-    // init section
-    volatile int a[dim_size][dim_size];
-    long int sum2 = 0;
-    // std::cout << "after mem loc";
+    // volatile auto a = new int[dim_size][dim_size];
+    volatile static int a[dim_size][dim_size];
+    volatile long int sum2 = 0;
 
     for(int i = 0; i < dim_size; ++i) {
         for(int j = 0; j < dim_size; ++j) {
             a[i][j] = 1;
         }
     }
-    // std::cout << "after init";
 
-    // warming-up
-//    for (int i = 0; i < 10000000; ++i) {
-//        volatile int c = i / 3;
-//    }
-    // std::cout << "after warming-up";
-
-    // second loop
     auto t2 = new Timer();
     for(int i = 0; i < dim_size; ++i) {
         for(int j = 0; j < dim_size; ++j) {
@@ -51,7 +42,6 @@ int main()
         }
     }
     delete t2;
-    // std::cout << "after loop";
 
     return 0;
 }
