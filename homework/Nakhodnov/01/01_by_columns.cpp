@@ -25,24 +25,29 @@ enum
     MATRIX_SIZE = 10000
 };
 
+using array = int (*)[MATRIX_SIZE];
+
+
 int main()
 {
-    int *matrix = (int *)malloc(MATRIX_SIZE * MATRIX_SIZE * sizeof(int));
+    array matrix = (array)(new int[MATRIX_SIZE * MATRIX_SIZE]);
     if(matrix == nullptr){
        cerr << "Allocation Problem" << endl;
        return 0;
     }
-    for(int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; ++i){
-       matrix[i] = i;
+    for(int i = 0; i < MATRIX_SIZE; ++i){
+        for(int j = 0; j < MATRIX_SIZE; ++j){
+            matrix[i][j] = i + j;
+        }
     }
     Timer T;
     long long matrix_sum = 0;
     for(int i = 0; i < MATRIX_SIZE; ++i){
         for(int j = 0; j < MATRIX_SIZE; ++j){
-            matrix_sum += matrix[i * MATRIX_SIZE + j];
+            matrix_sum += matrix[j][i];
         }
     }
     cout << "Maxtrix sum :" << matrix_sum << endl;
-    free(matrix);
+    delete[] matrix;
     return 0;    
 }
