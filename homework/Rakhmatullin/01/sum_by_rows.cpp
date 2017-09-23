@@ -1,6 +1,7 @@
-#include <iostream>
 #include <chrono>
-using namespace std;
+#include <iostream>
+
+#define N 10000
 
 class Timer
 {
@@ -20,29 +21,22 @@ private:
     const std::chrono::high_resolution_clock::time_point start_;
 };
 
-int main()
-{
-    int* matrix = nullptr;
-    int sum = 0;
-    int numCol = 10000;
-    int numRow = 10000;
-    matrix = new int[numCol*numRow];
-    for (int i = 0; i < numRow; ++i)
-    {
-        for (int j = 0; j < numCol; ++j)
-        {
-            matrix[i*numCol + j] = i - j;
-        }
-    }
-    Timer t;
-    for (int i = 0; i < numRow; ++i)
-    {
-        for (int j = 0; j < numCol; ++j)
-        {
-            sum += matrix[i*numCol + j];
-        }
-    }
-    delete matrix;
-    cout << "Sum = " << sum << endl;
-    return 0;
+int main(){
+	int** matrix = new int*[N];
+	for(int k = 0;k < N;++k)
+		matrix[k] = new int[N];
+	long int sum = 0;
+	for(int k = 0;k < N;++k){
+		for(int m = 0;m < N;++m){
+			matrix[k][m] = 2;
+		}
+	}
+	Timer t;
+	for(int i = 0;i < N;++i){
+		for(int j = 0;j < N;++j){
+			sum += matrix[i][j];
+		}
+	}
+	delete[] matrix;
+	return 0;
 }
