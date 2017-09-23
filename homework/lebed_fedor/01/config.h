@@ -1,6 +1,6 @@
 #pragma once
 
-// Compile-time constants should be defined here
+// Compile-time constants
 enum
 {
     // dimention of matrix

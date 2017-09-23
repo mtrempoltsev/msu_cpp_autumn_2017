@@ -2,7 +2,7 @@
 #include "config.h"
 #include "measure.h"
 
-// returns sum of all matrix element
+// returns sum of all matrix elements
 long sum_by_rows(const int m[DIM][DIM])
 {
     long s = 0;
