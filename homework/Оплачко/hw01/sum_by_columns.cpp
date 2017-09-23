@@ -1,7 +1,7 @@
 #include "constants.hpp"
 #include "benchmark.hpp"
 
-inline void calculateArraySum(const int m[DIM_SIZE][DIM_SIZE]) {
+inline void calculateArraySum(const int (&m)[DIM_SIZE][DIM_SIZE]) {
 	volatile long long sum = 0;
 	for (std::size_t i = 0; i < DIM_SIZE; i++) {
 		for (std::size_t j = 0; j < DIM_SIZE; j++) {

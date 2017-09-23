@@ -1,0 +1,6 @@
+Warmup by rows: 24872 us
+1733793664
+By rows: 24821 us
+1733793664
+By cols: 1694064 us
+1733793664
