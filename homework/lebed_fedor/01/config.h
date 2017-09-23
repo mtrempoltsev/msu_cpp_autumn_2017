@@ -6,3 +6,5 @@ enum
     WARMUP = 10,
     TESTS = 100
 };
+
+constexpr int N = MATRIX_ORDER;

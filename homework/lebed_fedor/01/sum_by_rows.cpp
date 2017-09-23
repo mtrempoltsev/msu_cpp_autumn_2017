@@ -1,13 +1,14 @@
 #include <cstdlib>
+#include "config.h"
 #include "measure.h"
 
 long
-sum_by_rows(int n, const int *m)
+sum_by_rows(const int m[N][N])
 {
     long s = 0;
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            s += m[i*n + j];
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            s += m[i][j];
         }
     }
     return s;
@@ -16,5 +17,7 @@ sum_by_rows(int n, const int *m)
 int
 main()
 {
-    std::cout << "Average time: " << measure(sum_by_rows) << " us" << std::endl;
+    std::cout << "Average time: "
+              << measure_avg_time(sum_by_rows)
+              << " us" << std::endl;
 }
