@@ -22,10 +22,15 @@ private:
 };
 
 int main(){
-	double** matrix = new double*[N];
+	int** matrix = new int*[N];
 	for(int k = 0;k < N;++k)
-		matrix[k] = new double[N];
-	double sum = 0;
+		matrix[k] = new int[N];
+	long int sum = 0;
+	for(int k = 0;k < N;++k){
+		for(int m = 0;m < N;++m){
+			matrix[k][m] = 2;
+		}
+	}
 	Timer t;
 	for(int i = 0;i < N;++i){
 		for(int j = 0;j < N;++j){
