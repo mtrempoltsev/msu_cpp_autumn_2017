@@ -1,10 +1,14 @@
 #pragma once
 
+// Compile-time constants should be defined here
 enum
 {
-    MATRIX_ORDER = 10000,
-    WARMUP = 10,
-    TESTS = 100
-};
+    // dimention of matrix
+    DIM = 10000,
 
-constexpr int N = MATRIX_ORDER;
+    // warmup runs to be done before measure
+    WARMUP_RUNS = 10,
+
+    // measure runs to be done
+    MEASURE_RUNS = 100
+};

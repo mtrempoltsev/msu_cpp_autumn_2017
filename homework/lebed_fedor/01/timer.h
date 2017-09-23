@@ -3,6 +3,7 @@
 #include <chrono>
 #include <iostream>
 
+// Is used to measure time 
 class Timer
 {
 public:
@@ -11,6 +12,7 @@ public:
     {
     }
 
+    // returns time in [us] since instantiation
     int elapsed()
     {
         const auto finish = std::chrono::high_resolution_clock::now();

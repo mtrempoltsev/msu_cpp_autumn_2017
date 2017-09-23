@@ -2,20 +2,19 @@
 #include "config.h"
 #include "measure.h"
 
-long
-sum_by_rows(const int m[N][N])
+// returns sum of all matrix element
+long sum_by_rows(const int m[DIM][DIM])
 {
     long s = 0;
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
+    for (int i = 0; i < DIM; i++) {
+        for (int j = 0; j < DIM; j++) {
             s += m[i][j];
         }
     }
     return s;
 }
 
-int
-main()
+int main()
 {
     std::cout << "Average time: "
               << measure_avg_time(sum_by_rows)

@@ -3,36 +3,42 @@
 #include "config.h"
 #include "timer.h"
 
-void
-fill_matrix(int m[N][N])
+// fills matrix with predefined sequence of values
+void fill_matrix(int m[DIM][DIM])
 {
     std::srand(0);
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
+    for (int i = 0; i < DIM; i++) {
+        for (int j = 0; j < DIM; j++) {
             m[i][j] = std::rand();
         }
     }
 }
 
-using SumMethod = long (*)(const int m[N][N]);
+using SumMethod = long (*)(const int m[DIM][DIM]);
 
-double
-measure_avg_time(SumMethod sm)
+// times block of tests on SumMethod and
+// returns average time required for one SumMethod
+double measure_avg_time(SumMethod sm)
 {
+    // volatile is to guarantee sm is actually called
     volatile long x;
-    int (* m)[N] = new int[N][N];
+
+    // matrix created & initialized
+    int (* m)[DIM] = new int[DIM][DIM];
     fill_matrix(m);
 
-    for (int i = 0; i < WARMUP; i++) {
+    // warmpu runs
+    for (int i = 0; i < WARMUP_RUNS; i++) {
         x = sm(m);
     }
 
+    // measure runs
     Timer t;
-    for (int i = 0; i < TESTS; i++) {
+    for (int i = 0; i < MEASURE_RUNS; i++) {
         x = sm(m);
     }
     long elapsed = t.elapsed();
 
     delete[] m;
-    return elapsed/(double)TESTS;
+    return elapsed/(double)MEASURE_RUNS;
 }
