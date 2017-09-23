@@ -25,7 +25,7 @@ int main(){
 	int** matrix = new int*[N];
 	for(int k = 0;k < N;++k)
 		matrix[k] = new int[N];
-	long int sum = 0;
+	int sum = 0;
 	for(int k = 0;k < N;++k){
 		for(int m = 0;m < N;++m){
 			matrix[k][m] = 2;
