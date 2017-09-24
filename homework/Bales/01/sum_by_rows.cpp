@@ -37,9 +37,6 @@ int main(int argc, char** argv) {
     for (size_t i = 0; i < sz; ++i) {
         for (size_t k = 0; k < sz; ++k) {
             sum += matrix[i][k];
-            // sum += matrix[i][k + 1];
-            // sum += matrix[i][k + 2];
-            // sum += matrix[i][k + 3];
         }
     }
     delete t;
