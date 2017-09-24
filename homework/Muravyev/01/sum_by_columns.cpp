@@ -1,7 +1,7 @@
 #include <chrono>
 #include <iostream>
 
-#define N 10000 // Задаем размерность матрицы
+#define N 10000
 
 class Timer
 {
@@ -22,19 +22,14 @@ private:
 };
 
 int main(){
-	int** matrix = new int*[N];
+	double** matrix = new double*[N];
 	for(int k = 0;k < N;++k)
-		matrix[k] = new int[N];
-	int sum = 0;
-	for(int k = 0;k < N;++k){
-		for(int m = 0;m < N;++m){
-			matrix[k][m] = 2;  // Заполняем матрицу
-		}
-	}
-	Timer t;                           // Начинаем отсчет времени
+		matrix[k] = new double[N];
+	double sum = 0;
+	Timer t;
 	for(int i = 0;i < N;++i){
 		for(int j = 0;j < N;++j){
-			sum += matrix[j][i]; // Непосредственно суммирование элементов
+			sum += matrix[j][i];
 		}
 	}
 	delete[] matrix;
