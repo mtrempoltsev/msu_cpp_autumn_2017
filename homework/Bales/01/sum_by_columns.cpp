@@ -3,7 +3,7 @@
 
 static const size_t sz = 10000;
 
-// Класс для подсчета времени работы алгоритма суммирования элементов в матрице
+// Класс для подсчета промежутка времени; вычисляет разницу во времени между вызовом конструктора и деструктора класса
 class Timer {
 public:
     Timer()
@@ -41,6 +41,9 @@ int main(int argc, char** argv) {
     }
     delete t;
     std::cout << "sum is : " << sum << std::endl;
+    for (size_t i = 0; i < sz; ++i) {
+        delete[] matrix[i];
+    }
     delete[] matrix;
     return 0;
 }
