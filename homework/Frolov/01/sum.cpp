@@ -1,6 +1,6 @@
 #include <iostream>
 #include <chrono>
-#define NUMBER_OF_ATTEMPTS 5
+#define NUMBER_OF_ATTEMPTS 7
 #define MATRIX_SIZE 31000
 using namespace std;
 
