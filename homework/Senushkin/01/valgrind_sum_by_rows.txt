@@ -1,0 +1,24 @@
+==65795== Cachegrind, a cache and branch-prediction profiler
+==65795== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+==65795== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==65795== Command: ./sum_by_rows
+==65795== Parent PID: 65779
+==65795== 
+--65795-- warning: L3 cache found, using its data for the LL simulation.
+--65795-- run: /usr/bin/dsymutil "./sum_by_rows"
+==65795== 
+==65795== I   refs:      10,540,198,668
+==65795== I1  misses:             4,298
+==65795== LLi misses:             3,187
+==65795== I1  miss rate:           0.00%
+==65795== LLi miss rate:           0.00%
+==65795== 
+==65795== D   refs:       6,014,807,645  (6,001,543,953 rd   + 13,263,692 wr)
+==65795== D1  misses:       193,816,784  (  187,563,450 rd   +  6,253,334 wr)
+==65795== LLd misses:       193,761,615  (  187,509,271 rd   +  6,252,344 wr)
+==65795== D1  miss rate:            3.2% (          3.1%     +       47.1%  )
+==65795== LLd miss rate:            3.2% (          3.1%     +       47.1%  )
+==65795== 
+==65795== LL refs:          193,821,082  (  187,567,748 rd   +  6,253,334 wr)
+==65795== LL misses:        193,764,802  (  187,512,458 rd   +  6,252,344 wr)
+==65795== LL miss rate:             1.2% (          1.1%     +       47.1%  )
