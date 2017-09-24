@@ -1,9 +1,9 @@
 #include <iostream>
-// #include <random>
 #include <chrono>
 
 static const size_t sz = 10000;
 
+// Класс для подсчета времени работы алгоритма суммирования элементов в матрице
 class Timer {
 public:
     Timer()
@@ -21,37 +21,26 @@ private:
     const std::chrono::high_resolution_clock::time_point start_;
 };
 
-// void print(const int* arr) {
-//     for (size_t i = 0; i < sz; ++i) {
-//         for (size_t j = 0; j < sz; ++j) {
-//             std::cout << arr[i * sz + j] << " ";
-//         }
-//         std::cout << std::endl;
-//     }
-//     std::cout << "***************" << std::endl;
-// }
-
 int main(int argc, char** argv) { 
-    // std::random_device device;
-    // std::minstd_rand gen(device());
-    // std::uniform_int_distribution<int> distrib(-1000, 1000);
-
-    Timer t;
-    using TMatrix = int[sz * sz];
-    int* matrix = new TMatrix;
-
+    using TMatrix = int(**);
+    using TVector = int(*);
+    TMatrix matrix = new TVector[sz];
+    
     for (size_t i = 0; i < sz; ++i) {
+        matrix[i] = new int[sz];
         for (size_t k = 0; k < sz; ++k) {
-            matrix[k * sz + i] = k * sz + i; 
+            matrix[i][k] = i * sz + k; 
         }
     }
-
+    Timer* t = new Timer();
+    size_t sum = 0;
     for (size_t i = 0; i < sz; ++i) {
         for (size_t k = 0; k < sz; ++k) {
-            matrix[k * sz + i] += matrix[k * sz + i]; 
+            sum += matrix[k][i];
         }
     }
-    // print(matrix);
+    delete t;
+    std::cout << "sum is : " << sum << std::endl;
     delete[] matrix;
     return 0;
 }
