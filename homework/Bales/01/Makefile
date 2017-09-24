@@ -13,6 +13,7 @@ compile: clean
 valgrind-memory-leaks: compile # поиск утечек памяти
 	$(VLGR) $(VLGRLEAKS) --log-file=sum_by_rows.memory-leaks.out ./sum_by_rows
 	$(VLGR) $(VLGRLEAKS) --log-file=sum_by_columns.memory-leaks.out ./sum_by_columns
+	$(DF) $(DFFLAGS) sum_by_rows.memory-leaks.out sum_by_columns.memory-leaks.out
 
 valgrind-cach-misses: compile # поиск промахов в кеш
 	$(VLGR) $(VLGRMISSES) --log-file=sum_by_rows.cache-misses.out ./sum_by_rows
