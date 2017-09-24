@@ -1,22 +1,22 @@
 #include "timer.hpp"
 
-int main(int argc, char const *argv[]) 
+int main() 
 {
 	const int size = 10000;
 
-	int** matrix = new int* [size];
+	static int matrix[size][size];
 	volatile int sum = 0;
 
+	//fill by 1
 	for (int i = 0; i < size; ++i) {
-		matrix[i] = new int [size];
 		for (int j = 0; j < size; j++) {
 			matrix[i][j] = 1;
 		}
 	}
 
 	Timer* t = new Timer;
-	for (int j = 0; j < size; ++j) {
-		for (int i = 0; i < size; ++i) {
+	for (int i = 0; i < size; ++i) {
+		for (int j = 0; j < size; ++j) {
 			sum += matrix[i][j];
 		}
 	}
