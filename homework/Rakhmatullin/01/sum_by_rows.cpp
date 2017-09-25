@@ -2,24 +2,6 @@
 #include <chrono>
 using namespace std;
 
-class Timer
-{
-public:
-    Timer()
-        : start_(std::chrono::high_resolution_clock::now())
-    {
-    }
-
-    ~Timer()
-    {
-        const auto finish = std::chrono::high_resolution_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(finish - start_).count() << " us" << std::endl;
-    }
-
-private:
-    const std::chrono::high_resolution_clock::time_point start_;
-};
-
 int main()
 {
     int** matrix = nullptr;
@@ -39,7 +21,8 @@ int main()
             matrix[i][j] = i - j;
         }
     }
-    Timer t; //Timer starts. Beginning of calculations.
+    //Setting up a timer and beginning calculations.
+    const auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < numRow; ++i)
     {
         for (int j = 0; j < numCol; ++j)
@@ -47,6 +30,8 @@ int main()
             sum += matrix[i][j];
         }
     }
+    const auto finish = std::chrono::high_resolution_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::microseconds>(finish - start).count() << " us" << std::endl;
     //Cleaning memory
     for(int i = 0; i < numRow; i++)
     {
