@@ -10,7 +10,7 @@
 //===========================================================================================
 
 #define SIZE 10000
-#define MAX_ELEMENT ((int) INT_MAX/SIZE/SIZE) //Чтобы сумма точно поместилась в int
+#define MAX_ELEMENT ((int) INT_MAX/SIZE/SIZE) //Р§С‚РѕР±С‹ СЃСѓРјРјР° С‚РѕС‡РЅРѕ РїРѕРјРµСЃС‚РёР»Р°СЃСЊ РІ int
 
 #define COUNT_ITERATIONS 100
 #define COUNT_FOR_BOOST 10
@@ -53,7 +53,7 @@ enum SummType
 
 //===========================================================================================
 
-void MakeMatrix(MatrixType matrix) //Заполнение случайными - очень долго
+void MakeMatrix(MatrixType matrix) //Р—Р°РїРѕР»РЅРµРЅРёРµ СЃР»СѓС‡Р°Р№РЅС‹РјРё - РѕС‡РµРЅСЊ РґРѕР»РіРѕ
 {
 	assert(matrix != nullptr);
 
@@ -62,7 +62,7 @@ void MakeMatrix(MatrixType matrix) //Заполнение случайными - очень долго
 		for (int j = 0; j < SIZE; ++j)
 		{
 			matrix [i][j] = (i*j+i+j)%MAX_ELEMENT;
-			if ((i*j) % 7 == 0) //Пусть некоторые числа будут отрицательными
+			if ((i*j) % 7 == 0) //РџСѓСЃС‚СЊ РЅРµРєРѕС‚РѕСЂС‹Рµ С‡РёСЃР»Р° Р±СѓРґСѓС‚ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅС‹РјРё
 			{
 				matrix [i][j] *= -1;
 			}
@@ -70,14 +70,14 @@ void MakeMatrix(MatrixType matrix) //Заполнение случайными - очень долго
 	}
 }
 
-//volatile не даст оптимизатору изменить порядок циклов
+//volatile РЅРµ РґР°СЃС‚ РѕРїС‚РёРјРёР·Р°С‚РѕСЂСѓ РёР·РјРµРЅРёС‚СЊ РїРѕСЂСЏРґРѕРє С†РёРєР»РѕРІ
 int CalculateSumRowsWithProfiling(const /*volatile*/ MatrixType matrix, Microseconds& current_time, SummType type)
 {
 	assert(matrix != nullptr && type != SummType::NO_TYPE);
 
 	/*volatile*/ int result = 0;
 
-	//Будем делать адресацию арифметикой указателей - это не потребует не так много доп. времени как volatile, но не даст оптимизировать порядок циклов
+	//Р‘СѓРґРµРј РґРµР»Р°С‚СЊ Р°РґСЂРµСЃР°С†РёСЋ Р°СЂРёС„РјРµС‚РёРєРѕР№ СѓРєР°Р·Р°С‚РµР»РµР№ - СЌС‚Рѕ РЅРµ РїРѕС‚СЂРµР±СѓРµС‚ РЅРµ С‚Р°Рє РјРЅРѕРіРѕ РґРѕРї. РІСЂРµРјРµРЅРё РєР°Рє volatile, РЅРѕ РЅРµ РґР°СЃС‚ РѕРїС‚РёРјРёР·РёСЂРѕРІР°С‚СЊ РїРѕСЂСЏРґРѕРє С†РёРєР»РѕРІ
 	int* matrix_start = (int*) matrix; 
 	
 	Timer timer;
@@ -131,7 +131,7 @@ Microseconds MakeMultipleTests(int count_tests, SummType type)
 {
 	Microseconds sum_time;
 
-	for (int i = 0; i < COUNT_FOR_BOOST; ++i) //Разогрев
+	for (int i = 0; i < COUNT_FOR_BOOST; ++i) //Р Р°Р·РѕРіСЂРµРІ
 	{
 		MakeSingleTest(sum_time, type);
 	}
