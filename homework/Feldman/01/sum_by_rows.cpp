@@ -20,12 +20,12 @@ private:
 };
 
 int main() {
-	int** firstMatrix = new int*[N]; //В нее же записываем результат
+	int** firstMatrix = new int*[N]; //Р’ РЅРµРµ Р¶Рµ Р·Р°РїРёСЃС‹РІР°РµРј СЂСѓР·СѓР»СЊС‚Р°С‚
 	int** secondMatrix = new int*[N];
 	for (int i = 0; i < N; ++i) {
 		firstMatrix[i] = new int[N];
 		secondMatrix[i] = new int[N];
-		for (int j = 0; j < N; ++j) { // сразу же заполняем матрицы 
+		for (int j = 0; j < N; ++j) { // Р—Р°РїРѕР»РЅСЏРµРј РјР°С‚СЂРёС†С‹
 			firstMatrix[i][j] = 1;
 			secondMatrix[i][j] = 2;
 		}
@@ -34,7 +34,7 @@ int main() {
 		Timer t;
 		for (int i = 0; i < N; ++i) {
 			for (int j = 0; j < N; ++j) {				
-			    firstMatrix[j][i] += secondMatrix[j][i]; //суммирование по столбцам
+			    firstMatrix[j][i] += secondMatrix[j][i]; //СЃСѓРјРјРёСЂСѓРµРј РїРѕ СЃС‚РѕР»Р±С†Р°Рј
 			}
 		}
 	}
