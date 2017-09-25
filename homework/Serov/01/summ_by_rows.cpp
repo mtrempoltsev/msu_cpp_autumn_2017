@@ -23,8 +23,6 @@ private:
     const std::chrono::high_resolution_clock::time_point start_;
 };
 
-int summ_by_rows(int** a);
-
 int summ_by_rows(int** a){
 
 	int Summ=0;
@@ -40,7 +38,6 @@ int summ_by_rows(int** a){
 
 int main(){
 
-	Timer t;
 	volatile int Summ=0;
 
 	int** mass = new int* [N];
@@ -53,11 +50,13 @@ int main(){
 			mass[i][j]=1;
 	}
 
+	Timer t;
+
 	Summ=summ_by_rows(mass);
 
 	for (int i=0;i<N;++i)
 		delete[] mass[i];
 
-	delete mass;
+	delete[] mass;
 	
 }
