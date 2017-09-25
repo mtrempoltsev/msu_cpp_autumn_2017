@@ -1,0 +1,22 @@
+==9427== Cachegrind, a cache and branch-prediction profiler
+==9427== Copyright (C) 2002-2017, and GNU GPL'd, by Nicholas Nethercote et al.
+==9427== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==9427== Command: ./sum_by_cols
+==9427== Parent PID: 9419
+==9427== 
+==9427== 
+==9427== I   refs:      6,303,220,027
+==9427== I1  misses:            1,608
+==9427== LLi misses:            1,567
+==9427== I1  miss rate:          0.00%
+==9427== LLi miss rate:          0.00%
+==9427== 
+==9427== D   refs:      2,902,252,999  (2,001,462,748 rd   + 900,790,251 wr)
+==9427== D1  misses:      118,803,350  (  112,537,253 rd   +   6,266,097 wr)
+==9427== LLd misses:       12,535,920  (    6,270,714 rd   +   6,265,206 wr)
+==9427== D1  miss rate:           4.1% (          5.6%     +         0.7%  )
+==9427== LLd miss rate:           0.4% (          0.3%     +         0.7%  )
+==9427== 
+==9427== LL refs:         118,804,958  (  112,538,861 rd   +   6,266,097 wr)
+==9427== LL misses:        12,537,487  (    6,272,281 rd   +   6,265,206 wr)
+==9427== LL miss rate:            0.1% (          0.1%     +         0.7%  )
