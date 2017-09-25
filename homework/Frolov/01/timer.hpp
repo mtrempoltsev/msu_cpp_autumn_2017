@@ -1,8 +1,6 @@
 #include <iostream>
 #include <chrono>
 
-#define NUMBER_OF_ATTEMPTS 7
-#define MATRIX_SIZE 10000
 int all_time=0;
 class Timer
 {

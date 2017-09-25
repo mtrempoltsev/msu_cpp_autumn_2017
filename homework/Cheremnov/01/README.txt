@@ -2,8 +2,8 @@
 > g++ sum_by_rows.cpp -o sum_by_rows -std=c++11 -O2
 > g++ sum_by_cols.cpp -o sum_by_cols -std=c++11 -O2
 Быстродействие двух программ
-193126 us - sum_by_rows
-797335 us - sum_by_columns
+47625 us - sum_by_rows
+872331 us - sum_by_columns
 Количество промахов кеша, вычисленных благодаря valgrind
 3% - sum_by_rows
 30% - sum_by_columns

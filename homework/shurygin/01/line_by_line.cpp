@@ -1,9 +1,13 @@
 #include <chrono>
 #include <iostream>
 
+/*
+   This program count avg pre-summing line by line
+*/
+
 const int maxSize = 10*1000;
 
-class Timer
+class Timer // class, which count time behind creating object and destroy
 {
 	public:
 		Timer()
@@ -22,26 +26,30 @@ class Timer
 int main()
 {
 	int* m1 = new int[maxSize * maxSize];
-	int* m2 = new int[maxSize * maxSize];
-	int* res = new int[maxSize * maxSize];
+	int* res = new int[maxSize];
 
-	for(size_t i = 0; i < maxSize; ++i)
+	for(size_t i = 0; i < maxSize; ++i) // init array
 	   for(size_t j = 0; j < maxSize; ++j)
 	   {
 		   m1[i * maxSize + j] = i;
-		   m2[i * maxSize + j] = j;
 	   }
 
 	{
-		Timer t;
+		Timer t; //time start
 		for(size_t i = 0; i < maxSize; ++i)
 		   for(size_t j = 0; j < maxSize; ++j)
 		   {
-				res[i * maxSize + j] = m1[i * maxSize + j] + m2[i * maxSize + j];
+				res[i] += m1[i * maxSize + j]; //count line by line
 		   }
+		//time finish
 	}
+	
+	int sum = 0;
+	for(size_t i = 0; i < maxSize; ++i)
+		sum += res[i];
+
+	std::cout << "Avg of matrix = " << 1.0 * sum / (maxSize * maxSize) << std::endl;
 
 	delete[] m1;
-	delete[] m2;
 	delete[] res;
 }
