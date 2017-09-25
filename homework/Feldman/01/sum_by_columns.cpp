@@ -21,13 +21,13 @@ private:
 };
 
 int main() {
-	int** firstMatrix = new int*[N]; 
+	int** matrix = new int*[N]; 
 
 	for (int i = 0; i < N; ++i) {
-		firstMatrix[i] = new int[N];
+		matrix[i] = new int[N];
 		
 		for (int j = 0; j < N; ++j) { 
-			firstMatrix[i][j] = 1;
+			matrix[i][j] = 1;
 			
 		}
 	}
@@ -36,15 +36,15 @@ int main() {
 		Timer t;
 		for (int i = 0; i < N; ++i) {
 			for (int j = 0; j < N; ++j) {				
-				sum += firstMatrix[j][i]; 
+				sum += matrix[j][i]; 
 			}
 		}
 	}
 	for (int i = 0; i < N; ++i) {
-		delete[] firstMatrix[i];
+		delete[] matrix[i];
 		
 	}
-	delete[] firstMatrix;
+	delete[] matrix;
 	cout << sum << endl;
 	return 0;
 }
