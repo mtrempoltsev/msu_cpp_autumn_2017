@@ -7,11 +7,11 @@ using namespace std;
 //Function for summation of matrix elements on rows
 int sum_by_rows(int m[ROWS][COLUMNS])
 {
-	//In variable s the summation of matrix elements is written
+    //In variable s the summation of matrix elements is written
     int s = 0;
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLUMNS; j++) {
-			//i is used for indexing rows, j - for indexing columns
+	    //i is used for indexing rows, j - for indexing columns
             s += m[i][j];
         }
     }
@@ -21,19 +21,27 @@ int sum_by_rows(int m[ROWS][COLUMNS])
 int main()
 {
     //Allocating memory for matrix
-    int (*m)[ROWS] = new int[ROWS][COLUMNS];
+    int (*m)[COLUMNS] = new int[ROWS][COLUMNS];
+    //Temporary variable, used for warm-uping
+    int q;
+    //Pre-generate matrix
+    set_matrix(m);
     //Warm-up of processor
     for(int i = 1; i < WARMUP_CYCLES; i++){
-	    //Generate and summate the matrix for warm-uping
-		set_matrix(m);
-		sum_by_rows(m);
+	//Summate the matrix for warm-uping
+	q = sum_by_rows(m);
     }
-    //Generating the matrix
-    set_matrix(m);
     //Starting timer to count time for summation
     Timer *t = new Timer;
-    //Generate and summate the matrix
-    sum_by_rows(m);
+    //Summate the matrix
+    int p = sum_by_rows(m);
+    //Test if one returned value from function is equal to another
+    if(p != q){
+	cout << "Error has occured";
+    }
+    else{
+	cout << p << endl;
+    }
     //Destroying the timer
     delete t;
     //Freeing memory
