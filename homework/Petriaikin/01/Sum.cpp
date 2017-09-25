@@ -62,7 +62,7 @@ void MakeMatrix(MatrixType matrix) //Заполнение случайными -
 		for (int j = 0; j < SIZE; ++j)
 		{
 			matrix [i][j] = (i*j+i+j)%MAX_ELEMENT;
-			if ((i*j) % 7 == 0) //Пусть некоторые числа будут отрицательными
+			if ((i*j) % 7 == 0) //Некоторые числа будут отрицательными
 			{
 				matrix [i][j] *= -1;
 			}
