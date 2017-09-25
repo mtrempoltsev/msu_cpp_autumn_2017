@@ -26,11 +26,14 @@ private:
 int summ_by_rows(int** a){
 
 	int Summ=0;
+	Timer *t=new Timer;
 
 	for (int i=0; i<N; ++i){
 		for (int j=0;j<N;++j)
 			Summ+=a[i][j];	
 	}
+
+	delete t;
 
 	return Summ;
 
@@ -49,8 +52,6 @@ int main(){
 		for (int j=0;j<N;j++)
 			mass[i][j]=1;
 	}
-
-	Timer t;
 
 	Summ=summ_by_rows(mass);
 
