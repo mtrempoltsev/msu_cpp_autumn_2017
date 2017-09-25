@@ -1,9 +1,6 @@
 #include <chrono>
 #include <iostream>
-#ifdef _DEBUG
-#include <crtdbg.h>
-#define _CRTDBG_MAP_ALLOC
-#endif
+
 using namespace std;
 #define N 10000
 class Timer
