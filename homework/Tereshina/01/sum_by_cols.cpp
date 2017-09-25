@@ -23,15 +23,16 @@ private:
 
 int main() {
 
-    int **array = new int*[N];
+    int **array = new int*[N]; // memory allocation for array
+
     for (int i = 0; i < N; i++) {
-        array[i] = new int[N];
+        array[i] = new int[N]; // memory allocation for rows of array
         for (int j = 0; j < N; j++) {
-            array[i][j] = 1;
+            array[i][j] = 1; // fills array with 1's
         }
     }
     
-    Timer *t = new Timer();
+    Timer *t = new Timer(); // starts timer
 
     volatile int sum = 0;
     
@@ -41,9 +42,13 @@ int main() {
         }
     }
 
-    delete t;
+    delete t; // stops timer
 
- //   std::cout << sum << std::endl;
+    for (int i = 0; i < N; i++) {
+        delete[] array[i]; // frees rows of array
+    }
 
-    delete[] array;
+    delete[] array; //frees array
+
+    return 0;
 }
