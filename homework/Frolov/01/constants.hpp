@@ -1,0 +1,2 @@
+#define NUMBER_OF_ATTEMPTS 7
+#define MATRIX_SIZE 10000
