@@ -3,38 +3,42 @@
 
 class Timer
 {
+private:
+    const std::chrono::high_resolution_clock::time_point start_;
+
 public:
     Timer()
             : start_(std::chrono::high_resolution_clock::now())
     {
     }
 
-    ~Timer()
+    void print_time()
     {
         const auto finish = std::chrono::high_resolution_clock::now();
         std::cout << std::chrono::duration_cast<std::chrono::microseconds>(finish - start_).count() << " us" << std::endl;
     }
-
-private:
-    const std::chrono::high_resolution_clock::time_point start_;
 };
 
-//average time 625154 us
+//average time 618922 us
 int main() {
 
-    int sizeN = 10000;
+    const auto sizeN = 10000;
     volatile auto sum = 0;
 
     //matrix init
-    int* matrix = (int*) malloc(sizeN * sizeN * sizeof(int));
+    auto matrix = new int [sizeN][sizeN];
     for (int i = 0; i < sizeN; ++i)
         for (int j = 0; j < sizeN; ++j)
-            matrix[i * sizeN + j] = rand() % 10;
+            matrix[i][j] = rand() % 10;
 
+    //calculate the sum and measure the time
     Timer t;
     for (int i = 0; i < sizeN; ++i)
         for (int j = 0; j < sizeN; j++)
-            sum += matrix[j * sizeN + i];
+            sum += matrix[j][i];
+    t.print_time();
+
+    delete [] matrix;
 
     return 0;
 }
