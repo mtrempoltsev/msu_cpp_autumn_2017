@@ -25,31 +25,32 @@ class Timer // class, which count time behind creating object and destroy
 
 int main()
 {
-	int* m1 = new int[maxSize * maxSize];
-	int* res = new int[maxSize];
+	int** m = new int*[maxSize];
+	for(size_t i = 0; i < maxSize; ++i)
+		m[i] = new int[maxSize];
+
 
 	for(size_t i = 0; i < maxSize; ++i) // init array
 	   for(size_t j = 0; j < maxSize; ++j)
 	   {
-		   m1[i * maxSize + j] = i;
+		   m[i][j] = i;
 	   }
 
+	int sum = 0;
 	{
 		Timer t; //time start
 		for(size_t i = 0; i < maxSize; ++i)
 		   for(size_t j = 0; j < maxSize; ++j)
 		   {
-				res[i] += m1[j * maxSize + i]; // count column by clumn
+				sum += m[j][i]; // count column by clumn
 		   }
 		//time finish
 	}
 	
-	int sum = 0;
-	for(size_t i = 0; i < maxSize; ++i)
-		sum += res[i];
 
 	std::cout << "Avg of matrix = " << 1.0 * sum / (maxSize * maxSize) << std::endl;
 
-	delete[] m1;
-	delete[] res;
+	for(size_t i = 0; i < maxSize; ++i)
+		delete[] m[i];
+	delete[] m;
 }
