@@ -5,13 +5,15 @@ class Timer {
  public:
   Timer() : start_(std::chrono::high_resolution_clock::now()) {}
 
-  ~Timer() {
+  void Duration() {
     const auto finish = std::chrono::high_resolution_clock::now();
     std::cout << std::chrono::duration_cast<std::chrono::microseconds>(finish -
                                                                        start_)
                      .count()
               << " us (microseconds)" << std::endl;
   }
+
+  ~Timer() {}
 
  private:
   const std::chrono::high_resolution_clock::time_point start_;
@@ -42,6 +44,8 @@ int main() {
       sum += matrix[i][j];
     }
   }
+
+  t.Duration();
 
   for (i = 0; i < DIM; i++) {
     delete[] matrix[i];
