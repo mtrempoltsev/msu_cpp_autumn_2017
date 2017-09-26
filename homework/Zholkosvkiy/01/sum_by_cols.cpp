@@ -28,19 +28,24 @@ int main()
 	int N = 10000;
 	volatile int sum = 0;
 
+	//инициализация матрицы
 	int** data = new int*[N];
 	for (int i = 0; i < N; i++) {
 		data[i] = new int[N]; 
 	}
 
-	
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 			data[i][j] = i + j;
 
+	//запуск таймера
 	Timer t;
+	//суммируем
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < N; j++)
 			sum += data[j][i];
+
+	//чистим память
+	delete[] data;
 	return 0;
 }
