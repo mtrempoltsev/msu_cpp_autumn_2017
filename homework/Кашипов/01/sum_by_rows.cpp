@@ -5,11 +5,11 @@ using namespace std;
 int N=10000;
 class Timer
 {
-public:
-    Timer()
-    : start_(std::chrono::high_resolution_clock::now())
-    {
-    }
+    public:
+	Timer()
+	: start_(std::chrono::high_resolution_clock::now())
+	{
+	}
 
     ~Timer()
     {
@@ -22,36 +22,35 @@ private:
 
 int main()
 {
-int i=0;
-int j=0;
-double sum=0;
-double* matrix = new double[N*N];
+    int i=0;
+    int j=0;
+    int sum=0;
+    int* matrix = new int[N*N];
  
-if (matrix==nullptr)
- {
-  cout << "Error" << endl;
-  return 0;
- }
+    if (matrix==nullptr)
+    {
+	cout << "Error" << endl;
+	return 0;
+    }
 
-for(i=0;i<N;i++)
- for(j=0;j<N;j++)
- {
-  matrix[i*N+j]=rand()%100;
-  //cout << "matrix["<< i <<"]="<< matrix[i] << endl;
- }
-
-
-{
- Timer* T = new Timer() ;
- for(i=0;i<N;i++)
-  for(j=0;j<N;j++)
-   sum+=matrix[i*N+j];
- cout << "Matrix sum = " << sum <<endl;
- delete T;
-}
+    for(i=0;i<N;i++)
+	for(j=0;j<N;j++)
+	{
+	    matrix[i*N+j]=rand()%100;
+	}
 
 
+    {
+	Timer* T = new Timer() ;
+	for(i=0;i<N;i++)
+	for(j=0;j<N;j++)
+	sum+=matrix[i*N+j];
+	cout << "Matrix sum = " << sum <<endl;
+	delete T;
+    }
 
-free(matrix);
-return 1;	
+
+
+    free(matrix);
+    return 1;
 }
