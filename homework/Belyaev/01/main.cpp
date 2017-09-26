@@ -1,10 +1,8 @@
 #include <chrono>
 #include <iostream>
-#include "by_rows.h"
-#include "by_columns.h"
+#include "header.h"
 #define NUMBER_OF_TESTS 10
 
-//using namespace std;
 
 int main(int argc, char* argv[])
 {
