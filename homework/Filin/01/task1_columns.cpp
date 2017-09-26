@@ -7,14 +7,6 @@
 //
 
 #include <iostream>
-#include <cstdio>
-#include <cstring>
-#include <vector>
-
-#include <iostream>
-#include <cstdio>
-#include <chrono>
-#include <random>
 
 
 #define M 10000
@@ -25,8 +17,7 @@
 using namespace std;
 
 
-class Timer
-{
+class Timer {
 public:
     Timer()
     : start_(std::chrono::high_resolution_clock::now())
@@ -44,6 +35,7 @@ private:
 };
 
 
+//функция суммирования эдементов матрицы по столбцам
 long long int sum_columns(int** matrix, int m, int n) {
     volatile long long int sum = 0;
     Timer t;
@@ -59,11 +51,12 @@ int main(int argc, const char * argv[]) {
     
     int** matrix = new int* [M];
     
+    //выделение памяти
     for (int i = 0; i < M; i++) {
         matrix[i] = new int [N];
     }
     
-    
+    //инициализация матрицы случайными числами
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
             matrix[i][j] = arc4random() % 2 ? (arc4random() % 100) : -(arc4random() % 100);
@@ -72,6 +65,13 @@ int main(int argc, const char * argv[]) {
     
     
     cout << sum_columns(matrix, M, N) << endl;
+    
+    
+    //освобождение памяти
+    for (int i = 0; i < M; i++) {
+        delete [] matrix[i];
+    }
+    delete [] matrix;
     
     return 0;
 }

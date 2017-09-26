@@ -7,9 +7,6 @@
 //
 
 #include <iostream>
-#include <cstdio>
-#include <chrono>
-#include <random>
 
 
 #define M 10000
@@ -39,6 +36,7 @@ private:
 };
 
 
+//функция суммирования эдементов матрицы по строкам
 long long int sum_rows(int** matrix, int m, int n) {
     volatile long long int sum = 0;
     Timer t;
@@ -54,11 +52,12 @@ int main(int argc, const char * argv[]) {
     
     int** matrix = new int* [M];
     
+    //выделение памяти
     for (int i = 0; i < M; i++) {
         matrix[i] = new int [N];
     }
     
-    
+    //инициализация матрицы случайными числами
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
             matrix[i][j] = arc4random() % 2 ? (arc4random() % 100) : -(arc4random() % 100);
@@ -67,6 +66,12 @@ int main(int argc, const char * argv[]) {
     
     
     cout << sum_rows(matrix, M, N) << endl;
+    
+    //освобождение памяти
+    for (int i = 0; i < M; i++) {
+        delete [] matrix[i];
+    }
+    delete [] matrix;
     
     return 0;
 }
