@@ -1,6 +1,5 @@
 #include <chrono>
 #include <iostream>
-
 using namespace std;
 #define N 10000
 class Timer
@@ -22,30 +21,30 @@ private:
 };
 
 int main() {
-	int** matrix = new int*[N]; //create matrix
+	int** matrix = new int*[N]; 
 
 	for (int i = 0; i < N; ++i) {
 		matrix[i] = new int[N];
-
-		for (int j = 0; j < N; ++j) { // fill matrix 
+		
+		for (int j = 0; j < N; ++j) { 
 			matrix[i][j] = 1;
-
+			
 		}
 	}
 	int sum = 0;
 	{
 		Timer t;
 		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < N; ++j) {
-				sum += matrix[i][j]; //sum by strings
+			for (int j = 0; j < N; ++j) {				
+				sum += matrix[j][i]; 
 			}
 		}
 	}
 	for (int i = 0; i < N; ++i) {
-		delete[] matrix[i]; //delete matrix
-
+		delete[] matrix[i];
+		
 	}
-	delete matrix;
+	delete[] matrix;
 	cout << sum << endl;
 	return 0;
 }
