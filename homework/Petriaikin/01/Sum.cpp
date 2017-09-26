@@ -127,7 +127,7 @@ Microseconds MakeTests(int count_tests, SummType type)
 		Microseconds current_time;
 		int result = CalculateSumWithProfiling(matrix, current_time, type);
 		std::cout << "Single test: sum = " << result << "; time = " << current_time.count() << " mcs" << std::endl;
-		if (i >= COUNT_FOR_BOOST) { sum_time += current_time; } //Boost öèêëû íå ñ÷èòàåì
+		if (i >= COUNT_FOR_BOOST) { sum_time += current_time; } //Boost циклы не считаем
 	}
 
 	free(matrix);
