@@ -5,7 +5,7 @@
 const int N = 10000;
 
 //Amount of iterations
-const int LOOPS = 1000;
+const int LOOPS = 100;
 
 //Total time of execution
 int totalTime = 0;
@@ -30,19 +30,23 @@ private:
 
 int main(){
     //The matrix that will be summed
-    int* matrix = new int[N * N];
+    int** matrix = new int*[N];
+
+    for(int i = 0; i < N; i++)
+        matrix[i] = new int[N];
 
     //Var containing the sum, made volatile so that compiler won't optimise it
     volatile int sum = 0;
 
     //Initialzation of the matrix
-    for(int i = 0; i < N * N; i++)
-        matrix[i] = i % 10;
-
-    //First run to heat up processor
     for(int i = 0; i < N; i++)
         for(int j = 0; j < N; j++)
-            sum += matrix[i + j * N];
+            matrix[i][j] = i % 10;
+
+    //First run to warm up processor
+    for(int i = 0; i < N; i++)
+        for(int j = 0; j < N; j++)
+            sum += matrix[j][i];
 
     //Main process
     for(int k = 0; k < LOOPS; k++){
@@ -52,7 +56,7 @@ int main(){
 
         for(int i = 0; i < N; i++)
             for(int j = 0; j < N; j++)
-                sum += matrix[i + j * N];
+                sum += matrix[j][i];
     }
 
     std::cout << (double)totalTime/LOOPS << std::endl;
