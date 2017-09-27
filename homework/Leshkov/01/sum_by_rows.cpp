@@ -33,21 +33,27 @@ int main(){
 
 for (int k=0;k!=launches;k++){
 
-        {
-            int** a=new int*[msize];
-            for(int i=0; i!=msize; i++)
-                a[i]=new int[msize];
+		{
+			int** a=new int*[msize];
+			for(int i=0; i!=msize; i++)
+				a[i]=new int[msize];
 
-            Timer t;
-            volatile int sum=0;
-            for (int i=0; i!=msize; i++){
-                for (int j=0; j!=msize; j++){
-                    sum+=a[i][j];
-                }
-            }
-        }
-    }
-    std::cout<<"avg_time from "<<launches<<" starts = "<<avg_time/launches<<" us"<<std::endl;
+			Timer* t=new Timer;
 
-    return 0;
+			volatile int sum=0;
+			for (int i=0; i!=msize; i++){
+				for (int j=0; j!=msize; j++){
+					sum+=a[i][j];
+				}
+			}
+			delete t;
+			for(int i=0; i!=msize; i++)
+				delete[] a[i];
+			delete[] a;
+		}
+		
+	}
+	std::cout<<"avg_time from "<<launches<<" starts = "<<avg_time/launches<<" us"<<std::endl;
+
+	return 0;
 }
