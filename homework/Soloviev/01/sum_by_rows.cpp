@@ -60,4 +60,10 @@ int main(){
     }
 
     std::cout << (double)totalTime/LOOPS << std::endl;
+
+    //Freeing up memory
+    for(int i = 0; i < N; i++)
+            delete [] matrix[i];
+
+    delete[] matrix;
 }
