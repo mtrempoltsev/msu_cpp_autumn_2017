@@ -27,24 +27,31 @@ int main()
 {
     const int N = 10000;
     const int M = 10000;
-    Timer t;
+
+    //create array of size NxM with accessing by [i][j]
     int *a;
     a = (int *)malloc(N*M*sizeof(int));
-    int *b;
-    b = (int *)malloc(N*M*sizeof(int));
-    int *c;
-    c = (int *)malloc(N*M*sizeof(int));
-
     using matrix = int(*)[M][N];
     matrix ptr_a = (matrix)a;
-    matrix ptr_b = (matrix)b;
-    matrix ptr_c = (matrix)c;
 
-    for(int j = 0; j < N; j++){
-        for(int i = 0; i < M; i++){
-           (*ptr_c)[i][j] = (*ptr_a)[i][j] + (*ptr_b)[i][j];
+    // fill array with ones
+    for(int i = 0; i < M; i++){
+        for(int j = 0; j < N; j++){
+           (*ptr_a)[i][j] = 1;
         }
     }
+
+    volatile int sum = 0; //create non-optimized collecting variable
+    Timer *t = new Timer; //start timer
+    for(int j = 0; j < N; j++){
+        for(int i = 0; i < M; i++){
+           sum += (*ptr_a)[i][j];
+        }
+    }
+    delete t; // stop timer
+
+    //free memory
+    free(a);
 
     return 0;
 }

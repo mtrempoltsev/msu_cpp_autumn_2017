@@ -1,11 +1,9 @@
 #include <chrono>
 #include <iostream>
-#include <fstream>
 #include <iomanip>
 #include <cassert>
-#include <cstdint>
-#include <cstring>
 #include <climits>
+#include <cstring>
 
 //===========================================================================================
 
@@ -15,12 +13,21 @@
 #define COUNT_ITERATIONS 100
 #define COUNT_FOR_BOOST 10
 
+#define ERROR_CODE 1
+
 //===========================================================================================
 
-typedef std::chrono::microseconds Microseconds;
 typedef int(*MatrixType) [SIZE];
 
 //===========================================================================================
+
+//Микросекунды stdlib не обнуляются в конструкторе по умолчанию! Поэтому сделаем класс-"декоратор"
+typedef class MicrosecondsDefaultZero : public std::chrono::microseconds
+{
+	public:
+		MicrosecondsDefaultZero () : std::chrono::microseconds (std::chrono::microseconds::zero ()) {}
+		MicrosecondsDefaultZero (std::chrono::microseconds&& ms) : std::chrono::microseconds (ms) {}
+} Microseconds;
 
 class Timer
 {
@@ -29,7 +36,6 @@ class Timer
 
 	public:
 		Timer();
-
 		Microseconds GetCurrentTime();
 };
 
@@ -53,95 +59,78 @@ enum SummType
 
 //===========================================================================================
 
-void MakeMatrix(MatrixType matrix) //Заполнение случайными - очень долго
+void FillMatrix(MatrixType matrix) //Заполнение случайными - теперь за приемлимое время, т.к. один раз
 {
 	assert(matrix != nullptr);
+	srand(time(0)); //Генерация новых случайных чисел при каждом запуске программы
+	
+	std::cout << "Matrix filling ..." << std::endl;
 
 	for (int i = 0; i < SIZE; ++i)
 	{
 		for (int j = 0; j < SIZE; ++j)
 		{
-			matrix [i][j] = (i*j+i+j)%MAX_ELEMENT;
-			if ((i*j) % 7 == 0) //Некоторые числа будут отрицательными
-			{
-				matrix [i][j] *= -1;
-			}
+			matrix [i][j] = (rand())%(MAX_ELEMENT*2+1)-MAX_ELEMENT; //×èñëà [-MAX_ELEMENT;+MAX_ELEMENT]
 		}
 	}
 }
 
 //volatile не даст оптимизатору изменить порядок циклов
-int CalculateSumRowsWithProfiling(const /*volatile*/ MatrixType matrix, Microseconds& current_time, SummType type)
+int CalculateSumWithProfiling(const /*volatile*/ MatrixType matrix, Microseconds& time, SummType type)
 {
 	assert(matrix != nullptr && type != SummType::NO_TYPE);
 
 	/*volatile*/ int result = 0;
 
-	//Будем делать адресацию арифметикой указателей - это не потребует не так много доп. времени как volatile, но не даст оптимизировать порядок циклов
-	int* matrix_start = (int*) matrix; 
-	
+	//По условиям задачи, работать с массивом как с одномерным нельзя => это недопустимый способ "обмана" компилятора
+	//int* matrix_start = (int*) matrix; 
+
+//Макроопределение, которое позволит не дублировать циклы суммирования по строкам и столбцам
+//Преимущество: логика суммирования пишется один раз
+//Нельзя использовать if (а функция на входе не знает, как ей нужно будет суммировать), т.к. это замедлит цикл
+//Использование: SUM_CYCLE(rows, columns) - суммирование по строкам, SUM_CYCLE(columns, rows) - по столбцам
+#define SUM_CYCLE(first, second) for (int rows = 0; rows < SIZE; ++rows)\
+								 {\
+									result += rows;\
+									for (int columns = 0; columns < SIZE; ++columns)\
+									{\
+										result += matrix [first][second];\
+									}\
+									result -= rows;\
+								 }
+
 	Timer timer;
-	if (type == SummType::BY_ROWS)
-	{
-		for (int i = 0; i < SIZE; ++i)
-		{
-			for (int j = 0; j < SIZE; ++j)
-			{
-				result += *(matrix_start + i*SIZE + j);
-				//result += matrix [i][j];
-			}
-		}
-	}
-	if (type == SummType::BY_COLUMNS)
-	{
-		int* m = (int*) matrix;
-		for (int i = 0; i < SIZE; ++i)
-		{
-			for (int j = 0; j < SIZE; ++j)
-			{
-				result += *(matrix_start + j*SIZE + i);
-				//result += matrix [j][i];
-			}
-		}
-	}
-	current_time = timer.GetCurrentTime();
+	if (type == SummType::BY_ROWS   ) { SUM_CYCLE(rows, columns); }
+	if (type == SummType::BY_COLUMNS) { SUM_CYCLE(columns, rows); }
+
+	time = timer.GetCurrentTime();
+
+//Такое сложное макроопределение лучше удалить
+#undef SUM_CYCLE
 
 	return result; 
 }
 
 //-------------------------------------------------------------------------------------------
 
-void MakeSingleTest(Microseconds& sum_time, SummType type)
+Microseconds MakeTests(int count_tests, SummType type)
 {
-	assert(type != SummType::NO_TYPE);
-
-	MatrixType matrix = (MatrixType) calloc(SIZE*SIZE, sizeof (int));
+	MatrixType matrix = (MatrixType) calloc(SIZE*SIZE, sizeof(int));
 	assert(matrix != nullptr);
-	MakeMatrix(matrix);
+	FillMatrix(matrix); //Будем считать, что скорость суммирования не зависит от содержимого матрицы и для всех итераций будем использовать одну матрицу
 
-	Microseconds current_time;
-	int result = CalculateSumRowsWithProfiling(matrix, current_time, type);
-	std::cout << "Single test: sum = " << result << "; time = " << current_time.count() << " mcs" << std::endl;
-	sum_time += current_time;
+	Microseconds sum_time;
+	//Сразу и разогрев, и тесты, чтобы не писать дополнительную функцию и 2 цикла
+	int count_all = COUNT_FOR_BOOST + count_tests;
+	for (int i = 0; i < count_all; ++i)
+	{
+		Microseconds current_time;
+		int result = CalculateSumWithProfiling(matrix, current_time, type);
+		std::cout << "Single test: sum = " << result << "; time = " << current_time.count() << " mcs" << std::endl;
+		if (i >= COUNT_FOR_BOOST) { sum_time += current_time; } //Boost циклы не считаем
+	}
 
 	free(matrix);
-}
-
-Microseconds MakeMultipleTests(int count_tests, SummType type)
-{
-	Microseconds sum_time;
-
-	for (int i = 0; i < COUNT_FOR_BOOST; ++i) //Разогрев
-	{
-		MakeSingleTest(sum_time, type);
-	}
-	sum_time = Microseconds::zero();
-
-	for (int i = 0; i < count_tests; ++i)
-	{
-		MakeSingleTest(sum_time, type);
-	}
-
 	return sum_time;
 }
 
@@ -158,28 +147,16 @@ int main(int count_args, char* args [])
 	if (type == SummType::NO_TYPE)
 	{
 		std::cout << "-r (sum by rows) or -c (sum by columns) is required as the first argument!";
-		return 0;
+		return ERROR_CODE;
 	}
 
 	std::cout << ((type == SummType::BY_ROWS) ? "Sum by rows" : "Sum by columns") << std::endl;
 
-	std::string filename;
-	if (type == SummType::BY_ROWS) { filename = "rowsresults.txt"; }
-	else { filename = "columnsresults.txt"; }
-
-	std::fstream file;
-	file.open(filename, std::fstream::app);
-
-	Microseconds result = MakeMultipleTests(COUNT_ITERATIONS, type);
+	Microseconds result = MakeTests(COUNT_ITERATIONS, type);
 	double avg_time = ((double) result.count ()) / COUNT_ITERATIONS;
 
-	std::cout << COUNT_ITERATIONS << " tests was processed, summ time = " << result.count() << " microseconds, averege time = ";
-	std::cout << std::fixed << std::setprecision (2) << avg_time << " mcs";
-	time_t current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	file << std::put_time(std::localtime (&current_time), "%c") << '\t' << COUNT_ITERATIONS << '\t' << result.count () << '\t';
-	file << std::fixed << std::setprecision(2) << avg_time << " mcs" << std::endl;
-
-	file.close();
+	std::cout << "Result: " << COUNT_ITERATIONS << " tests was processed, summ time = " << result.count() << " microseconds, averege time = ";
+	std::cout << std::fixed << std::setprecision (2) << avg_time << " mcs" << std::endl << std::endl;
 	
 	return 0;
 }

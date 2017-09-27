@@ -25,7 +25,9 @@ int main()
     int i=0;
     int j=0;
     int sum=0;
-    int* matrix = new int[N*N];
+    int** matrix = new int*[N];
+    for(i=0;i<N;i++)
+    	matrix[i] = new int[N];
  
     if (matrix==nullptr)
     {
@@ -36,21 +38,22 @@ int main()
     for(i=0;i<N;i++)
 	for(j=0;j<N;j++)
 	{
-	    matrix[i*N+j]=rand()%100;
+	    matrix[i][j]=rand()%100;
 	}
 
 
     {
 	Timer* T = new Timer() ;
 	for(i=0;i<N;i++)
-	for(j=0;j<N;j++)
-	sum+=matrix[i*N+j];
+	    for(j=0;j<N;j++)
+	        sum+=matrix[i][j];
 	cout << "Matrix sum = " << sum <<endl;
 	delete T;
     }
 
 
-
-    free(matrix);
+    for(i=0;i<N;i++)
+    	delete[] matrix[i];
+    delete[] matrix;
     return 1;
 }

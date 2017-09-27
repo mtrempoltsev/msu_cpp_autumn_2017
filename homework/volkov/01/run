@@ -1,0 +1,26 @@
+#!/bin/bash
+
+SIZE=10000
+COUNT=5
+
+make
+
+if [ $? -ne 0 ]; then
+    exit
+fi
+
+# warm up
+./sum $SIZE row > /dev/null
+./sum $SIZE col > /dev/null
+
+for i in `seq 1 $COUNT`; do
+    echo row $i/$COUNT
+    row_res[$i]=`./sum $SIZE row | grep -o '[0-9]*'`
+    echo col $i/$COUNT
+    col_res[$i]=`./sum $SIZE col | grep -o '[0-9]*'`
+done
+
+echo -e "row\tcol"
+for i in `seq 1 $COUNT`; do
+    echo -e "${row_res[$i]}\t${col_res[$i]}"
+done
