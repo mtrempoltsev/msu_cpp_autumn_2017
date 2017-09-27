@@ -6,6 +6,7 @@
 
 
 long int avg_time=0;
+//содержит общее время, в выводе делим на кол-во запусков
 class Timer
 {
 public:
@@ -31,29 +32,34 @@ private:
 int main(){
 
 
-for (int k=0;k!=launches;k++){
-
-		{
-			int** a=new int*[msize];
-			for(int i=0; i!=msize; i++)
-				a[i]=new int[msize];
-
-			Timer* t=new Timer;
-
-			volatile int sum=0;
-			for (int i=0; i!=msize; i++){
-				for (int j=0; j!=msize; j++){
-					sum+=a[i][j];
-				}
-			}
-			delete t;
-			for(int i=0; i!=msize; i++)
-				delete[] a[i];
-			delete[] a;
+	int** a=new int*[msize];
+	for(int i=0; i<msize; i++){
+		a[i]=new int[msize];
+		for(int j=0;j<msize; j++){
+			a[i][j]=i+j;
 		}
-		
 	}
+	//Задаём массив
+
+
+	for (int k=0;k!=launches;k++){
+		
+		Timer* t=new Timer;
+
+		volatile int sum=0;
+		for (int i=0; i<msize; i++){
+			for (int j=0; j<msize; j++){
+				sum+=a[i][j];
+			}
+		}
+		delete t;
+	}
+
+
 	std::cout<<"avg_time from "<<launches<<" starts = "<<avg_time/launches<<" us"<<std::endl;
+	for(int i=0; i<msize; i++)
+		delete[] a[i];
+	delete[] a;
 
 	return 0;
 }
