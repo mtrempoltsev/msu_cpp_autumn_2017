@@ -1,14 +1,28 @@
-
 #include <iostream>
 #include <chrono>
 #include <iostream>
 
-#define N 10000 //количество элементов
-#define MAX_ITER 100 // количество замеров
+class Timer
+{
+public:
+    Timer()
+        : start_(std::chrono::high_resolution_clock::now())
+    {
+    }
 
-/*
-* В этой программе производится суммирование по строкам и замер времени работы.
-* */
+    ~Timer()
+    {
+        const auto finish = std::chrono::high_resolution_clock::now();
+        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(finish - start_).count() << " us" << std::endl;
+    }
+
+private:
+    const std::chrono::high_resolution_clock::time_point start_;
+};
+
+
+#define N 10000 //количество элементов
+
 int main()
 {
 	int** arr_mat = new int*[N];
@@ -32,32 +46,27 @@ int main()
 	std::cout << "Результат: " << sum << std::endl;
 	sum = 0;
 	std::cout << "Суммирование по строкам: " << std::endl;
+	// по  строкам  а потом по столбцам
 
-	long long sumTime = 0;
-	std::chrono::high_resolution_clock::time_point finish;
-	int m_it = 1;
-	for (m_it = 1; m_it <= MAX_ITER; ++m_it)
-	{
-		const std::chrono::high_resolution_clock::time_point start_t = std::chrono::high_resolution_clock::now();
-		for (volatile int i = 0; i < N; ++i) {
-			for (volatile int j = 0; j < N; ++j) {
-				sum += arr_mat[i][j];
-			}
-		}
+	Timer* timer = new Timer();
+        
+        sum = 0;
+        for (volatile int i = 0; i < N; ++i) 
+        {
+	    for (volatile int j = 0; j < N; ++j)
+            {
+		sum += arr_mat[i][j];
+	    }
+        }
+        
+        delete timer;
 
-		const auto finish_t = std::chrono::high_resolution_clock::now();
-		const long long  cur_time = std::chrono::duration_cast<std::chrono::microseconds>(finish_t - start_t).count();
-
-		std::cout << cur_time << std::endl;
-		sumTime += cur_time;
-	}
-
-	std::cout << "Среднее время: " << sumTime / double(m_it) << std::endl;
+        std::cout<<"RES: "<< sum<< std::endl;
 
 	for (int i = 0; i< N; ++i)
-		delete arr_mat[i];
+		delete[] arr_mat[i];
 
-	delete arr_mat;
+	delete[] arr_mat;
 
 	return 0;
 }
