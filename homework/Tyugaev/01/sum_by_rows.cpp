@@ -36,7 +36,7 @@ int main()
         }
     }
 
-    long long sum = 0;
+    volatile long long sum = 0;
 
     for(int run = 0; run < 20; run++) {
         Timer t;
