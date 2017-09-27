@@ -1,73 +1,63 @@
+
 #include <iostream>
-#include <limits>
 #include <chrono>
 #include <iostream>
 
 #define N 10000 //количество элементов
-
-
-
-class Timer
-{
-public:
-    Timer()
-            : start_(std::chrono::high_resolution_clock::now())
-    {
-    }
-
-    ~Timer()
-    {
-        const auto finish = std::chrono::high_resolution_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(finish - start_).count() << std::endl;
-    }
-
-private:
-    const std::chrono::high_resolution_clock::time_point start_;
-};
+#define MAX_ITER 100 // количество замеров
 
 /*
- * В этой программе производится суммирование по строкам и замер времени работы.
- * */
-int main() {
+* В этой программе производится суммирование по строкам и замер времени работы.
+* */
+int main()
+{
+	int** arr_mat = new int*[N];
 
-    int** arr_mat = new int* [N];
+	for (size_t i = 0; i< N; ++i)
+	{
+		arr_mat[i] = new int[N];
+		for (size_t j = 0; j<N; ++j)
+			arr_mat[i][j] = 1;
+	}
 
-    for(size_t  i = 0; i< N; ++i)
-    {
-        arr_mat[i] = new int[N];
-        for(size_t j =0; j<N; ++j)
-            arr_mat[i][j] = i + j;
-    }
+	// разогрев
+	std::cout << "Разогрев: " << std::endl;
+	volatile long  sum = 0;
+	for (volatile int i = 0; i < N; ++i) {
+		for (volatile int j = 0; j < N; ++j) {
+			sum += arr_mat[i][j];
+		}
+	}
 
-    // разогрев
-    std::cout<< "Разогрев: "<<std::endl;
-    volatile long  sum = 0;
-    for(volatile int j = 0; j < N; ++j) {
-        for (volatile int i = 0; i < N; ++i) {
-            sum += arr_mat[i][j];
-        }
-    }
-   
-    std::cout<<"Результат: " << sum << std::endl;
-    sum = 0 ; 
-    std::cout<< "Суммирование по строкам: "<<std::endl;
-    // по  строкам  а потом по столбцам
+	std::cout << "Результат: " << sum << std::endl;
+	sum = 0;
+	std::cout << "Суммирование по строкам: " << std::endl;
 
-    
-    for(int mIt = 1; mIt <= 100; ++mIt)
-    {
-      Timer* timer = new Timer();
-      for(volatile int i = 0; i < N; ++i) {
-          for (volatile int j = 0; j < N; ++j) {
-              sum += arr_mat[i][j];
-          }
-      }
+	long long sumTime = 0;
+	std::chrono::high_resolution_clock::time_point finish;
+	int m_it = 1;
+	for (m_it = 1; m_it <= MAX_ITER; ++m_it)
+	{
+		const std::chrono::high_resolution_clock::time_point start_t = std::chrono::high_resolution_clock::now();
+		for (volatile int i = 0; i < N; ++i) {
+			for (volatile int j = 0; j < N; ++j) {
+				sum += arr_mat[i][j];
+			}
+		}
 
-     // std::cout<<"Итерация: "<<mIt<<std::endl;
-     // std::cout<<"Результат: " << sum << std::endl;
-     // std::cout<<"Время:";
-      delete timer;
-    }
+		const auto finish_t = std::chrono::high_resolution_clock::now();
+		const long long  cur_time = std::chrono::duration_cast<std::chrono::microseconds>(finish_t - start_t).count();
 
-    return 0;
+		std::cout << cur_time << std::endl;
+		sumTime += cur_time;
+	}
+
+	std::cout << "Среднее время: " << sumTime / double(m_it) << std::endl;
+
+	for (int i = 0; i< N; ++i)
+		delete arr_mat[i];
+
+	delete arr_mat;
+
+	return 0;
 }
