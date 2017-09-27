@@ -25,11 +25,11 @@ private:
 
 int main()
 {
-    volatile int** arr = new volatile int* [N];
+    int** arr = new int* [N];
 
     for(int i = 0; i < N; i++)
     {
-        arr[i] = new volatile int [N];
+        arr[i] = new int [N];
         for(int j = 0; j < N; j++)
         {
             arr[i][j] = rand() % 1000 - 500;
@@ -46,6 +46,11 @@ int main()
             }
         }
     }
+
+    for(int i = 0; i < N; i++) {
+       delete [] arr[i];
+    }
+    delete [] arr;
 
     return 0;
 }
