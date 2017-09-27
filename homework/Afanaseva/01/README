@@ -1,0 +1,6 @@
+To compile:
+g++ sum_by_rows.cpp -o sum_by_rows -std=c++11 -O2
+Estimate time ~ 340716us
+g++ sum_by_cols.cpp -o sum_by_cols -std=c++11 -O2
+Estimate time ~ 1859793us
+
