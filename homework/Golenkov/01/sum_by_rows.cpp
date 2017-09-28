@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 enum {
-    NUMBER_OF_RUNS = 100,
+    NUMBER_OF_RUNS = 10,
     SIZE = 10000
 };
 
@@ -18,7 +18,7 @@ public:
     ~Timer()
     {
         const auto finish = std::chrono::high_resolution_clock::now();
-        int all_time =  std::chrono::duration_cast<std::chrono::microseconds>(finish - start_).count();
+        auto all_time =  std::chrono::duration_cast<std::chrono::microseconds>(finish - start_).count();
         std::cout << all_time / NUMBER_OF_RUNS << " us" << std::endl;
     }
 
@@ -30,6 +30,7 @@ private:
 
 void initializeMatrix(int** matrix)
 {
+    // fill the matrix with random numbers from 1 to 10
     for (int i = 0; i < SIZE; i++)
     {
         for (int j = 0; j < SIZE; j++)
@@ -41,12 +42,18 @@ void initializeMatrix(int** matrix)
 
 void sumByRows(int** matrix)
 {
+    // perform the summation over rows
     volatile long long int sum = 0;
-    for (int i = 0; i < SIZE; i++)
+    Timer t;
+    for (int k = 0; k < NUMBER_OF_RUNS; k++)
     {
-        for (int j = 0; j < SIZE; j++)
+        // find the sum several times
+        for (int i = 0; i < SIZE; i++)
         {
-            sum += matrix[i][j];
+            for (int j = 0; j < SIZE; j++)
+            {
+                sum += matrix[i][j];
+            }
         }
     }
 }
@@ -55,18 +62,20 @@ int main()
 {
     int** test_matrix;
     test_matrix = new int* [SIZE];
-    for (int i=0; i < SIZE; i++)
+    for (int i = 0; i < SIZE; i++)
     {
         test_matrix[i] = new int [SIZE];
     }
     initializeMatrix(test_matrix);
 
-    Timer t;
-    for (int k = 0; k < NUMBER_OF_RUNS; k++)
-    {
-        sumByRows(test_matrix);
-    }
+    sumByRows(test_matrix); // warm-up
+    sumByRows(test_matrix); // result
 
+    // freeing memory
+    for (int i = 0; i < SIZE; i++)
+    {
+        delete[] test_matrix[i];
+    }
     delete[] test_matrix;
     return 0;
 }
