@@ -8,7 +8,7 @@
 class Timer
 {
 public:
-    Timer(ssize_t);
+    Timer(size_t);
     ~Timer();
 
     time_t
@@ -16,7 +16,7 @@ public:
 
 private:
     const std::chrono::high_resolution_clock::time_point start_;
-    const ssize_t count_;
+    const size_t count_;
 };
 
 #endif

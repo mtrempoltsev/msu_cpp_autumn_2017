@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Timer::Timer(ssize_t count)
+Timer::Timer(size_t count)
         : start_(std::chrono::high_resolution_clock::now()),
           count_(count)
 {
