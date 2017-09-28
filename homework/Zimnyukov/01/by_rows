@@ -21,3 +21,4 @@ int main()
     cout << s << '\n';
     return 0;
 }
+// 200 000 - 250 000 ns
