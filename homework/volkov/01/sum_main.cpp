@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "matrix.h"
 #include "timer.h"
 
 using SumType = int;
@@ -22,18 +23,12 @@ int main(int argc, char* argv[])
     size_t size = atoi(argv[1]);
     bool byColumn = string("col") == argv[2];
 
-    SumType* array;
-    try {
-        array = new SumType[size * size];
-    } catch (bad_alloc) {
-        cerr << "new failed" << endl;
-        exit(1);
-    }
+    Matrix<SumType> array(size);
 
     // filling array
-    for (size_t i = 0; i < size * size; ++i) {
-        array[i] = fill(i);
-    }
+    for (size_t j = 0; j < size; ++j)
+        for (size_t i = 0; i < size; ++i)
+            array[j][i] = fill(i + j);
 
     volatile SumType sum = 0;
     {
@@ -43,15 +38,14 @@ int main(int argc, char* argv[])
             // sum by column
             for (size_t i = 0; i < size; ++i)
                 for (size_t j = 0; j < size; ++j)
-                    sum += array[size * j + i];
+                    sum += array[j][i];
         } else {
             // sum by row
             for (size_t j = 0; j < size; ++j)
                 for (size_t i = 0; i < size; ++i)
-                    sum += array[size * j + i];
+                    sum += array[j][i];
         }
     }
 
-    delete[] array;
     return 0;
 }
