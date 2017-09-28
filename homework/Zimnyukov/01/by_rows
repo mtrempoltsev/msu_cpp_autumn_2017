@@ -1,0 +1,24 @@
+#include <chrono>
+#include <iostream>
+#include <Timer.h>
+#include <cstdlib>
+using namespace std;
+
+int main()
+{
+    srand(time(nullptr));
+    const int N  = 10000;
+    int *a = (int *)malloc(N * N * 4);
+    for (int i = 0; i < N * N; ++i)
+        a[i] = rand();
+
+    Timer t;
+    volatile int s = 0;
+    for (volatile int i = 0; i < N; ++i)
+        for (volatile int j = 0; j < N; ++j)
+            s += a[i * N + j];
+            
+    cout << s << '\n';
+    return 0;
+}
+// 200 000 - 250 000 ns

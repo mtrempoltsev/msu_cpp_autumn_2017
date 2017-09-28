@@ -66,9 +66,11 @@ int main() {
     for (int k = 0; k < hot_runs; k++) {
         sum = 0;
         for (int i = 0; i < n; i++) {
+            volatile int tmp = 0;
             for (int j = 0; j < n; j++) {
-                sum += array[i][j];
+                tmp += array[i][j];
             }
+            sum += tmp;
         }
     }
     
