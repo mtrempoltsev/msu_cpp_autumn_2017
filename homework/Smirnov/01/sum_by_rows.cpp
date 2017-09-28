@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cstdlib>
 
-#define SIZE 10000 ///< Размер матрицы.
+const int Size=10000;///< Размер матрицы.
 
 /**
  Класс для измерения времени. 
@@ -36,27 +36,40 @@ private:
 int main(int argc, char** argv)
 {
     // Выделение памяти.
-    int* A = (int *)malloc(sizeof(int) * SIZE * SIZE);
+    int** A = new int* [Size];
+    for(int i = 0; i < Size; i++)
+    {
+        A[i] = new int [Size];
+    }
 
     // Инициализация.
-    for(int i = 0; i < SIZE; i++)
+    for(int i = 0; i < Size; i++)
     {
-        for(int j = 0; j < SIZE; j++)
+        for(int j = 0; j < Size; j++)
         {
-            A[i*SIZE + j] = i - j;
+            A[i][j] = i - j;
         }
     }
 
     // Вычисление суммы элементов.
     volatile int sum = 0;
-    Timer t;
-    for(int i = 0; i < SIZE; i++)
     {
-        for(int j = 0; j < SIZE; j++)
+        Timer t;
+        for(int i = 0; i < Size; i++)
         {
-             sum += A[i*SIZE + j];
+            for(int j = 0; j < Size; j++)
+            {
+                 sum += A[i][j];
+            }
         }
     }
+
+    // Высвобождение памяти.
+    for(int i = 0; i < Size; i++)
+    {
+        delete[] A[i];
+    }
+    delete[] A;
 
     return 0;
 }
