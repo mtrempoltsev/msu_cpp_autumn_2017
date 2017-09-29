@@ -1,0 +1,11 @@
+Программа вычисляет значение выражения.
+Запустить программу можно командой g++ calc.cpp -std=c++11 -o calc
+Выражение в командную строку необходимо передавать без пробелов, т.е 1+2-3*4/5, иначе возникнет исключение
+Грамматика, которая использовалась при написания следующая
+
+Expr -> Term | Term_Expr
+_Expr -> +Term | -Term | +Term_Expr | -Term_Expr
+Term -> Prim | Prim_Term
+_Term -> *Prim | /Prim | *Prim_Term | /Prim_Term
+Prim -> Number | -Number
+Number -> 0 | 1 | ... | 9
