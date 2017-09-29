@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-int select_operation(int a, int b, char op) {//Функция выбора операции
+int select_operation(int a, int b, char op) {//Функция выбора оберации
 	switch (op) {
 		case '+':
 			return a + b;
@@ -30,7 +30,7 @@ int number(char*& str);
 
 int main(int argc, char** argv) {
 	if (argc != 2) { //Количество аргументов командной строки не равно 2
-		cout << "INVALID PARAMETERS" << endl;
+		cout << "INVALID ARGUMENTS" << endl;
 		return -1;
 	}
 	try {
@@ -48,6 +48,9 @@ int main(int argc, char** argv) {
  */
 int expr(char*& str) {
 	int left_operand = term(str); //Левый операнд выражения
+	if (!isdigit(*str))
+		if (*str != '+' && *str != '-')
+			throw 0;
 	if (*str == '+' || *str == '-') { //Если он не единственный
 		return _expr(str,left_operand); 
 	}
@@ -128,11 +131,18 @@ int number(char*& str) {
 		++index;
 		str_num = (char*)realloc(str_num,(index + 1)*sizeof(char));
 		str++;
-	}	
+	}
+	if (!isdigit(*str))
+		if (*str != '+' && *str != '-' && *str != '*' && *str != '/') {
+			free(str_num);
+			throw 0;
+		}
 	str_num[index] = '\0';	
 	int num = atoi(str_num); //Преобразуем char* в int	
 	free(str_num);	
 	return num; //возвращаем цифру
 }
+
+
 
 
