@@ -36,9 +36,8 @@ int main(int argc, char** argv) {
 	try {
 		cout << expr(argv[1]) << endl;
 	}
-	catch(int a) {
-		if (a == 0) //Неверное выражение
-			cout << "INVALID EXPRESSION!" << endl;
+	catch(int a) {	 //Неверное выражение
+		cout << "INVALID EXPRESSION!" << endl;
 	}
 	return 0;
 }
