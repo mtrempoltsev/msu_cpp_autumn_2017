@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-int select_operation(int a, int b, char op) {//Функция выбора оберации
+int select_operation(int a, int b, char op) {//Функция выбора операции
 	switch (op) {
 		case '+':
 			return a + b;
@@ -30,7 +30,7 @@ int number(char*& str);
 
 int main(int argc, char** argv) {
 	if (argc != 2) { //Количество аргументов командной строки не равно 2
-		cout << "Too few arguments!" << endl;
+		cout << "INVALID PARAMETERS" << endl;
 		return -1;
 	}
 	try {
