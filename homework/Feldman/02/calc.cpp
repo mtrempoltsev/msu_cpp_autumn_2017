@@ -131,11 +131,6 @@ int number(char*& str) {
 		str_num = (char*)realloc(str_num,(index + 1)*sizeof(char));
 		str++;
 	}
-	if (!isdigit(*str))
-		if (*str != '+' && *str != '-' && *str != '*' && *str != '/') {
-			free(str_num);
-			throw 0;
-		}
 	str_num[index] = '\0';	
 	int num = atoi(str_num); //Преобразуем char* в int	
 	free(str_num);	
