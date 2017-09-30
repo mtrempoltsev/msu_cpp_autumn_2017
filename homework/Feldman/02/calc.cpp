@@ -30,14 +30,15 @@ int number(char*& str);
 
 int main(int argc, char** argv) {
 	if (argc != 2) { //Количество аргументов командной строки не равно 2
-		cout << "INVALID ARGUMENTS" << endl;
+		cout << "Too few arguments!" << endl;
 		return -1;
 	}
 	try {
 		cout << expr(argv[1]) << endl;
 	}
-	catch(int a) {	 //Неверное выражение
-		cout << "INVALID EXPRESSION!" << endl;
+	catch(int a) {
+		if (a == 0) //Неверное выражение
+			cout << "INVALID EXPRESSION!" << endl;
 	}
 	return 0;
 }
@@ -47,9 +48,6 @@ int main(int argc, char** argv) {
  */
 int expr(char*& str) {
 	int left_operand = term(str); //Левый операнд выражения
-	if (!isdigit(*str))
-		if (*str != '+' && *str != '-')
-			throw 0;
 	if (*str == '+' || *str == '-') { //Если он не единственный
 		return _expr(str,left_operand); 
 	}
@@ -130,12 +128,14 @@ int number(char*& str) {
 		++index;
 		str_num = (char*)realloc(str_num,(index + 1)*sizeof(char));
 		str++;
-	}
+	}	
 	str_num[index] = '\0';	
 	int num = atoi(str_num); //Преобразуем char* в int	
 	free(str_num);	
 	return num; //возвращаем цифру
 }
+
+
 
 
 
