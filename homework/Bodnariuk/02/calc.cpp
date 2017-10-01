@@ -36,7 +36,7 @@ double term(char* data, int start, int len, bool last_mult) {
             case '/':
                 if (data[i + 1] == ' ') {
                     double tail = term(data, i + 2, len, data[i] == '*');
-                    if((data[i] == '/' && last_mult) || (data[i] == '*' && !last_mult)) {
+                    if((data[i] == '/') == last_mult) {
                         return number(data, start, i - 1) / tail;
                     }
                     else {
@@ -55,7 +55,7 @@ double expression(char* data, int start, int len, bool last_plus) {
             case '-':
                 if (data[i + 1] == ' ') {
                     double tail = expression(data, i + 2, len, data[i] == '+');
-                    if((data[i] == '-' && last_plus) || data[i] == '+' && !last_plus) {
+                    if((data[i] == '-') == last_plus) {
                         tail = - tail;
                     }
                     return term(data, start, i - 1, true) + tail;
