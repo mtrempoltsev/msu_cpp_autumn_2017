@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <algorithm>
 #include <string>
 #include <cstring>
@@ -7,7 +7,7 @@
 #include <exception>
 using namespace std;
 
-//объекты данного класса содержит в себе 1 распознаную лексему 
+//РѕР±СЉРµРєС‚С‹ РґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР° СЃРѕРґРµСЂР¶РёС‚ РІ СЃРµР±Рµ 1 СЂР°СЃРїРѕР·РЅР°РЅСѓСЋ Р»РµРєСЃРµРјСѓ 
 class Token {
 public:
     enum Token_Types {
@@ -35,13 +35,13 @@ public:
     }
 };
 
-//объект данного класса содержит в себе множество операций
+//РѕР±СЉРµРєС‚ РґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР° СЃРѕРґРµСЂР¶РёС‚ РІ СЃРµР±Рµ РјРЅРѕР¶РµСЃС‚РІРѕ РѕРїРµСЂР°С†РёР№
 class Field {
     using BinaryFunction = function<long long int(long long int, long long int)>;
     map<Token::Token_Types, BinaryFunction> Operations;
 public:
     Field() {
-        //добавляем простейшие действия - сложение, вычитание, деление, умножение
+        //РґРѕР±Р°РІР»СЏРµРј РїСЂРѕСЃС‚РµР№С€РёРµ РґРµР№СЃС‚РІРёСЏ - СЃР»РѕР¶РµРЅРёРµ, РІС‹С‡РёС‚Р°РЅРёРµ, РґРµР»РµРЅРёРµ, СѓРјРЅРѕР¶РµРЅРёРµ
         Operations[Token::PLUS] = [](long long int a, long long int b) {return a + b;};
         Operations[Token::MINUS] = [](long long int a, long long int b) {return a - b;};
         Operations[Token::MULT] = [](long long int a, long long int b) {return a * b;};
@@ -55,12 +55,12 @@ public:
     }
 };
 
-//данный класс позволяет производить разбиение на лексемы-токены
+//РґР°РЅРЅС‹Р№ РєР»Р°СЃСЃ РїРѕР·РІРѕР»СЏРµС‚ РїСЂРѕРёР·РІРѕРґРёС‚СЊ СЂР°Р·Р±РёРµРЅРёРµ РЅР° Р»РµРєСЃРµРјС‹-С‚РѕРєРµРЅС‹
 class Tokenizer{
-    const char *S = NULL; //указатель на токенизируемую строку
-    int iter = 0; //индекс ещё не обработанного символа в строке S
-    int prev_iter = -1; //индекс начала предыдущего токена
-    Token prev_token; //в данном объекте хранится токен начинающийся с индекса prev_iter
+    const char *S = NULL; //СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‚РѕРєРµРЅРёР·РёСЂСѓРµРјСѓСЋ СЃС‚СЂРѕРєСѓ
+    int iter = 0; //РёРЅРґРµРєСЃ РµС‰С‘ РЅРµ РѕР±СЂР°Р±РѕС‚Р°РЅРЅРѕРіРѕ СЃРёРјРІРѕР»Р° РІ СЃС‚СЂРѕРєРµ S
+    int prev_iter = -1; //РёРЅРґРµРєСЃ РЅР°С‡Р°Р»Р° РїСЂРµРґС‹РґСѓС‰РµРіРѕ С‚РѕРєРµРЅР°
+    Token prev_token; //РІ РґР°РЅРЅРѕРј РѕР±СЉРµРєС‚Рµ С…СЂР°РЅРёС‚СЃСЏ С‚РѕРєРµРЅ РЅР°С‡РёРЅР°СЋС‰РёР№СЃСЏ СЃ РёРЅРґРµРєСЃР° prev_iter
 
 public:
     Tokenizer(const char * str) : S(str) {}
@@ -81,7 +81,7 @@ public:
         case '\0': return Token(Token::END);
         case '+': return Token(Token::PLUS);
         case '-':
-            //дополнительно проверяем на унарный минус
+            //РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ РїСЂРѕРІРµСЂСЏРµРј РЅР° СѓРЅР°СЂРЅС‹Р№ РјРёРЅСѓСЃ
             if(S[iter] == ' ') return Token(Token::MINUS); 
             else if (!isdigit(S[iter])) {
                 throw string("Undefined lexem: ") + S[iter] + string(" in position: ") + to_string(iter);
@@ -109,7 +109,7 @@ public:
 };
 
 
-//обрабатываем операции с наибольшим приоритетом
+//РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РѕРїРµСЂР°С†РёРё СЃ РЅР°РёР±РѕР»СЊС€РёРј РїСЂРёРѕСЂРёС‚РµС‚РѕРј
 long long int high_priority(Tokenizer &Tkz, Field &F) {
     long long int left = 0;
     Token buff = Tkz.next_token();
@@ -122,7 +122,7 @@ long long int high_priority(Tokenizer &Tkz, Field &F) {
     return left;
 }
 
-//обрабатываем операции с наименьшим приоритетом
+//РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РѕРїРµСЂР°С†РёРё СЃ РЅР°РёРјРµРЅСЊС€РёРј РїСЂРёРѕСЂРёС‚РµС‚РѕРј
 long long int low_priority(Tokenizer &Tkz, Field &F) {
     long long int left = 0;
     Token buff;
