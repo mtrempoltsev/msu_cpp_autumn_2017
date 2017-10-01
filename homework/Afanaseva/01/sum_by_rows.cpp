@@ -2,10 +2,18 @@
 #include <iostream>
 #include <ctime>
 
-#define SIZE_OF_MATRIX 10000
-#define WARMUP_CONSTANT 100
-
 using namespace std;
+// Инициализация параметров запуска программы: размер квадратной матрицы и число итераций прогрева
+namespace options
+{
+    const int size_of_matrix = 10000;
+    const int warmup_constant = 100;
+}
+
+/* Класс для замера времени работы программы.
+ *  При уничтожении экземпляра класса происходит запись в терминал
+ * времени между вызовами конструктора и деструктора класса.
+ */
 
 class Timer
 {
@@ -25,38 +33,57 @@ private:
     const std::chrono::high_resolution_clock::time_point start_;
 };
 
-void init_array(int n, int* array)
+
+// Фунция инициализации массива данных случайным образом
+void init_array(int n, int** array)
 {
+    srand(time(NULL));
     for(int i = 0; i < n; i++)
         for(int j = 0; j < n; j++)
-            array[i * n + j] = rand() % 7;
+	    array[i][j] = rand() % 7;
 }
 
-int sum_by_rows(int n, int* array)
+// Функция суммирования значений массива по строкам
+int sum_by_rows(int n, int** array)
 {
     volatile int sum = 0;
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
-            sum += array[i * n + j];
+	    sum += array[i][j];
     return sum;
 }
 
-
+//-----------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
-    const int n = SIZE_OF_MATRIX;
-    const int warmup = WARMUP_CONSTANT;
-    int* array = new int[n * n];
+    //Инициализация констант (можно было не делать)
+    const int n = options::size_of_matrix;
+    const int warmup = options::warmup_constant;
 
-    srand(time(NULL));
+    //Cоздание и заполнение массива
+    int** array = new int*[n];
+    for(int i = 0; i < n; i++)
+	    array[i] = new int[n];
 
+    init_array(n, array);
+
+    //Прогрев кэша
     for(int i = 0; i < warmup; i++)
-        init_array(n, array);
+	sum_by_rows(n, array);
 
     volatile int sum = 0;
 
-    Timer t;
+    //Начало отсчета времени суммирования
+    Timer *t = new Timer();
+
     sum = sum_by_rows(n, array);
+
+    //Завершение отсчета времени суммирования
+    delete t;
+
+    //Освобождение памяти
+    for(int i = 0; i < n; i++)
+	delete[] array[i];
 
     delete[] array;
     return 0;
