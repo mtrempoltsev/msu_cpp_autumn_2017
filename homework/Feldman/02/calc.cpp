@@ -1,6 +1,8 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <ctype.h>
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 int select_operation(int a, int b, char op) {//Функция выбора оберации
@@ -21,6 +23,7 @@ int select_operation(int a, int b, char op) {//Функция выбора об�
 }
 
 
+
 int expr(char*& str);
 int _expr(char*& str, int left_operand);
 int term(char*& str);
@@ -28,11 +31,20 @@ int _term(char*& str, int left_operand);
 int prim(char*& str);
 int number(char*& str);
 
+
+void compactString(char *str)
+{
+	for (int i = 0, j = 0; str[i]; (str[j++] = str[i] != ' ' ? str[i] : (j--, str[j]), i++, (!str[i] ? (str[j] = 0) : 0)));
+}
 int main(int argc, char** argv) {
+	
+	
 	if (argc != 2) { //Количество аргументов командной строки не равно 2
-		cout << "Too few arguments!" << endl;
+		cout << "INVALID ARGUMENTS" << endl;
 		return -1;
 	}
+	
+	
 	try {
 		cout << expr(argv[1]) << endl;
 	}
@@ -56,7 +68,8 @@ int expr(char*& str) {
 
 int _expr(char*& str, int left_operand) {
 	char operation = *str; //Операция между правым и левым операндом
-	++str; 
+	++str;
+	if (*str == ' ') ++str;
 	int right_operand = term(str); //Получаем правый операнд
 	if (*str == '\0') {	//Выражение закончилось, возвращаем ответ	
 		return select_operation(left_operand,right_operand,operation);;
@@ -68,6 +81,9 @@ int _expr(char*& str, int left_operand) {
 
 int term(char*& str) { 
 	int left_part = prim(str); //Вычисление левой части операнда
+	if (!isdigit(*str))
+		if (*str != '*' && *str != '/' && *str != '+' && *str != '-')
+			throw 0;
 	if (*str == '*' || *str == '/') {//Если операнд - произведение | частное
 		return _term(str,left_part);
 	}
@@ -80,6 +96,7 @@ int _term(char*& str, int left_part) {//Вычисление операнда - 
 	if (operation == '+' || operation == '-') //Если + | - вычисление операнда закончилось
 		throw left_part; //Выкидываем результат
 	++str;
+	if (*str == ' ') ++str;
 	int right_part = prim(str); //Вычисляем правую часть
 	if (*str == '\0') { //Это был последний операнд
 		try {
@@ -113,13 +130,19 @@ int _term(char*& str, int left_part) {//Вычисление операнда - 
 int prim(char*& str) { //Получаем число
 	if (*str == '-') { //унарный минус
 		++str;
+		if (*str == ' ') ++str;
 		return -number(str);
 	}
 	return number(str);
 }
 
 int number(char*& str) {
-	if (!isdigit(*str)) //Если символ не цифра, кидаем исключение
+	if (*str == ' ') {
+		cout << "NUM SPACE" << endl;
+		++str;
+	}
+	if (!isdigit(*str))
+		//Если символ не цифра, кидаем исключение
 		throw 0;
 	char* str_num = (char*)malloc(sizeof(char));
 	int index = 0;	
@@ -129,14 +152,9 @@ int number(char*& str) {
 		str_num = (char*)realloc(str_num,(index + 1)*sizeof(char));
 		str++;
 	}	
+	if (*str == ' ') ++str;
 	str_num[index] = '\0';	
 	int num = atoi(str_num); //Преобразуем char* в int	
 	free(str_num);	
 	return num; //возвращаем цифру
 }
-
-
-
-
-
-
