@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <string>
 using namespace std;
 //Перечисление возможных значений
 enum class Token{
@@ -15,10 +16,10 @@ enum class Token{
 int number;
 Token current;
 //Получение токенов
-Token getToken(istream* input){
+Token getToken(stringstream& input){
         char c;
         do{
-                input->get(c);
+                input.get(c);
         } while (isspace(c));
 
         switch (c){
@@ -30,8 +31,8 @@ Token getToken(istream* input){
                 default:
                 {
                         if (c >= '0' && c <= '9'){
-                                input->putback(c);
-                                *input >> number;
+                                input.putback(c);
+                                input >> number;
                                 return current = Token::Number;
                         }
                         else
@@ -44,7 +45,7 @@ Token getToken(istream* input){
         return current = Token::End;
 }
 //Обработка первичных значений
-double prim(std::istream* input, bool get) {
+double prim(stringstream& input, bool get) {
 
         if (get) {
                 getToken(input);
@@ -63,7 +64,7 @@ double prim(std::istream* input, bool get) {
         }
 }
 //Сложение
-double term(std::istream* input, bool get) {
+double term(stringstream& input, bool get) {
         double left = prim(input, get);
 
         while(true) {
@@ -82,7 +83,7 @@ double term(std::istream* input, bool get) {
         }
 }
 //Умножение
-double expr(std::istream* input, bool get) {
+double expr(stringstream& input, bool get) {
         double left = term(input, get);
 
         while(true) {
@@ -100,9 +101,12 @@ double expr(std::istream* input, bool get) {
 }
 int main(int argc, char* argv[]){
         //Получить строку
-        istream* input = new istringstream(argv[1]);
+        string str= argv[1];
+        stringstream input;
+        input<<str;
         getToken(input);
         cout << expr(input, false) << endl;
+
         return 0;
 }
 
