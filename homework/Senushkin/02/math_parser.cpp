@@ -15,7 +15,7 @@ bool isbinop(const char & c){
 	return (c=='+' || c=='*' || c=='/');
 }
 
-// check letters
+// check letters and points
 void validate(const char* str){
 	if (*(str+std::strlen(str)-1) == '-' || isbinop(*str+std::strlen(str)-1)){
 		exit_failure();
@@ -31,6 +31,7 @@ void validate(const char* str){
 	}
 }
 
+//  remove spaces
 void skip_space(char * str){
 	while (*str != ' ' && *str != 0) {
 		str++;
@@ -81,13 +82,11 @@ int term(const char*& str){
 			}else{
 				exit_failure();
 			}
-			// str++;
 		}
 		else break;
 	}
 	if (*str!='\n')
 		str--;
-	// str--;
 
 #ifdef DEBUG
 	std::cout << "Transitional term values: " << result << ",  " << std::endl;
@@ -110,7 +109,6 @@ int _expr(const char*& str){
 			}else{
 				exit_failure();
 			}
-			// str++;
 		}
 		else break;
 	}
@@ -131,11 +129,6 @@ int main(int argc, char * argv[]){
 		std::cout << "INPUT_FAILURE";
 		return -1;
 	}
-	// char * str = argv[1];
-	// skip_space(str);
-	//std::cout << *str << std::endl;
-	// const char * cstr = str;
-	// validate(cstr);
 	std::cout << expr(argv[1]) << std::endl;
 
 	return 0;
