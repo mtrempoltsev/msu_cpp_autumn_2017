@@ -70,7 +70,9 @@ int term(Token &token, const char *&text, const char *&prev)
                 break;
             }
             case Token::Div:{
-                left /= prim(token, text, prev);
+                int divisor = prim(token, text, prev);
+                if (divisor == 0) throw 0;
+                left /= divisor;
                 break;
             }
             default: return left;
