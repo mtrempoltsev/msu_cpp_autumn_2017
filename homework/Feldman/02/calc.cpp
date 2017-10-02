@@ -35,7 +35,7 @@ int number(char*& str);
 void deleteSpace(char* src)
 {
 	char* dst = src;
-	while (*dst == *src++) 
+	while ((*dst = *src++)) 
 		if (*dst != ' ') 
 			dst++;
 }
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	deleteSpace(argv[1]);
-	for (int i = 0; argv[i] != '\0'; ++i) {		
+	for (int i = 0; argv[1][i] != '\0'; ++i) {		
 		if ((argv[1][i] == '+' || argv[1][i] == '-' || argv[1][i] == '*' || argv[1][i] == '/')
 			&& (argv[1][i] != '-' && !(isdigit(argv[1][i + 1])))) {
 			cout << "INVALID EXPRESSION!" << endl;
