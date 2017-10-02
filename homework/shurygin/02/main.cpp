@@ -29,7 +29,7 @@ Token getToken(const std::string& s, int& value)
 	if(c >= '0' && c <= '9')
 	{
 		value = (c - '0');
-		for(int j = i+1; j < s.size(); ++j)
+		for(size_t j = i+1; j < s.size(); ++j)
 		{
 			if(s[j] > '9' || s[j] < '0')
 				return Token::Number;
@@ -71,12 +71,12 @@ int calc(const std::string& s)
 			}
 		else if(cur == Token::Mul || cur == Token::Div)
 		{
-			if(min_priority != Token::Mul && min_priority != Token::Div)
-			{
+		//	if(min_priority != Token::Mul && min_priority != Token::Div)
+		//	{
 				min_priority = cur ;
 				str_for_min_priority[0] = s.substr(0, i);
 				str_for_min_priority[1] = s.substr(i + 1);
-			}
+		//	}
 		}
 		else if(cur == Token::Number)
 			if(min_priority == Token::None)
@@ -100,13 +100,49 @@ int calc(const std::string& s)
 		return -calc(str_for_min_priority[1]);
 	if(min_priority == Token::Number)
 		return val;
+	return 0;
 }
 
 void delSpace(std::string& s)
 {
-	for(int i = 0; i < s.size(); ++i)
+	for(size_t i = 0; i < s.size(); ++i)
+	{
 		if(s[i] == ' ')
+		{
 			s = s.erase(i, 1);
+			i--;
+		}
+	}
+}
+
+void checkExpr(const std::string& s)
+{
+	bool a = 1; // 0 - operator, 1 - number
+	size_t i = 0;
+	if(s[i] == '-')
+		++i;
+	for(;i < s.size(); ++i)
+	{
+		if(s[i] == ' ')
+			continue;
+		if(s[i] <= '9' && s[i] >= '0' && !a)
+			throw 1;
+		if(s[i] <= '9' && s[i] >= '0')
+		{
+			while(s[i] <= '9' && s[i] >= '0' && i < s.size())
+				++i;
+			i--;
+			a = 0;
+			continue;
+		}
+		else if(s[i] == '+' || s[i] == '*' || s[i] == '/' || s[i] == '-')
+			if(a && s[i] != '-')
+				throw 1;
+			else
+				a = 1;
+		else
+			;
+	}
 }
 
 int main(int argc, char* argv[])
@@ -122,6 +158,7 @@ int main(int argc, char* argv[])
 
 	try
 	{
+		checkExpr(expr);
 		int res = calc(expr);
 		std::cout << res << std::endl;
 	}
