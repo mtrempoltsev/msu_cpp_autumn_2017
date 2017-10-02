@@ -29,14 +29,14 @@ int number(char* data, int start, int len) {
     return accumulator;
 }
 
-double term(char* data, int start, int len) {
+double term(char* data, int start, int len, bool last_mult) {
     for(int i = start; i < len; ++i) {
         switch (data[i]) {
             case '*':
             case '/':
                 if (data[i + 1] == ' ') {
-                    double tail = term(data, i + 2, len);
-                    if(data[i] == '/') {
+                    double tail = term(data, i + 2, len, data[i] == '*');
+                    if((data[i] == '/') == last_mult) {
                         return number(data, start, i - 1) / tail;
                     }
                     else {
@@ -48,21 +48,21 @@ double term(char* data, int start, int len) {
     return number(data, start, len);
 }
 
-double expression(char* data, int start, int len) {
+double expression(char* data, int start, int len, bool last_plus) {
     for(int i = start; i < len; ++i) {
         switch (data[i]) {
             case '+':
             case '-':
                 if (data[i + 1] == ' ') {
-                    double tail = expression(data, i + 2, len);
-                    if(data[i] == '-') {
+                    double tail = expression(data, i + 2, len, data[i] == '+');
+                    if((data[i] == '-') == last_plus) {
                         tail = - tail;
                     }
-                    return term(data, start, i - 1) + tail;
+                    return term(data, start, i - 1, true) + tail;
                 }
         }
     }
-    return term(data, start, len);
+    return term(data, start, len, true);
 }
 
 int main(int argc, char* argv[])
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
         cout << argv[0] << " \"-12 * 2 / 3 + 8 * 2 / 1\"" << '\n';
     } else {
         auto data = argv[1];
-        auto e = expression(data, 0, strlen(data));
+        auto e = expression(data, 0, strlen(data), true);
         cout << e << "\n";
     }
     return 0;
