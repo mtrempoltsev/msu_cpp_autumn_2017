@@ -8,7 +8,11 @@
 using namespace std;
 
 int digit(char c) {
-    return int(c) - '0';
+    if(c >= '0' && c <='9') {
+        return int(c) - '0';
+    } else {
+        throw 1;
+    }
 }
 
 int number(char* data, int start, int len) {
@@ -60,6 +64,22 @@ double expression(char* data, int start, int len, bool last_plus) {
                     }
                     return term(data, start, i - 1, true) + tail;
                 }
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '/':
+            case '*':
+            case ' ':
+                break;
+            default:
+                throw 1;
         }
     }
     return term(data, start, len, true);
@@ -74,8 +94,15 @@ int main(int argc, char* argv[])
         cout << argv[0] << " \"-12 * 2 / 3 + 8 * 2 / 1\"" << '\n';
     } else {
         auto data = argv[1];
-        auto e = expression(data, 0, strlen(data), true);
-        cout << e << "\n";
+        double e;
+        try {
+            e = expression(data, 0, strlen(data), true);
+            cout << e << "\n";
+        }
+        catch (int code) {
+            cout << "r u kidding me?" << "\n";
+            return code;
+        }
     }
     return 0;
 }
