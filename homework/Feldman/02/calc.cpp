@@ -32,10 +32,6 @@ int prim(char*& str);
 int number(char*& str);
 
 
-void compactString(char *str)
-{
-	for (int i = 0, j = 0; str[i]; (str[j++] = str[i] != ' ' ? str[i] : (j--, str[j]), i++, (!str[i] ? (str[j] = 0) : 0)));
-}
 int main(int argc, char** argv) {
 	
 	
