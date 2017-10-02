@@ -2,8 +2,6 @@
 #include <string>
 
 using namespace std;
-//string str;
-//int counter = 0;
 
 int get_number_without_sign(int& counter, string& str)
 {
@@ -43,7 +41,12 @@ int get_term(int& counter, string& str)
         if (str[counter] == '/')
         {
             counter++;
-            res /= get_number(counter, str);
+            int n = get_number(counter, str);
+            if (n)
+                res /= n;
+            else
+                throw "Invalid operation";
+           
         }
     }
     return res;
