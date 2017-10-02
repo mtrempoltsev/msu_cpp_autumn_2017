@@ -35,7 +35,7 @@ int number(char*& str);
 void deleteSpace(char* src)
 {
 	char* dst = src;
-	while ((*dst = *src++)) 
+	while ((*dst = *src++))
 		if (*dst != ' ') 
 			dst++;
 }
