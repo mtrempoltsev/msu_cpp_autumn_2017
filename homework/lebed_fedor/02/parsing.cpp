@@ -15,7 +15,7 @@ enum class Token
 // installs str at start of token and returns it's type
 // if token type is NUMBER getNumber should be used to retrieve it's value
 // NOTE: does not move to next token
-Token getToken(const char *&str)
+Token get_token(const char *&str)
 {
     while (std::isspace(*str)) {
         str++;
@@ -37,7 +37,7 @@ Token getToken(const char *&str)
 }
 
 // returns number if token type is NUBMER and moves to next token
-int getNumber(const char *&str)
+int get_number(const char *&str)
 {
     int value = 0;
     do {
@@ -48,15 +48,15 @@ int getNumber(const char *&str)
 }
 
 // prim = number | -number
-int getPrim(const char *&str)
+int get_prim(const char *&str)
 {
-    Token tok = getToken(str);
+    Token tok = get_token(str);
     if (tok == Token::Minus) {
         str++;
-        return -getNumber(str);
+        return -get_number(str);
     }
     else if (tok == Token::Number) {
-        return getNumber(str);
+        return get_number(str);
     }
     else {
         throw "number expected";
@@ -64,13 +64,13 @@ int getPrim(const char *&str)
 }
 
 // term = prim | term*prim | term/prim
-int getTerm(const char *&str)
+int get_term(const char *&str)
 {
-    int value = getPrim(str);
-    Token op = getToken(str);
+    int value = get_prim(str);
+    Token op = get_token(str);
     while (op == Token::Mul || op == Token::Div) {
         str++;
-        int operand = getPrim(str);
+        int operand = get_prim(str);
         if (op == Token::Mul) {
             value *= operand;
         }
@@ -78,19 +78,19 @@ int getTerm(const char *&str)
             value /= operand;
         }
 
-        op = getToken(str);
+        op = get_token(str);
     }
     return value;
 }
 
 // expr = term | expr + term | expr - term
-int getExpr(const char *&str)
+int get_expr(const char *&str)
 {
-    int value = getTerm(str);
-    Token op = getToken(str);
+    int value = get_term(str);
+    Token op = get_token(str);
     while (op == Token::Plus || op == Token::Minus) {
         str++;
-        int operand = getTerm(str);
+        int operand = get_term(str);
         if (op == Token::Plus) {
             value += operand;
         }
@@ -98,7 +98,7 @@ int getExpr(const char *&str)
             value -= operand;
         }
 
-        op = getToken(str);
+        op = get_token(str);
     }
     return value;
 }
@@ -106,8 +106,8 @@ int getExpr(const char *&str)
 // validates & parses expression in str
 // NOTE: throws error if str is invalid
 int calc_parse(const char *&str) {
-    int value = getExpr(str);
-    if (getToken(str) != Token::End) {
+    int value = get_expr(str);
+    if (get_token(str) != Token::End) {
         throw "EOF expected";
     }
     return value;
