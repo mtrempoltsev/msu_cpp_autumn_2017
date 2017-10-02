@@ -7,9 +7,6 @@
     number = [0-9]
  */
 
-//текущее разобранное число в строке
-int number = 0;
-
 //класс типов токенов
 enum class Token {
     Invalid,
@@ -37,11 +34,6 @@ Token get_token(const char *&text) {
                 return Token::Div;
         }
         if (c >= '0' && c <= '9') {
-            number = c - '0';
-            for (auto c = *text; c >= '0' && c <= '9';) {
-                number = number * 10 + c - '0';
-                c = *++text;
-            }
             return Token::Number;
         }
         return Token::Invalid;
@@ -53,14 +45,18 @@ Token get_token(const char *&text) {
 int prim(const char *&text) {
     //prim всегда начинается с токена
     Token token = get_token(text);
+    int number = 0;
 
     switch (token) {
         case Token::Number:
+            number = *(text-1) - '0';
+            for (auto c = *text; c >= '0' && c <= '9';) {
+                number = number * 10 + c - '0';
+                c = *++text;
+            }
             return number;
         case Token::Minus:
             return -prim(text);
-        case Token::Plus:
-            return prim(text);
         case Token::End:
             throw ("Error: prim expected");
         case Token::Invalid:
@@ -74,6 +70,7 @@ int prim(const char *&text) {
 int term(const char *&text) {
     //term всегда начинается с prim
     int result = prim(text);
+    int number;
 
     while (true) {
         Token token = get_token(text);
@@ -89,6 +86,8 @@ int term(const char *&text) {
                 else
                     throw ("Error: null division");
                 break;
+            case Token::Invalid:
+                throw ("Error: invalid term");
             default:
                 //отступаем назад, если вышли за конец term
                 --text;
@@ -111,6 +110,8 @@ int expr(const char *&text) {
             case Token::Minus:
                 result -= term(text);
                 break;
+            case Token::Invalid:
+                throw ("Error: invalid expr");
             default:
                 return result;
         }
