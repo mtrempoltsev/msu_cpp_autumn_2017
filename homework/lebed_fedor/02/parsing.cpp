@@ -53,7 +53,13 @@ int get_prim(const char *&str)
     Token tok = get_token(str);
     if (tok == Token::Minus) {
         str++;
-        return -get_number(str);
+        tok = get_token(str);
+        if (tok == Token::Number) {
+            return -get_number(str);
+        }
+        else {
+            throw "number expected";
+        }
     }
     else if (tok == Token::Number) {
         return get_number(str);
