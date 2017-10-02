@@ -48,7 +48,11 @@ int main()
 
    //останавливаем таймер
    delete t;
-   delete matrix;
+
+   for(int i = 0; i < SIZE; i++)
+      delete[] matrix[i];
+
+   delete[] matrix;
 
    return 0;
 }
