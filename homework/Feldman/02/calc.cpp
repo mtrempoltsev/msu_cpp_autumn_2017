@@ -35,7 +35,7 @@ int number(char*& str);
 void deleteSpace(char* src)
 {
 	char* dst = src;
-	while (*dst = *src++) 
+	while (*dst == *src++) 
 		if (*dst != ' ') 
 			dst++;
 }
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	cout << expr(argv[1]) << endl;
-	return 0
+	return 0;
 }
 
 /*Далее под операндом будем понимать произведение | частное |число
