@@ -32,22 +32,45 @@ int prim(char*& str);
 int number(char*& str);
 
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
 	
 	
-	if (argc != 2) { //Количество аргументов командной строки не равно 2
+	if (argc < 2) { //Количество аргументов командной строки не равно 2
 		cout << "INVALID ARGUMENTS" << endl;
 		return -1;
 	}
 	
 	
-	try {
-		cout << expr(argv[1]) << endl;
+	string str;
+	for (int i = 1; i < argc; ++i) {
+		string tmp = argv[i];
+		str += tmp;
 	}
-	catch(int a) {
-		if (a == 0) //Неверное выражение
-			cout << "INVALID EXPRESSION!" << endl;
+	for (int i = 0; i < str.length(); ++i) {
+		
+		if ((str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/') 
+			&& (str[i+1] != '-' && !(isdigit(str[i+1])))) {
+			
+				cout << "INVALID EXPRESSION!" << endl;
+				return -1;
+			}
+
+		if (!isdigit(str[i]))
+			if (str[i] != '+' && str[i] != '-' && str[i] != '*' && str[i] != '/') {
+				cout << "INVALID EXPRESSION!" << endl;
+				return -1;
+			}
+			
+			
+			
 	}
+	
+	char* exp = (char*)malloc(sizeof(char)*str.length() + 1);
+	strcpy(exp,str.c_str());
+	argv[1] = exp;
+	cout << expr(argv[1]) << endl;
+	
+	free(exp);
 	return 0;
 }
 
@@ -77,9 +100,9 @@ int _expr(char*& str, int left_operand) {
 
 int term(char*& str) { 
 	int left_part = prim(str); //Вычисление левой части операнда
-	if (!isdigit(*str))
-		if (*str != '*' && *str != '/' && *str != '+' && *str != '-')
-			throw 0;
+	/*if (!isdigit(*str))
+		if (*str != '*' && *str != '/' && *str != '+' && *str != '-' )
+			throw 0;*/
 	if (*str == '*' || *str == '/') {//Если операнд - произведение | частное
 		return _term(str,left_part);
 	}
@@ -133,13 +156,6 @@ int prim(char*& str) { //Получаем число
 }
 
 int number(char*& str) {
-	if (*str == ' ') {
-		cout << "NUM SPACE" << endl;
-		++str;
-	}
-	if (!isdigit(*str))
-		//Если символ не цифра, кидаем исключение
-		throw 0;
 	char* str_num = (char*)malloc(sizeof(char));
 	int index = 0;	
 	while (*str >= '0' && *str <= '9') { //Читаем символы до первого сивола операции		
