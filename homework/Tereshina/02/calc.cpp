@@ -5,23 +5,20 @@ int prim(char *str) {
     int sign = 1;
     int n;
 
-//this part processes situation when unary minus is separated from its number by spaces
-    while(*str == ' ') {
+    while(*str == ' ') { //this part processes situation when unary minus is separated from its number by spaces
         str++;
     }
     if (*str == '-') {
         sign = -1;
         str++;
-    }
-//str contains beginning of the part of string which is supposed to be numeric
+    } //str contains beginning of the part of string which is supposed to be numeric
 
     if (!sscanf(str, "%d", &n)) { //read the number
         std::cerr << "Not a numeric expression\n";
         exit(1);
     }
     
-//check if there is something left in prim after number    
-    while(*str >= '0' && *str++ <= '9')
+    while(*str >= '0' && *str++ <= '9') //check if there is something left in prim after number
         {}
     while(*str == ' ') {
         str++;
@@ -35,8 +32,10 @@ int prim(char *str) {
 }
 
 int term(char *str) {
-    if (!(*str)) 
-        return 0;
+    if (!(*str)) {
+        std::cerr << "Not a numeric expression\n";
+        exit(1);
+    }
 
     char *p = str;
     while(*p++) //set p to the end of str
@@ -74,21 +73,23 @@ char *rightest_sum_sign(char *str) {
             return p; //if the rightest sign is + then it's simple
         if (*p == '-') { //if the rightest sign is - then it is possibly unary
             char *p1 = p;
-            while (--p1 >= str && *p1 == ' ') //set another pointer to find the next symbol to the left of rightest - sign
+            while (--p1 >= str && *p1 == ' ') //set pointer to find the next symbol to the left of rightest - sign
                 {}
-            if (p1 < str) //if there were no other signs left of - in the expr then minus was unary and the whole expr is a term
+            if (p1 < str) //no other signs left of - in the expr then minus was unary and the whole expr is a term
                 return NULL;
             if (*p1 >= '0' && *p1 <= '9') //if there is a number left of the - than - is binary and it's simple
                 return p;
-            p = p1 + 1; //if the rightest non-unary operation is not + or - then the search continues from the pos of this operation
+            p = p1 + 1; //the rightest binary operation is not + or -; continue search from the pos of this operation
         }
     }
     return NULL; //if no operations were found then expr is a term
 }
 
 int expr(char *str) {
-    if (!(*str)) 
-        return 0;
+    if (!(*str)) {
+        std::cerr << "Not a numeric expression\n";
+        exit(1);
+    }
     
     char *p = rightest_sum_sign(str); //p gets a position of the rightest + or binary -
 
