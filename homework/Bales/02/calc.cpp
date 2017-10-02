@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
-#define INCORRECT_PARAMS -1
+#define INCORRECT_PARAMS -1 // Ошибка: некорректное кол-во аргументов
+#define INCORRECT_INPUT -2 // Ошибка: некорректное арифметическое выражение
+#define ZERO_DIVISION -3 // Ошибка: деление на 0
+#define OK 0 
 
 enum class Token {
     Invalid,
@@ -84,6 +87,7 @@ double term(const char*& text, size_t cntEnter) {
 
 double prim(const char*& text) {
     auto token = getToken(text);
+    
     if (Token::Number == token) {
         int val = 0;
         /* Возвращаем символ, являющийся цифрой, во входную последовательность, 
@@ -97,17 +101,73 @@ double prim(const char*& text) {
         }
         return val;
     }
-    else if (Token::Minus == token) {
-        return -prim(text);
-    }
-    else return 0;
+    else return -prim(text);
 }
 
-// TODO: написать makefile, добавить аттрибуты для функций, чтобы аргументы функций клались в регистр
+int checkInput(const char* text) {
+    char prevCh = ' '; // токен, считанный на предыдущей итерации
+    size_t cntOperators = 0; // кол-во операторов, используемых послед-но
+    while (prevCh = *text++) {
+        if (prevCh != ' ')
+            break;
+    }
+    if ((prevCh >= '0' && prevCh <= '9') || prevCh == '-') {
+        if (prevCh == '-')
+            cntOperators++;
+        while (const auto ch = *text++) {            
+            switch (ch) {
+                case ' ': continue;
+                case '-': 
+                    if ((prevCh >= '0' && prevCh <= '9') || (prevCh == '-' && cntOperators <= 1)) {
+                        prevCh = ch;
+                        cntOperators++;
+                        continue;
+                    }
+                    else return INCORRECT_INPUT;
+                case '+':                     
+                case '*':
+                case '/':
+                    if (prevCh >= '0' && prevCh <= '9') {
+                        prevCh = ch;
+                        cntOperators++;
+                        continue;
+                    }
+                    else return INCORRECT_INPUT;
+                case '0':
+                    if (prevCh == '/')
+                        return ZERO_DIVISION;
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    if ((prevCh >= '0' && prevCh <= '9') || cntOperators > 0) {
+                        cntOperators = 0;
+                        prevCh = ch;
+                        continue;
+                    }
+                    else return INCORRECT_INPUT;
+                default:
+                    return INCORRECT_INPUT;
+            }
+        }
+        if (cntOperators > 0)
+            return INCORRECT_INPUT;
+    }
+    else return INCORRECT_INPUT;
+    return OK;
+}
 
 int main(int argc, char* argv[]) {
     if (argc != 2)
         return INCORRECT_PARAMS;
+    auto checkCode = checkInput(argv[1]);
+    if (checkCode != OK)
+        return checkCode;
     // Оператор деления - вещественный
     const char* text = argv[1];
     std::cout << expr(text) << std::endl;
