@@ -1,7 +1,7 @@
 #include <chrono>
 #include <iostream>
 
-#define SIZE 10000
+const size_t SIZE = 10000;
 
 class Timer{
     public:
@@ -9,7 +9,7 @@ class Timer{
             : start_(std::chrono::high_resolution_clock::now()){
         }
 
-        ~Timer(){
+        void print_time(){
             const auto finish = std::chrono::high_resolution_clock::now();
             std::cout << std::chrono::duration_cast<std::chrono::microseconds>(finish - start_).count() << " us" << std::endl;
         }
@@ -19,19 +19,29 @@ class Timer{
 };
 
 int main(){
-    int* arr = new int[SIZE * SIZE];
-    for (int i = 0; i < SIZE; ++i){
-        for (int j = 0; j < SIZE; ++j){
-            arr[i * SIZE + j] = i + j;
+    //matrix creation
+    int** arr = new int*[SIZE];
+    for (size_t i = 0; i < SIZE; ++i){
+        arr[i] = new int[SIZE];
+    }
+    for(size_t i = 0; i < SIZE; ++i){
+        for (size_t j = 0; j < SIZE; ++j){
+            arr[i][j] = 1;
         }
     }
-    volatile int sum = 0;
+    volatile auto sum = 0;
+    
+    //time measurement
     Timer t;
-    for (int i = 0; i < SIZE; ++i){
-        for (int j = 0; j < SIZE; ++j){
-            sum += arr[i * SIZE + j];
+    for (size_t i = 0; i < SIZE; ++i){
+        for (size_t j = 0; j < SIZE; ++j){
+            sum += arr[i][j];
         }
     }
-    delete []arr;
+    //execution timeout
+    t.print_time();
+    for (size_t i = 0; i < SIZE; ++i)
+        delete [] arr[i];
+    delete [] arr;
     return 0;
 }
