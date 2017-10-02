@@ -7,18 +7,18 @@ using namespace std;
 
 int select_operation(int a, int b, char op) {//Функция выбора оберации
 	switch (op) {
-		case '+':
-			return a + b;
-		case '-':
-			return a - b;
-		case '*':
-			return a * b;
-		case '/':
-			if (b == 0)
-				throw -1;
-			return a / b;
-		default:
-			return 0;
+	case '+':
+		return a + b;
+	case '-':
+		return a - b;
+	case '*':
+		return a * b;
+	case '/':
+		if (b == 0)
+			throw - 1;
+		return a / b;
+	default:
+		return 0;
 	}
 }
 
@@ -32,44 +32,43 @@ int prim(char*& str);
 int number(char*& str);
 
 
-int main(int argc, char* argv[]) {	
-	if (argc < 2) { //Количество аргументов командной строки не равно 2
-		cout << "INVALID ARGUMENTS" << endl;
-		return -1;
-	}
-	string str;
-	for (int i = 1; i < argc; ++i) {
-		string tmp = argv[i];
-		str += tmp;
-	}
-	for (int i = 0; i < str.length(); ++i) {		
-		if ((str[i] == '+' || str[i] == '-' || str[i] == '*' || str[i] == '/') 
-			&& (str[i+1] != '-' && !(isdigit(str[i+1])))) {
-			
-				cout << "INVALID EXPRESSION!" << endl;
-				return -1;
-			}
-		if (!isdigit(str[i]))
-			if (str[i] != '+' && str[i] != '-' && str[i] != '*' && str[i] != '/') {
-				cout << "INVALID EXPRESSION!" << endl;
-				return -1;
-			}			
-	}	
-	char* exp = (char*)malloc(sizeof(char)*str.length() + 1);
-	strcpy(exp,str.c_str());
-	argv[1] = exp;
-	cout << expr(argv[1]) << endl;	
-	free(exp);
-	return 0;
+void deleteSpace(char* src)
+{
+	char* dst = src;
+	while (*dst = *src++) if (*dst != ' ') dst++;
 }
 
-/*Далее под операндом будем понимать произведение | частное |число 
- * под выражением будем понимать сумму | разность операндов
- */
+
+int main(int argc, char* argv[]) {
+ 	if (argc != 2) { //Количество аргументов командной строки не равно 2
+		cout << "INVALID ARGUMENTS" << endl;
+		return 0;
+	}
+	
+	deleteSpace(argv[1]);
+	for (int i = 0; argv[i] != '\0'; ++i) {		
+		if ((argv[1][i] == '+' || argv[1][i] == '-' || argv[1][i] == '*' || argv[1][i] == '/')
+			&& (argv[1][i] != '-' && !(isdigit(argv[1][i + 1])))) {
+			cout << "INVALID EXPRESSION!" << endl;
+			return 0;
+		}
+		if (!isdigit(argv[1][i]))
+			if (argv[1][i] != '+' && argv[1][i] != '-' && argv[1][i] != '*' && argv[1][i] != '/') {
+				cout << "INVALID EXPRESSION!" << endl;
+				return 0;
+		}
+	}
+	cout << expr(argv[1]) << endl;
+	return 0
+}
+
+/*Далее под операндом будем понимать произведение | частное |число
+* под выражением будем понимать сумму | разность операндов
+*/
 int expr(char*& str) {
 	int left_operand = term(str); //Левый операнд выражения
 	if (*str == '+' || *str == '-') { //Если он не единственный
-		return _expr(str,left_operand); 
+		return _expr(str, left_operand);
 	}
 	return left_operand; //Если он единственный
 }
@@ -79,17 +78,17 @@ int _expr(char*& str, int left_operand) {
 	++str;
 	int right_operand = term(str); //Получаем правый операнд
 	if (*str == '\0') {	//Выражение закончилось, возвращаем ответ	
-		return select_operation(left_operand,right_operand,operation);;
+		return select_operation(left_operand, right_operand, operation);;
 	}
 	else { //В выражении есть другие операнды
-		return  _expr(str, select_operation(left_operand,right_operand,operation));
+		return  _expr(str, select_operation(left_operand, right_operand, operation));
 	}
 }
 
-int term(char*& str) { 
+int term(char*& str) {
 	int left_part = prim(str); //Вычисление левой части операнда
 	if (*str == '*' || *str == '/') {//Если операнд - произведение | частное
-		return _term(str,left_part);
+		return _term(str, left_part);
 	}
 	return left_part; //Если операнд - число
 }
@@ -103,20 +102,20 @@ int _term(char*& str, int left_part) {//Вычисление операнда - 
 	if (*str == '\0') { //Это был последний операнд
 		try {
 			//вычисляем значение операнда
-			return select_operation(left_part,right_part,operation);
-		
-		}		
+			return select_operation(left_part, right_part, operation);
+
+		}
 		catch (int a) {
 			if (a == -1) { //Спецификация - деление на нуль
 				//в ответе получаем мусор
 				cout << "DIVISION BY ZERO!" << endl;
 			}
-		}		
+		}
 	}
 	else { //это был не последний операнд
 		int right_term; //Вычисляем дальше операнды справа
 		try {
-			right_term = _term(str,select_operation(left_part,right_part,operation));
+			right_term = _term(str, select_operation(left_part, right_part, operation));
 		}
 		catch (int a) {
 			if (a == -1) { //Опять деление на нуль
@@ -139,15 +138,15 @@ int prim(char*& str) { //Получаем число
 
 int number(char*& str) {
 	char* str_num = (char*)malloc(sizeof(char));
-	int index = 0;	
+	int index = 0;
 	while (*str >= '0' && *str <= '9') { //Читаем символы до первого сивола операции		
 		str_num[index] = *str;	//записываем их в строку
 		++index;
-		str_num = (char*)realloc(str_num,(index + 1)*sizeof(char));
+		str_num = (char*)realloc(str_num, (index + 1)*sizeof(char));
 		str++;
-	}	
-	str_num[index] = '\0';	
+	}
+	str_num[index] = '\0';
 	int num = atoi(str_num); //Преобразуем char* в int	
-	free(str_num);	
+	free(str_num);
 	return num; //возвращаем цифру
 }
