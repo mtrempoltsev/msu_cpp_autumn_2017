@@ -46,7 +46,10 @@ double getExpr(string & str, int end_pos) {
     } else if (str[pos] == '-') {
         return getExpr(str, pos - 1) - right_value;
     } else {
-        return right_value;
+        std::string error = "Error is expr, position: " + std::to_string(end_pos) + " find next char: ";
+        error += str[pos];
+        error += " expected [0-9] or -";
+        throw error;
     }
 }
 
