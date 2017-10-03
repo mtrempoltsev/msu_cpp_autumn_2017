@@ -1,4 +1,3 @@
-
 //
 //  task2_calc.cpp
 //  TS
@@ -14,8 +13,7 @@
 
 using namespace std;
 
-//перечисление значений элементов (если можно было бы объекту типа Token присвоить rawValue, то можно
-//хранить и тип и значение, а не создавать структуру symbol)
+//перечисление значений элементов
 enum Token {
     Invalid,
     Minus = '-',
@@ -30,30 +28,30 @@ enum Token {
 struct symbol {
     Token tok;
     double number_value;
-} curr_symbol;
+};
 
 
-double expr();
-double term();
-double prim();
-symbol getToken();
-
-char* text; // выражение считанное из командной строки
+double expr(char*& text);
+double term(char*& text, symbol& curr_symbol);
+double prim(char*& text, symbol& curr_symbol);
+symbol getToken(char*& text, symbol& curr_symbol);
 
 
 
 //обрабатывает сложение и вычитание, состоит из одного цикла, в котором распознанные термы складываются или вычитаются
-double expr() {
-    double left = term();
+double expr(char*& text) {
+    symbol curr_symbol;
+    getToken(text, curr_symbol);
+    double left = term(text, curr_symbol);
     while (1) {
         switch (curr_symbol.tok) {
             case Token::Plus:
-                getToken();
-                left += term();
+                getToken(text, curr_symbol);
+                left += term(text, curr_symbol);
                 break;
             case Token::Minus:
-                getToken();
-                left -= term();
+                getToken(text, curr_symbol);
+                left -= term(text, curr_symbol);
                 break;
             default:
                 return left;
@@ -63,19 +61,19 @@ double expr() {
 }
 
 //обрабатывает умножение и деление, состоит из одного цикла, в котором распознанные термы умножаются или делятся
-double term() {
-    double left = prim();
+double term(char*& text, symbol& curr_symbol) {
+    double left = prim(text, curr_symbol);
     double d;
     while(1) {
         switch (curr_symbol.tok) {
             case Token::Mul:
-                getToken();
+                getToken(text, curr_symbol);
                 
-                left *= prim();
+                left *= prim(text, curr_symbol);
                 break;
             case Token::Div:
-                getToken();
-                d = prim();
+                getToken(text, curr_symbol);
+                d = prim(text, curr_symbol);
                 if (d == 0) {
                     cerr << "zero division" << endl;
                     exit(1);
@@ -89,14 +87,14 @@ double term() {
 }
 
 //функция обрабатывает первичные элементы
-double prim() {
+double prim(char*& text, symbol& curr_symbol) {
     switch (curr_symbol.tok) {
         case Token::Number:
-            getToken();
+            getToken(text, curr_symbol);
             return curr_symbol.number_value;
         case Token::Minus: //унарный минус
-            getToken();
-            return -prim();
+            getToken(text, curr_symbol);
+            return -prim(text,curr_symbol);
         case Token::End:
             return 1;
         default:
@@ -107,7 +105,7 @@ double prim() {
 }
 
 //функция получения очереного токена (операнда, операции или конца выражения)
-symbol getToken() {
+symbol getToken(char*& text, symbol& curr_symbol) {
     while (const auto c = *text++) {
         switch (c) {
             case ' ': continue;
@@ -142,6 +140,9 @@ symbol getToken() {
 
 int main(int argc, char* argv[]) {
     
+    char* text; // выражение считанное из командной строки
+
+    
     //проверяем кол-во параметров командной строки
     switch(argc) {
         case 1:
@@ -157,8 +158,7 @@ int main(int argc, char* argv[]) {
             break;
     }
     
-    getToken();
-    cout << expr() << endl;
+    cout << expr(text) << endl;
     
     return 0;
 }
