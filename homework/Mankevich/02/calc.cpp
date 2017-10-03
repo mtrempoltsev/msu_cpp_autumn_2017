@@ -103,8 +103,11 @@ double expr(const char*& text, Token& current_token){
                 left -= term(text, current_token);
                 break;
             }
-            default:
+            case Token::End:{
                 return left;
+            }
+            default:
+                throw std::invalid_argument("Wrong simbols");
         }
     }
 }
@@ -122,7 +125,7 @@ int main(int argc, char* argv[]){
         std::cout << expr(text, curr_token) <<std::endl;
     }
     catch (const std::invalid_argument& ia){
-        std::cout << ia.what() << std::endl;
+        //std::cout << ia.what() << std::endl;
         return -1;
     }
     return 0;
