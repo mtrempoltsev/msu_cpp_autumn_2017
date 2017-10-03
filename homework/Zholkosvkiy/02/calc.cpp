@@ -6,10 +6,10 @@
 expr = term
 | expr + term
 | expr - term
-term = prim
-| term * prim
-| term / prim
-prim = number
+term = getPrim
+| term * getPrim
+| term / getPrim
+getPrim = number
 | -number
 number = [0 - 9] +
 */
@@ -19,16 +19,16 @@ using namespace std;
 //Token class
 enum class Token
 {
-	Invalid,
 	Minus,
 	Plus,
 	Mul,
 	Div,
 	Number,
-	End
+	End,
+	Invalid
 };
 
-//get the next Token. If Token::Num  - val is the number, else val is 0
+//get the next Token. If Token::Num  - val is the number
 Token _getToken(const char*& text, int &val)
 {
 	while (const auto c = *text++)
@@ -41,12 +41,11 @@ Token _getToken(const char*& text, int &val)
 			case '*': return Token::Mul;
 			case '/': return Token::Div;
 		}
-		val = 0;
 		//if c is number
 		if (c >= '0' && c < '9')
 		{
 			val = c - '0';
-			//
+			//get number
 			for (auto c = *text;  c >= '0' && c <= '9';)
 			{
 				val = val * 10 + (c - '0');
@@ -54,6 +53,7 @@ Token _getToken(const char*& text, int &val)
 			}
 			return Token::Number;
 		}
+		throw "Invalid character";
 		return Token::Invalid;
 	}
 	return Token::End;
@@ -66,62 +66,110 @@ int getToken(const char*&text, Token& nextToken)
 	nextToken = _getToken(text, val);
 	return val;
 }
+
 //returns number with its sign
 int getNumber(const char*& text, Token& nextToken)
 {
-	int number = getToken(text, nextToken);
-	int sign = 1; //sign before the number
-	while (nextToken == Token::Minus || nextToken == Token::Plus)
-	{
-		if (nextToken == Token::Minus)
-		{
-			sign = -sign;
-		}
-		number = getToken(text, nextToken);
-	}
-	getToken(text, nextToken);
-	return sign * number;
-}
+	int number = getToken(text,nextToken);
 
+	//only number or minus before negative number
+	if( (nextToken != Token::Number) && (nextToken != Token::Minus))
+	{
+		throw "Error! Invalid expression";
+	}
+	//if it's just a number
+	if( nextToken == Token::Number)
+	{
+ 		getToken(text,nextToken);
+		return number;
+	}
+	//may be negative number
+	else if ( nextToken == Token::Minus)
+	{
+		number = getToken(text,nextToken);
+		//if the next is a number
+		if( nextToken == Token::Number)
+		{
+ 			getToken(text,nextToken);
+			return (-1)*number;
+		}
+		else
+		{
+			throw "Error! Invalid expression";
+		}
+	}
+
+}
 //multiply or divide
-int Prim(const char*& text, Token& nextToken)
+int getPrim(const char*& text, Token& nextToken)
 {
 	int result = getNumber(text, nextToken);
 
 	while (nextToken == Token::Mul || nextToken == Token::Div)
 	{
+		//if multiply
 		if (nextToken == Token::Mul)
 		{
-			result *= getNumber(text, nextToken);
+			int number = getNumber(text, nextToken);
+			result *= number;
 		}
+		//if divide
 		else
 		{
-			result /= getNumber(text, nextToken);
+			int number = getNumber(text, nextToken);
+			result /= number;
 		}
 	}
+
 	return result;
 }
+
 int calc(const char* text)
 {
 	Token nextToken;
-	int expr = Prim(text, nextToken);
+
+	int expr = getPrim(text, nextToken);
+
 	while (nextToken == Token::Plus || nextToken == Token::Minus)
 	{
+		//if add
 		if (nextToken == Token::Plus)
 		{
-			expr += Prim(text, nextToken);
+			expr += getPrim(text, nextToken);
 		}
+		//if substract
 		else
 		{
-			expr -= Prim(text, nextToken);
+			expr -= getPrim(text, nextToken);
 		}
 	}
 	return expr;
 }
 int main(int argc, char *argv[])
 {
-
-	cout << argv[1] << endl;
-	cout << calc(argv[1]) << endl;
+	int result;
+	//no expression
+	if (argc != 2)
+	{
+		cout << "Please enter your expression!" << endl;
+		return 1;
+	}
+	else
+	{
+		cout << argv[1] << endl;
+	}
+	//try to calculate
+	try
+	{
+	 	result = calc(argv[1]);
+	}
+	//error mesage
+	catch(const char* error)
+	{
+		cout << error << endl;
+		return 1;
+	}
+	//it's ok!
+	cout << result << endl;
 	return 0;
 }
