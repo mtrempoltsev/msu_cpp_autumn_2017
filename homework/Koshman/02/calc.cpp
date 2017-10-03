@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 using namespace std;
 
 enum class Token
@@ -21,6 +22,7 @@ Token getToken(const char*& text, bool reverse = false, const char* limit = 0)
 	// reverse: whether to move forward or backwards
 	//   limit: the point to stop at when moving backwards
 
+
 	while (const auto c = *text)
 	{
 		if (limit && reverse && (text <= limit))
@@ -37,7 +39,7 @@ Token getToken(const char*& text, bool reverse = false, const char* limit = 0)
 			case '/': return Token::Div;
 		}
 
-		if (c >= '0' && c <= '9')
+		if (c >= '1' && c <= '9')
 		{
 			for (auto c = *text; c >= '0' && c <= '9';)
 				{
@@ -101,7 +103,10 @@ int term(const char* start, const char* end)
 		{
 			return term(start, ptr1) * number(ptr2, end); 
 		} else if (token == Token::Div) {
-			return term(start, ptr1) / number(ptr2, end);
+			int denominator = number(ptr2, end);
+			if (not denominator)
+				throw std::overflow_error("Exception: zero division");
+			return term(start, ptr1) / denominator;
 		}
 		if (ptr1 == ptr2)
 			--ptr1;
@@ -147,11 +152,10 @@ int expr(const char* start, const char* end)
 
 int main(int argc, char const *argv[])
 {
-	if ((argc == 1) || (not *argv[1])){
+	if (argc == 1){
 		cout << "No expression provided";
 		return 1;
 	}
-
 	const char* start = argv[1];
 	const char* end = start;
 	bool invalid = false;
@@ -191,7 +195,12 @@ int main(int argc, char const *argv[])
 		cout << "Invalid expression";
 		return 1;
 	} else {
-		cout << expr(start, end);
+		try {
+	    	cout << expr(start, end);
+	    } catch (std::overflow_error e) {
+	        std::cout << e.what();
+	        return 1;
+	    }
 	}	
 	return 0;
 
