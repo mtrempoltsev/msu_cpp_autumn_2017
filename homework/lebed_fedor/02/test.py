@@ -1,5 +1,4 @@
 #! /usr/bin/python3
-import sys
 from subprocess import Popen, PIPE
 tests = [
     ('1+2', 3),

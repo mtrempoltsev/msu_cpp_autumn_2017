@@ -5,7 +5,7 @@ OPTIONS = -std=c++14 -O3 -Wpedantic -Wall -Wextra
 
 all: parse
 test: parse test.py
-	./test.py parse
+	python2 test.py
 parse: parse.cpp parsing.cpp parsing_error.cpp
 	$(CXX) -o $@ $^ $(OPTIONS)
 clean:
