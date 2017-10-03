@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
-#define INCORRECT_PARAMS -1 // Ошибка: некорректное кол-во аргументов
-#define INCORRECT_INPUT -2 // Ошибка: некорректное арифметическое выражение
-#define ZERO_DIVISION -3 // Ошибка: деление на 0
+#define INCORRECT_PARAMS 1 // Ошибка: некорректное кол-во аргументов
+#define INCORRECT_INPUT 2 // Ошибка: некорректное арифметическое выражение
+#define ZERO_DIVISION 3 // Ошибка: деление на 0
 #define OK 0 
 
 enum class Token {
@@ -105,11 +105,12 @@ double prim(const char*& text) {
 }
 
 int checkInput(const char* text) {
-    char prevCh = ' '; // токен, считанный на предыдущей итерации
+    char prevCh = *text++; // токен, считанный на предыдущей итерации
     size_t cntOperators = 0; // кол-во операторов, используемых послед-но
-    while (prevCh = *text++) {
+    while (prevCh) {
         if (prevCh != ' ')
             break;
+        prevCh = *text++;
     }
     if ((prevCh >= '0' && prevCh <= '9') || prevCh == '-') {
         if (prevCh == '-')
@@ -118,7 +119,7 @@ int checkInput(const char* text) {
             switch (ch) {
                 case ' ': continue;
                 case '-': 
-                    if ((prevCh >= '0' && prevCh <= '9') || (prevCh == '-' && cntOperators <= 1)) {
+                    if ((prevCh >= '0' && prevCh <= '9') || cntOperators <= 1) {
                         prevCh = ch;
                         cntOperators++;
                         continue;

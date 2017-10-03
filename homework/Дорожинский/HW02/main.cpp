@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 enum class Token {
 	Plus,
@@ -40,7 +41,8 @@ Token _getToken(const char*& str, int& val) { // if token is a number then put i
 			}
 			return Token::Num;
 		}
-		return Token::Invalid;
+		throw std::runtime_error(std::string("Invalid symbol: ") + c);
+		//return Token::Invalid;
 	}
 	return Token::End;
 }
@@ -53,15 +55,19 @@ int getToken(const char*& str, Token& nextToken) {
 
 int getNumber(const char*& str, Token& nextToken) {
 	int number = getToken(str, nextToken);
-	int sign = 1;
-	while ((nextToken == Token::Plus) || (nextToken == Token::Minus)) { // Numbers may start from '+'/'-' sign
-		if (nextToken == Token::Minus) {
-			sign = -sign;
-		}
-		number = getToken(str, nextToken);
+	if (nextToken == Token::Num) {
+		getToken(str, nextToken);
+		return number;
 	}
-	getToken(str, nextToken); // When we done with a number we need to read token for next operation ('*', '/', '+', '-', 'EOF')
-	return sign * number;
+	if (nextToken == Token::Minus) { // Numbers may start with '-' sign
+		number = -getToken(str, nextToken);
+		if (nextToken == Token::Num) {
+			getToken(str, nextToken); // When we done with a number we need to read token for next operation ('*', '/', '+', '-', 'EOF')
+			return number;
+		}
+	}
+	throw std::runtime_error("Unexpected token: " + tokenToStr(nextToken));
+	return 0;
 }
 
 int getItem(const char*& str, Token& nextToken) {
@@ -70,7 +76,11 @@ int getItem(const char*& str, Token& nextToken) {
 		if (nextToken == Token::Mult) {
 			result *= getNumber(str, nextToken);
 		} else {
-			result /= getNumber(str, nextToken);
+			int num = getNumber(str, nextToken);
+			if (num == 0) {
+				throw std::runtime_error("Zero division!");
+			}
+			result /= num;
 		}
 	}
 	return result;
@@ -117,23 +127,15 @@ int doTests() {
 	fails += assert("1 + 2 + 3 + 4", 10);
 	fails += assert("1 + 2 * 3 + 4 * 5 + 6 * 7 + 8 * 9 * 10", 789);
 	fails += assert("-5", -5);
-	fails += assert("-++--5", -5);
 	fails += assert("1 + -1", 0);
 	fails += assert("1 - -1", 2);
 	fails += assert("2 + 10 * -1 + 1", -7);
-	fails += assert("1-+2", -1);
 	fails += assert("1+-2", -1);
 	fails += assert("-1", -1);
 	fails += assert("-1 - 1 -5 -8*0", -7);
-	fails += assert("++-+--+-+-123", -123);
-	fails += assert("++-+--+-+-123*-2", 246);
-	fails += assert("-1*++-+--+-+-123", 123);
-	fails += assert("1++-+--+-+-123", -122);
 	fails += assert("10*2/7", 2);
 	fails += assert("10*2/-7", -2);
 	fails += assert("20/-7", -2);
-	fails += assert("10*2/+7", 2);
-	fails += assert("10*2/-3/-+1/+-1/+2", -3);
 
 	if (fails == 0) {
 		std::cout << "All tests have passed successfully!" << std::endl;

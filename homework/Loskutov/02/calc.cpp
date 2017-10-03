@@ -59,12 +59,14 @@ int prim(const char*& text, Token *token) {
             *token = Token::Invalid;
             return 0;
         }
-        char buf[20];
+        char *buf;
+        buf = (char*)calloc(20, sizeof(char));
         int i = 0;
         for (;(*text >= '0') && (*text <= '9'); ++text) {
             buf[i] = *text;
             i++;
         }
+        free(buf);
         *token = Token::Null;
         return -atoi(buf);
     }
@@ -72,13 +74,15 @@ int prim(const char*& text, Token *token) {
         *token = Token::Invalid;
         return 0;
     }
-    char buf[20];
+    char *buf;
+    buf = (char*)calloc(20, sizeof(char));
     int i = 0;
     buf[0] = *text;
-    for (;(*text >= '0') && (*text <= '9'); ++text) {
+    for (; (*text >= '0') && (*text <= '9'); ++text) {
         buf[i] = *text;
         i++;
     }
+    free(buf);
     *token = Token::Null;
     return atoi(buf);
 }
@@ -88,29 +92,39 @@ int prim(const char*& text, Token *token) {
 //    | term * prim
 //    | term / prim
 int term(const char*& text, Token* token) {
-    int res = prim(text, token);
+    int left = prim(text, token);
     if (*token == Token::Null) {
         *token = getToken(text);
         if (*token == Token::Invalid) {
-            return res;
+            return left;
         }
     }
-    if (*token == Token::Mul) {
-        *token = Token::Null;
-        int num = term(text, token);
-        if (*token == Token::Invalid) {
-            return res;
+    while ((*token == Token::Mul) || (*token == Token::Div)) {
+        if (*token == Token::Mul) {
+            *token = Token::Null;
+            int right = prim(text, token);
+            if (*token == Token::Invalid) {
+                return left;
+            }
+            left *= right;
+        } else if (*token == Token::Div) {
+            *token = Token::Null;
+            int right = prim(text, token);
+            if (*token == Token::Invalid) {
+                return left;
+            }
+            if (right == 0) {
+                *token = Token::Invalid;
+                return 0;
+            }
+            left /= right;
         }
-        res *= num;
-    } else if (*token == Token::Div) {
-        *token = Token::Null;
-        int num = term(text, token);
+        *token = getToken(text);
         if (*token == Token::Invalid) {
-            return res;
+            return left;
         }
-        res /= num;
     }
-    return res;
+    return left;
 }
 
 //Функция реализует часть грамматики:
@@ -149,7 +163,11 @@ int expr(const char*& text, Token* token) {
 int main(int argc, const char * argv[]) {
     if (argc < 2) {
         cout << "No expression!" << endl;
-        return 0;
+        return 1;
+    }
+    if (argc > 2) {
+        cout << "Too many arguments!" << endl;
+        return 1;
     }
     const char* text = argv[1];
     Token *token = (Token*)malloc(sizeof(Token*));
@@ -157,6 +175,7 @@ int main(int argc, const char * argv[]) {
     int res = expr(text, token);
     if (*token == Token::Invalid) {
         cout << "Bad expression!" << endl;
+        return 1;
     } else {
         cout << res << endl;
     }

@@ -127,6 +127,8 @@ int calc(char* expr) {
 int main(int argc, char** argv) {
 	if(argc < 2) {
 		cout << "Usage: ./a.out <expression>" << endl;
+		
+		exit(1);
 	}
 	
 	char* expr = argv[1];
@@ -134,13 +136,15 @@ int main(int argc, char** argv) {
 	if(*expr == '\0') {
 		cout << "Error: input expression is empty" << endl;
 		
-		return 0;
+		exit(1);
 	}
 	
 	try {
 		cout << calc(expr) << endl;
 	} catch(const char* e) {
 		cout << e << endl;
+		
+		exit(1);
 	}
 	
 	return 0;
