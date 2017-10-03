@@ -39,10 +39,14 @@ Token get_token(const char *&str)
 // returns number if token type is NUBMER and moves to next token
 int get_number(const char *&str)
 {
+    const char *token_start = str;
     int value = 0;
     do {
-        value *= 10;
-        value += *str-'0';
+        if (__builtin_mul_overflow(value, 10, &value)
+            || __builtin_add_overflow(value, *str-'0', &value)) {
+            str = token_start;
+            throw "value too big for int";
+        }
     } while (std::isdigit(*++str));
     return value;
 }
@@ -55,6 +59,7 @@ int get_prim(const char *&str)
         str++;
         tok = get_token(str);
         if (tok == Token::Number) {
+            // cannot overflow since |INT_MIN| = |INT_MAX| + 1
             return -get_number(str);
         }
         else {
@@ -75,12 +80,19 @@ int get_term(const char *&str)
     int value = get_prim(str);
     Token op = get_token(str);
     while (op == Token::Mul || op == Token::Div) {
-        str++;
+        const char *op_token_start = str++;
         int operand = get_prim(str);
         if (op == Token::Mul) {
-            value *= operand;
+            if (__builtin_mul_overflow(value, operand, &value)) {
+                str = op_token_start;
+                throw "mul overflow";
+            }
         }
         else {
+            if (operand == 0) {
+                str = op_token_start;
+                throw "attempt to divide by zero";
+            }
             value /= operand;
         }
 
@@ -95,13 +107,19 @@ int get_expr(const char *&str)
     int value = get_term(str);
     Token op = get_token(str);
     while (op == Token::Plus || op == Token::Minus) {
-        str++;
+        const char *op_token_start = str++;
         int operand = get_term(str);
         if (op == Token::Plus) {
-            value += operand;
+            if (__builtin_add_overflow(value, operand, &value)) {
+                str = op_token_start;
+                throw "add overflow";
+            }
         }
         else {
-            value -= operand;
+            if (__builtin_sub_overflow(value, operand, &value)) {
+                str = op_token_start;
+                throw "sub overflow";
+            }
         }
 
         op = get_token(str);
