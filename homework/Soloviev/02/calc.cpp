@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
 	//Check if there is enough args
 	if(argc != 2){
 		std::cout << "Wrong number of arguments\n";
-		return 0;
+		return 1;
 	}
 
 	char* str = new char[strlen(argv[1]) + 1]; //Expression without spaces
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]){
 		{
 			std::cout << "Wrong symbols\n";
 			delete [] str;
-			return 0;
+			return 1;
 		}
 	}
 
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]){
 		else
 			std::cout << "Zero division\n";
 		delete [] str;
-		return 0;
+		return 1;
 	}
 
 	std::cout << result << std::endl;
