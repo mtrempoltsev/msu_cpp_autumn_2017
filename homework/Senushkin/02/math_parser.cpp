@@ -76,7 +76,15 @@ int term(const char*& str){
 		if (c=='*' || c=='/'){
 			str++;
 			if (!isbinop(*str)){
-				if (c == '/') result /= prim(str);
+				if (c == '/') {
+					int value = prim(str);
+					if (value != 0){
+						result /= prim(str);
+					}
+					else{
+						exit_failure();
+					}
+				}
 				if (c == '*') result *= prim(str);
 				str++;
 			}else{
