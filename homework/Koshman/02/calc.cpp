@@ -37,6 +37,7 @@ Token getToken(const char*& text, bool reverse = false, const char* limit = 0)
 			case '+': return Token::Plus;
 			case '*': return Token::Mul;
 			case '/': return Token::Div;
+			case '0': return Token::Number;
 		}
 
 		if (c >= '1' && c <= '9')
