@@ -35,7 +35,7 @@ int number(char*& str);
 void deleteSpace(char* src)
 {
 	char* dst = src;
-	while ((*dst = *src++))
+	while ((*dst = *src++)) 
 		if (*dst != ' ') 
 			dst++;
 }
@@ -44,23 +44,29 @@ void deleteSpace(char* src)
 int main(int argc, char* argv[]) {
  	if (argc != 2) { //Количество аргументов командной строки не равно 2
 		cout << "INVALID ARGUMENTS" << endl;
-		return 0;
+		return 1;
 	}
 	
 	deleteSpace(argv[1]);
 	for (int i = 0; argv[1][i] != '\0'; ++i) {		
-		if ((argv[1][i] == '+' || argv[1][i] == '-' || argv[1][i] == '*' || argv[1][i] == '/')
-			&& (argv[1][i] != '-' && !(isdigit(argv[1][i + 1])))) {
+		if ((argv[1][i] == '+' || argv[1][i] == '-' || argv[1][i] == '*' || argv[1][i] == '/'))
+			if (argv[1][i+1] != '-' && !(isdigit(argv[1][i + 1]))) {
 			cout << "INVALID EXPRESSION!" << endl;
-			return 0;
+			return 1;
 		}
 		if (!isdigit(argv[1][i]))
 			if (argv[1][i] != '+' && argv[1][i] != '-' && argv[1][i] != '*' && argv[1][i] != '/') {
 				cout << "INVALID EXPRESSION!" << endl;
-				return 0;
+				return 1;
 		}
 	}
-	cout << expr(argv[1]) << endl;
+	try {
+		cout << expr(argv[1]) << endl;
+	}
+	catch (const char* msg) {
+		cout << msg << endl;
+		return 1;
+	}
 	return 0;
 }
 
@@ -110,7 +116,7 @@ int _term(char*& str, int left_part) {//Вычисление операнда - 
 		catch (int a) {
 			if (a == -1) { //Спецификация - деление на нуль
 				//в ответе получаем мусор
-				cout << "DIVISION BY ZERO!" << endl;
+				throw "DIVISION BY ZERO!";
 			}
 		}
 	}
@@ -121,7 +127,7 @@ int _term(char*& str, int left_part) {//Вычисление операнда - 
 		}
 		catch (int a) {
 			if (a == -1) { //Опять деление на нуль
-				cout << "DIVISION BY ZERO!" << endl;
+				throw "DIVISION BY ZERO!";
 			}
 			return a;	// Ловим то, что выкинули, если встретили + | -		
 		}
