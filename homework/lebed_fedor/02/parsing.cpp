@@ -1,130 +1,114 @@
-#include <ctype.h>
-#include "parsing.h"
-#include "parsing_error.h"
+#include <cctype>
 
-struct Tokenizer {
-    const char *cur_pos;
-    const char *next_pos;
-    Token token;
-
-    Tokenizer(const char *str): next_pos(str) {
-        next_token();
-    }
-
-    void next_token() {
-        cur_pos = next_pos;
-        while (isspace(*cur_pos)) {
-            cur_pos++;
-        }
-        next_pos = cur_pos;
-
-        if (*next_pos == '\0') {
-            token.type = Token::End;
-            return;
-        }
-
-        if (isdigit(*next_pos)) {
-            token.type = Token::Number;
-            int value = 0;
-            do {
-                value *= 10;
-                value += *next_pos-'0';
-            } while (isdigit(*++next_pos));
-            token.value = value;
-            return;
-        }
-
-        token.type = Token::Operation;
-        token.value = *next_pos++;
-    }
+// defines token types in string
+enum class Token
+{
+    Invalid,
+    Minus,
+    Plus,
+    Div,
+    Mul,
+    Number,
+    End
 };
 
-class Parser {
-    Tokenizer _tok;
-    int _value;
-
-public:
-    Parser(const char *str): _tok(str) {
-        _value = expr();
-        if (_tok.token.type != Token::End) {
-            throw ParseError(Token::End, _tok.cur_pos);
-        }
+// installs str at start of token and returns it's type
+// if token type is NUMBER getNumber should be used to retrieve it's value
+// NOTE: does not move to next token
+Token get_token(const char *&str)
+{
+    while (std::isspace(*str)) {
+        str++;
     }
 
-    int value() {
-        return _value;
+    switch (*str) {
+        case '-': return Token::Minus;
+        case '+': return Token::Plus;
+        case '*': return Token::Mul;
+        case '/': return Token::Div;
+        case '\0': return Token::End;
     }
 
-private:
-    int expr() {
-        int value = term();
-        while (_tok.token.type == Token::Operation) {
-            if (_tok.token.value == '+') {
-                _tok.next_token();
-                value += term();
-            }
-            else if (_tok.token.value == '-') {
-                _tok.next_token();
-                value -= term();
-            }
-            else {
-                break;
-            }
-        }
-
-        return value;
+    if (std::isdigit(*str)) {
+        return Token::Number;
     }
 
-    int term() {
-        int value = prim();
-        while (_tok.token.type == Token::Operation) {
-            if (_tok.token.value == '*') {
-                _tok.next_token();
-                value *= prim();
-            }
-            else if (_tok.token.value == '/') {
-                _tok.next_token();
-                value /= prim();
-            }
-            else {
-                break;
-            }
-        }
+    return Token::Invalid;
+}
 
-        return value;
+// returns number if token type is NUBMER and moves to next token
+int get_number(const char *&str)
+{
+    int value = 0;
+    do {
+        value *= 10;
+        value += *str-'0';
+    } while (std::isdigit(*++str));
+    return value;
+}
+
+// prim = number | -number
+int get_prim(const char *&str)
+{
+    Token tok = get_token(str);
+    if (tok == Token::Minus) {
+        str++;
+        return -get_number(str);
     }
-
-    int prim() {
-        if (_tok.token.type == Token::Operation && _tok.token.value == '-') {
-            _tok.next_token();
-            return -number();
-        }
-
-        return number();
+    else if (tok == Token::Number) {
+        return get_number(str);
     }
-
-    int number() {
-        if (_tok.token.type == Token::Operation && _tok.token.value == '(') {
-            _tok.next_token();
-            int value = expr();
-            if (_tok.token.type == Token::Operation && _tok.token.value == ')') {
-                _tok.next_token();
-                return value;
-            }
-            throw ParseError(Token::Operation, _tok.cur_pos);
-        }
-
-        if (_tok.token.type == Token::Number) {
-            int value = _tok.token.value;
-            _tok.next_token();
-            return value;
-        }
-
-        throw ParseError(Token::Number, _tok.cur_pos);
+    else {
+        throw "number expected";
     }
-};
+}
 
-int calc_parse(const char *s) {
-    Parser p(s);
-    return p.value();
+// term = prim | term*prim | term/prim
+int get_term(const char *&str)
+{
+    int value = get_prim(str);
+    Token op = get_token(str);
+    while (op == Token::Mul || op == Token::Div) {
+        str++;
+        int operand = get_prim(str);
+        if (op == Token::Mul) {
+            value *= operand;
+        }
+        else {
+            value /= operand;
+        }
+
+        op = get_token(str);
+    }
+    return value;
+}
+
+// expr = term | expr + term | expr - term
+int get_expr(const char *&str)
+{
+    int value = get_term(str);
+    Token op = get_token(str);
+    while (op == Token::Plus || op == Token::Minus) {
+        str++;
+        int operand = get_term(str);
+        if (op == Token::Plus) {
+            value += operand;
+        }
+        else {
+            value -= operand;
+        }
+
+        op = get_token(str);
+    }
+    return value;
+}
+
+// validates & parses expression in str
+// NOTE: throws error if str is invalid
+int calc_parse(const char *&str) {
+    int value = get_expr(str);
+    if (get_token(str) != Token::End) {
+        throw "EOF expected";
+    }
+    return value;
 }

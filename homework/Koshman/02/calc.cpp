@@ -149,24 +149,47 @@ int main(int argc, char const *argv[])
 {
 	if ((argc == 1) || (not *argv[1])){
 		cout << "No expression provided";
-		return 0;
+		return 1;
 	}
 
 	const char* start = argv[1];
 	const char* end = start;
 	bool invalid = false;
+	bool NAN = true; 
 
 	auto token = getToken(end);
 	while (token != Token::End)
-	{
-		token = getToken(end);
-		if (token == Token::Invalid)
+	{	
+		switch (token)
 		{
-			invalid = true;
+			case Token::Invalid: {
+				invalid = true;
+				break;
+			}
+			case Token::Number: {
+				if (not NAN)
+					invalid = true;
+				NAN = false;
+				break;
+			}
+			case Token::Minus: {
+				NAN = true;	
+				break;
+			}
+			default: {
+				if (NAN)
+					invalid = true;
+				NAN = true;
+			}
 		}
+		if (invalid)
+			break;
+		token = getToken(end);
 	}
-	if (invalid){
+
+	if (invalid || NAN){
 		cout << "Invalid expression";
+		return 1;
 	} else {
 		cout << expr(start, end);
 	}	

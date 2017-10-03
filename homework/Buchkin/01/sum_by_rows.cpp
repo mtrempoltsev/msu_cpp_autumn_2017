@@ -21,7 +21,7 @@ fillMatrix(uint32_t ** mtrx)
 	srand((unsigned int)time(nullptr));
 	for (uint32_t i = 0; i != SIZE; ++i) {
 		for (uint32_t j = 0; j != SIZE; ++j) {
-			mtrx[i][j] = (uint32_t)rand();
+			mtrx[i][j] = (uint32_t)rand() % 10;
 		}
 	}
 }
@@ -56,27 +56,25 @@ private:
 int
 main()
 {
-	uint32_t ** a = allocMemory(), ** b = allocMemory(), ** c = allocMemory();
-	//c = a + b
+	uint32_t ** a = allocMemory();
 	fillMatrix(a);
-	fillMatrix(b);
-
+	uint64_t sum = 0;
+	
 	{
 		Timer t;
 		
 		for (uint32_t i = 0; i != SIZE; ++i) {
 			for (uint32_t j = 0; j != SIZE; ++j) {
-				c[i][j] = a[i][j] + b[i][j];
+				sum += a[i][j];
 			}
 		}
 	}
 	
 	freeMatrix(a);
-	freeMatrix(b);
-	freeMatrix(c);
 	
 	return 0;
 }
+
 
 
 
