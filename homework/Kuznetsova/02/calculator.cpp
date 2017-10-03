@@ -48,33 +48,39 @@ int parse_expression(const char*& input) {
 
 //выделяем множители
 int parse_term(const char*& input) {
+
     if (!(*input)) {
         std::cerr << "Invalid syntax\n";
         exit(1);
     }
+
     auto left = parse_primary(input);
     auto token = get_token(input);
-    int right = 0;
-    switch (token) {
-        case Token::Mul:
-            return left * parse_term(input);
-        case Token::Div:
-            right = parse_term(input);
+
+    while (token == Token::Mul || token == Token::Div) {
+        
+        int right = parse_primary(input);
+        if (token == Token::Mul) {
+            left *= right;
+        }
+        else {
             if (right == 0) {
                 cout << message << endl;
                 cerr << "Division by zero\n";
                 exit(1);
-            } else {
-                return left / right;
             }
-        case Token::Invalid:
-            cout << message << endl;
-            cerr << "Incorrect symbol\n";
-            exit(1);
-        default:
-            --input; //дойдя до + или -, возвращаем токен обратно
-            return left;
+            left /= right;
+        }
+
+        token = get_token(input);
     }
+    if (token == Token::Invalid) {
+        cout << message << endl;
+        cerr << "Incorrect symbol\n";
+        exit(1);
+    }
+    --input; //дойдя до + или -, возвращаем токен обратно
+    return left;
 }
 
 
