@@ -63,7 +63,7 @@ int get_term(int left, string_it& curr, string_it end) {
     skip_spaces(curr);
     char op = *curr;
 
-    if (op != '*' && op != '/' || curr == end) {
+    if ((op != '*' && op != '/' ) || curr == end) {
         return left;
     }
 
@@ -86,7 +86,7 @@ int get_expr(int left, string_it& curr, string_it end) {
     skip_spaces(curr);
     char op = *curr;
 
-    if (op != '+' && op!= '-' || curr == end) {
+    if ((op != '+' && op!= '-' ) || curr == end) {
         return left;
     }
 
