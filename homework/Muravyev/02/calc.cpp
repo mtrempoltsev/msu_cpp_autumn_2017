@@ -61,12 +61,14 @@ int calc(const char* text, int um){
 			help();
 			exit(-1);
 		}
-		else if (token == Token::Plus)
-			return um*stoi(s) + calc(text, 1);
+		else if (token == Token::Plus){
+			int r = calc(text,1);
+			return um*stoi(s) + r;
+		}
 		else if (token == Token::Minus){
 			if (s == "unary minus")
 				return calc(text, -1*um);
-			return um*stoi(s) - calc(text, 1);
+			return um*stoi(s) + calc(text, -1);
 		}
 		else if (token == Token::End){
 			return um*stoi(s);
