@@ -74,8 +74,6 @@ double term(stringstream& input, bool get, int& number, Token& current) {
                         break;
                 case Token::Div:
                         if (double d = prim(input, true,number,current)) {
-                                cout<<left<<endl;
-                                cout<<d<<endl;
                                 left /= d;
                                 break;
                         }
