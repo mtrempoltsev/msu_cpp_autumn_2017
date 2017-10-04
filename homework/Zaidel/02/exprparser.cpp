@@ -1,5 +1,6 @@
 #include <iostream>
 
+
 enum class Token
 {
     Invalid = 0,
@@ -10,6 +11,7 @@ enum class Token
     Number = 5,
     End = 6
 };
+
 
 // получение текущего токена
 Token getToken(const char*& text, bool isShiftedAfterOperation = true, bool isShiftedAfterNumber = false)
@@ -57,18 +59,29 @@ Token getToken(const char*& text, bool isShiftedAfterOperation = true, bool isSh
     return Token ::End;
 }
 
+bool isNegativeNumber(const char*& text)
+{
+    const char* prev_text = text;
+
+    if(getToken(text) == Token::Minus)
+    {
+        return true;
+    }
+
+
+    text = prev_text;
+    return  false;
+}
+
 // вычисление числа с унарным минусом
 int prim(const char*& text)
 {
 
-    bool isNegative = false;
-    if(getToken(text) == Token::Minus)
-    {
-        isNegative = true;
-    }
+    bool isNegative = isNegativeNumber(text);
 
     int res  = 0;
     bool isNumber = false;
+
     for(;(*text >= '0' && *text <= '9') || *text == ' ' ; ++text)
     {
         if(*text == ' ')
@@ -79,7 +92,7 @@ int prim(const char*& text)
     }
 
     if(!isNumber)
-        throw std::exception();
+        throw std::runtime_error("Error in number input!");
 
     if(isNegative)
         return -res;
@@ -98,12 +111,19 @@ int term(const char*& text)
     {
         if(tk == Token::Mul)
         {
-           res *= prim(text);
+           int pr = prim(text);
+           res *=  pr;
         }
 
         if(tk == Token::Div)
         {
-           res/= prim(text);
+            int pr = prim(text);
+            if(pr == 0)
+            {
+                throw std::runtime_error("Division by zero!");
+            }
+
+            res /=  pr;
         }
 
         tk = getToken(text);
@@ -126,7 +146,7 @@ int expr(const char*& text)
 
           if(tk == Token::Invalid)
           {
-              throw std::exception();
+              throw std::runtime_error("Invalid character!");
           }
 
           if(tk == Token::Plus)
@@ -145,29 +165,32 @@ int expr(const char*& text)
 
 int main(int argc, char* argv[])
 {
-    const char* text = "1 + 2/2 * 3 - -4*-1";
+    const char* text = "";
 
-    if (argc == 1) 
+
+    if (argc == 1)
     {
-      std::cout << "Empty input!"  << std::endl;
-      return 2;
+        std::cout << "Empty input!"  << std::endl;
+        return -1;
     }
     text = argv[1];
 
     if(getToken(text, false, false) == Token::End)
     {
-       std::cout<<"Empty input!"<< std::endl;
-       return 2;
+        std::cout<<"Empty input!"<< std::endl;
+        return -1;
     }
+
 
     try
     {
         int res = expr(text);
         std::cout<<res<<std::endl;
     }
-    catch (std::exception ex)
+    catch (std::exception& ex)
     {
-       std::cout<<"error in input!"<<std::endl;
+       std::cout<<ex.what()<<std::endl;
+       return -1;
     }
 
     return 0;
