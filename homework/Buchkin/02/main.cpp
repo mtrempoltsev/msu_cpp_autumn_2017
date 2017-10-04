@@ -14,6 +14,8 @@ main(int argc, char * argv[])
 	}
 	catch(const char *msg) {
 		std::cout << msg << std::endl;
+		//code 1
+		return 1;
 	}
 	
 	return 0;

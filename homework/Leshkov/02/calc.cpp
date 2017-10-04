@@ -29,8 +29,20 @@ int main(int argc, char* argv[]){
 	int j=0;
 	char* str=(char*)malloc(strlen(argv[1]+1));
 	for(int i=0; i<strlen(argv[1]); i++){
-		if(argv[1][i]!=' ')
+		if(argv[1][i]!=' '){
+
+
+			if(((argv[1][i]>'9')||(argv[1][i]<'0'))&&
+				(argv[1][i]!='+')&&(argv[1][i]!='-')&&
+				(argv[1][i]!='*')&&(argv[1][i]!='/')){
+
+				cout<<"check: Unexpected Lexem "<<argv[1][i]<<endl;
+				return 1;
+			}
+
+
 			str[j++]=argv[1][i];
+		}
 	}
 	//Making input string without spaces
 
@@ -120,14 +132,9 @@ int S(const char* s, int &i){
 			res+=D(s,i);
 		}
 		if(s[i]=='-'){
+
 			i++;
 			res-=D(s,i);
-		}
-		if((s[i]!='\0')&&(s[i]!='-')&&
-			(s[i]!='+')){
-			cout<<"S: unexpectible Lexem: "<<s[i]<<endl;
-			throw s[i];
-			//Проверка на символы, не являющиеся терминалными
 		}
 
 	}
