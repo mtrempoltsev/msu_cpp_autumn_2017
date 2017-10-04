@@ -26,7 +26,7 @@ long long sum(int **a)
 int main()
 {
     int **a = (int**)malloc((N * sizeof(int*)) + (N * (N * sizeof(int))));
-    int *buf
+    int *buf;
     buf = (int*)(a + N);
     for (int i = 0; i < N; i++) {
         a[i] = buf + i * N;
