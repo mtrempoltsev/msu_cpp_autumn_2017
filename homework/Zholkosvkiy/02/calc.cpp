@@ -98,7 +98,7 @@ int getNumber(const char*& text, Token& nextToken)
 			throw "Error! Invalid expression";
 		}
 	}
-
+	return 1;
 }
 //multiply or divide
 int getPrim(const char*& text, Token& nextToken)
@@ -117,7 +117,14 @@ int getPrim(const char*& text, Token& nextToken)
 		else
 		{
 			int number = getNumber(text, nextToken);
-			result /= number;
+			if (number == 0)
+			{
+				throw "Error! Invalid expression";
+			}
+			else
+			{
+				result /= number;
+			}
 		}
 	}
 
@@ -151,25 +158,27 @@ int main(int argc, char *argv[])
 	//no expression
 	if (argc != 2)
 	{
-		cout << "Please enter your expression!" << endl;
+		//cout << "Please enter your expression!" << endl;
 		return 1;
 	}
 	else
 	{
-		cout << argv[1] << endl;
+	//	cout << argv[1] << endl;
 	}
 	//try to calculate
 	try
 	{
 	 	result = calc(argv[1]);
 	}
+
 	//error mesage
 	catch(const char* error)
 	{
-		cout << error << endl;
+	//	cout << error << endl;
 		return 1;
 	}
 	//it's ok!
 	cout << result << endl;
+
 	return 0;
 }
