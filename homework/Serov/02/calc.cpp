@@ -26,8 +26,10 @@ symbol next(const char*& input){
 		}
 		if ((curr>='0')&&(curr<='9'))
 			return symbol::number;
-		else
-			return symbol::wrong;
+		else{
+			cerr<<"Wrong input"<<endl;			
+			exit(0);
+		}
 		}
 	return symbol::end;
 }
@@ -35,7 +37,7 @@ symbol next(const char*& input){
 int expr(const char*& input) //разбиваем на слагаемые
 {
 	int res=term(input);
-	symbol s=next(input);
+	symbol s=next(input);	
 	if (s!=symbol::end)
 		return s==symbol::plus ? res+expr(input) : res-expr(input);
 	else
@@ -46,8 +48,19 @@ int term(const char*& input) //разбиваем на множители
 {
 	int res=prim(input);
 	symbol s=next(input);
-	if ((s==symbol::multiply)||(s==symbol::divide))
-		return s==symbol::multiply ? res*term(input) : res/term(input);
+	if (s==symbol::multiply)
+		return res*term(input);
+	if (s==symbol::divide){
+
+	int check=term(input);
+
+	if (check==0)//проверка деления на ноль
+	{
+		cerr<<"Zero division error"<<endl;
+		exit(0);
+	}
+		return res/check;
+	}
 	else{
 		--input; //могли считать + или -, а не * или / => возвращаем в input
 		return res;
@@ -58,6 +71,10 @@ int prim(const char*& input) //считывание числа
 {
 	char s=next(input);
 	int res=0;
+	if ((s==symbol::plus)||(s==symbol::divide)||(s==symbol::multiply)){
+		cerr<<"Two or more operations is a row"<<endl;
+		exit(0);
+	}
 	if (s==symbol::number){
 		input--;
 		char s=*input;
@@ -76,10 +93,12 @@ int main(int argc, const char* argv[])
 {
 	//проверяем, сколько ввели параметров в командной строке
 	if (argc!=2){
-		cout<<"Wrong input"<<endl;
+		cout<<"Wrong number of arguments"<<endl;
 		return 0;
 	}
-const char* input=argv[1];
+
+	const char* input=argv[1];
+
 	cout<<expr(input)<<endl;
 
 return 1;
