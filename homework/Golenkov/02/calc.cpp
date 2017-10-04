@@ -14,7 +14,6 @@ enum class Token
 Token getToken(const char*& text)
 {
     //separate token
-    auto b = *text;
     while(const auto c = *text++)
     {
         switch(c)
@@ -61,11 +60,10 @@ int getNumber(const char*& text)
             i *= 10;
             j++;
         }
-        auto v = *text;
         for (int k = 0; k < j; k++)
         {
             //set the pointer after the last digit
-            v = *++text;
+            ++text;
         }
         return number;
     }
