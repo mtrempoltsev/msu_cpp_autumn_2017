@@ -99,6 +99,7 @@ double prim(char*& text, symbol& curr_symbol) {
             return 1;
         default:
             cout << "Original needed" << endl;
+            exit(1);
             break;
     }
     return 1;
@@ -119,18 +120,18 @@ symbol getToken(char*& text, symbol& curr_symbol) {
         if (c >= '0' && c <= '9') {
             string tmp = "";
             tmp += c;
-            for (auto c = *text;  c >= '0' && c <= '9';) {
-                ++text;
-                c = *text;
-                tmp += c;
-                
+            while (isdigit(*text)) {
+                tmp += *text;
+                text++;
             }
             curr_symbol.tok = Token::Number;
             curr_symbol.number_value = atoi(tmp.c_str());
             return curr_symbol;
             
         }
-        curr_symbol.tok = Token::Invalid;
+        cerr << "Invalid token" << endl;
+        exit(1);
+        //curr_symbol.tok = Token::Invalid;
         return curr_symbol;
     }
     curr_symbol.tok = Token::End;
