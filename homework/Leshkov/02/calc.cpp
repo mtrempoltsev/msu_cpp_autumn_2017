@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
 
 	if (argc!=2){
 		cout<<"Incorrect amount of args\n";
-		return 0;
+		return 1;
 	}
 	//Сhecking amount of Аrgs
 
@@ -37,10 +37,12 @@ int main(int argc, char* argv[]){
 
 	int iter=0;
 	try{
-		cout<<str<<"="<<S(str,iter)<<endl;	
+		cout<<S(str,iter)<<endl;	
 	}
 	catch(char c){
 		cout<<"Error on "<<c<<endl;
+		free(str);
+		return 1;
 	}
 
 	free(str);
