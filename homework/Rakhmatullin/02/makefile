@@ -1,10 +1,4 @@
-.PHONY: all clean
-
-all: calc
-
-clean:
-			rm -rf hello *.o
 calc.o: calc.c
-			gcc -c -o calc.o calc.c
+	g++ --O2 -std=c++11  -c calc.cpp -o calc.o
 calc: calc.o
-			gcc -o calc calc.o
+	g++ -o calc calc.o
