@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int term(const char*& input);
+int term(const char*& input, bool inverse=0);
 int prim(const char*& input);
 
 enum symbol{
@@ -44,27 +44,30 @@ int expr(const char*& input) //разбиваем на слагаемые
 		return res;
 }
 
-int term(const char*& input) //разбиваем на множители
+int term(const char*& input, bool inverse) //разбиваем на множители 
 {
-	int res=prim(input);
+	int res=prim(input); //  6/2*2 воспринимается, как 6/(2*2), значит если было деление, то следующую операцию необходимо инвертировать
 	symbol s=next(input);
-	if (s==symbol::multiply)
-		return res*term(input);
-	if (s==symbol::divide){
+	if ((s==symbol::multiply)||(s==symbol::divide)){
+		if (s==symbol::divide){ //деление
+		inverse++;
+		int check=term(input,inverse);
 
-	int check=term(input);
+		if (check==0)//проверка деления на ноль
+		{
+			cerr<<"Zero division error"<<endl;
+			exit(0);
+		}
+		return (inverse & 1) ? res/check : res*check;
+		}
 
-	if (check==0)//проверка деления на ноль
-	{
-		cerr<<"Zero division error"<<endl;
-		exit(0);
+		if (s==symbol::multiply){ //умножение
+			return (inverse & 1) ? res/term(input,inverse) : res*term(input,inverse);}
+
 	}
-		return res/check;
-	}
-	else{
-		--input; //могли считать + или -, а не * или / => возвращаем в input
-		return res;
-	}
+	--input; //могли считать + или -, а не * или / => возвращаем в input
+	return res;
+	
 }
 
 int prim(const char*& input) //считывание числа
