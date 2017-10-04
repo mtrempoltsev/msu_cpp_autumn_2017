@@ -43,17 +43,23 @@ prim(const char* str, int32_t len)
 int64_t
 term(const char* str, int32_t len)
 {	
-	int32_t i = 0;
-	while (i != len && str[i] != '*' && str[i] != '/') {
-		++i;
+	int32_t i = len - 1;
+	while (i >= 0 && str[i] != '*' && str[i] != '/') {
+		--i;
 	}
 	
-	if (i == len) {
+	if (i == -1) {
 		return prim(str, len);
 	} else if (str[i] == '*') {
-		return prim(str, i) * term(str + i + 1, len - i - 1);
+		return term(str, i) * prim(str + i + 1, len - i - 1);
 	} else if (str[i] == '/') {
-		return prim(str, i) / term(str + i + 1, len - i - 1);
+		//zero-division checking
+		int64_t dividend = term(str, i);
+		int64_t divider = prim(str + i + 1, len - i - 1);
+		if (divider == 0) {
+			throw "Zero division";
+		}
+		return dividend / divider;
 	} else {
 		throw "Wrong argument; Error in term";
 	}
@@ -62,24 +68,29 @@ term(const char* str, int32_t len)
 int64_t
 expr(const char* str, int32_t len)
 {
-	int32_t i = 0;
-	bool prevWasDigit = false;//to determine unary and binary minuses
-	while (i != len && str[i] != '+' && (str[i] != '-' || prevWasDigit == false)) {
-		if (isdigit(str[i])) {
-			prevWasDigit = true;
-		} else if (!isspace(str[i])) {
-			prevWasDigit = false;
+	int32_t i = len - 1;
+	while (i >= 0 && str[i] != '+') {
+		//minus - unary or binary?
+		if (str[i] == '-') {
+			int32_t j = i - 1;
+			while (j >= 0 && isspace(str[j])) {
+				--j;
+			}
+			if (j == -1 || !isdigit(str[j])) {//minus is unary
+				i = j + 1;
+			} else {
+				break;
+			}
 		}
-		
-		i++;
+		--i;
 	}
 	
-	if (i == len) {
+	if (i == -1) {
 		return term(str, len);
 	} else if (str[i] == '+') {
-		return term(str, i) + expr(str + i + 1, len - i - 1);
+		return expr(str, i) + term(str + i + 1, len - i - 1);
 	} else if (str[i] == '-') {
-		return term(str, i) - expr(str + i + 1, len - i - 1);
+		return expr(str, i) - term(str + i + 1, len - i - 1);
 	} else {
 		throw "Wrong argument; Error in expr";
 	}
