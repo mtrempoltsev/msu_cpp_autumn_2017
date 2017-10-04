@@ -49,8 +49,8 @@ bool check_overflow_mul(int a, int b)
 	if((a >= 0 && b >= 0) || (a <= 0 && b <= 0))
 		//If a > INT_MAX / b, then a * b > INT_MAX, multiplication results in overflow
 		return a <= INT_MAX / b;
-	//If a < INT_MIN / b, then a * b > INT_MIN, multiplication results in overflow
-	return a >= INT_MIN / b;
+	//If a > INT_MIN / b, then a * b < INT_MIN, multiplication results in overflow
+	return a <= INT_MIN / b;
 }
 
 //We check if summation will result in overflow

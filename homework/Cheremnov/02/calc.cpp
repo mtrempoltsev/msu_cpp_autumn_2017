@@ -50,7 +50,8 @@ Token get_token(string::const_iterator &start, string::const_iterator finish)
 	//If current symbol isn't digit, error has occured
     return Token::Error;
 }
-//Read number from string. We use flag, because -(INT_MIN) != (INT_MAX), and so the overflow of int_type varies if the value is below or above zero
+//Read number from string. We use flag, because -(INT_MIN) != (INT_MAX), 
+//and so the overflow of int_type varies if the value is below or above zero
 int get_number(string::const_iterator &start, string::const_iterator finish, int flag){
 	//Get the token
 	Token tok = get_token(start, finish);
@@ -105,13 +106,11 @@ int get_prim(string::const_iterator &start, string::const_iterator finish)
 		start++;
 		flag = 1;
 	}
-	else if(tok == Token :: Plus){
-		start++;
-	}
 	//Then we return the result of function get_number. Thar function already returns number with sign that we need
 	return get_number(start, finish, flag);
 }
-//This is function for making this action: term = prim | term * prim | term / prim, referring to calculator's grammatics
+//This is function for making this action: term = prim | term * prim | term / prim, 
+//referring to calculator's grammatics
 int get_term(string::const_iterator &start, string::const_iterator finish) 
 {
 	//The res variable we move prim 
