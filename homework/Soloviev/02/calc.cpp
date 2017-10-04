@@ -94,7 +94,7 @@ int main(int argc, char* argv[]){
 	char c = 0;                                //Additional var
 
 	//Deleting spaces and checking for wrong symbols
-	for(int i = 0; i < strlen(argv[1]); i++){
+	for(uint i = 0; i < strlen(argv[1]); i++){
 		//Skip spaces
 		if(argv[1][i] != ' ')
 			c = argv[1][i];
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]){
 			continue;
 
 		//Check for wrong symbols
-		if(c >= '0' && c <= '9' ||
+		if((c >= '0' && c <= '9') ||
 		   c == '+' || c == '-' ||
 		   c == '*' || c == '/')
 			str[counter++] = c;
