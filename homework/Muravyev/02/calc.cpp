@@ -5,8 +5,7 @@ using namespace std;
 
 void help(){  // Just a small help for users
 	cout << endl << "Help" << endl
-	<< "Enter ./name_of_prog <expression>" << endl
-	<< "Please, use @ instead of * for multiplication!" << endl;
+	<< "Enter ./name_of_prog expression" << endl;
 }
 
 enum class Token{
@@ -22,13 +21,16 @@ enum class Token{
 Token getToken(const char*& text, string& s){
 	while(const char c = *text){
 		switch(c){
+			case '"':
+				++text;
+				continue;
 			case ' ': 
 				++text;
 				continue;
 			case '-':
 				++text;
 				return Token::Minus;
-			case '@': 
+			case '*': 
 				++text;
 				return Token::Mul;
 			case '/': 
@@ -63,6 +65,11 @@ int calc(const char* text, int um){
 		}
 		else if (token == Token::Plus){
 			int r = calc(text,1);
+			if (s == "unary minus"){
+				cout << "Incorrect input data" << endl;
+				help();
+				exit(-1);
+			}
 			return um*stoi(s) + r;
 		}
 		else if (token == Token::Minus){
@@ -124,16 +131,11 @@ int calc(const char* text, int um){
 }
 
 int main(int argc, char** argv){
-	if (argc < 2){
+	if (argc != 2){
 		help();
 		return -1;
 	}
-	string arguments;
-	arguments.clear();
-	for (int i = 1;i < argc;++i){   //  We don't need the first argument
-		arguments += string(argv[i]); // Get a string of arguments
-	}
-	const char* text = arguments.c_str();
+	const char* text = argv[1];
 	cout << calc(text, 1) << endl; //  Start calculating
 	return 0;
 }
