@@ -11,7 +11,7 @@ void fill_arr(int **a)
     srand(time(nullptr));
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < N; ++j)
-            a[j][i] = rand();
+            a[i][j] = rand();
 }
 
 long long sum(int **a)
@@ -19,7 +19,7 @@ long long sum(int **a)
     long long ans = 0;
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < N; ++j)
-            ans += a[i][j];
+            ans += a[j][i];
     return ans;
 }
 
@@ -35,7 +35,8 @@ int main()
     volatile long long s = 0;
     for (int i = 0; i < 10; ++i)
         s = sum(a); //WARMUP
-
+    
+    fill_arr(a);
     int entire = 0;
     Timer t;
     for (int i = 0; i < TESTS_CNT; ++i)
