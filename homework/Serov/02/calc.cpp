@@ -27,7 +27,7 @@ symbol next(const char*& input){
 		if ((curr>='0')&&(curr<='9'))
 			return symbol::number;
 		else{
-			cerr<<"Wrong input"<<endl;			
+			cerr<<"Wrong input"<<endl; //проверяем, что введены только цифры или +,-,*,/	
 			exit(0);
 		}
 		}
@@ -71,7 +71,7 @@ int prim(const char*& input) //считывание числа
 {
 	char s=next(input);
 	int res=0;
-	if ((s==symbol::plus)||(s==symbol::divide)||(s==symbol::multiply)){
+	if ((s==symbol::plus)||(s==symbol::divide)||(s==symbol::multiply)){ //проверяем, что подряд не идут операции, напр */
 		cerr<<"Two or more operations is a row"<<endl;
 		exit(0);
 	}
