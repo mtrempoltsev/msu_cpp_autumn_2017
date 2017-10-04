@@ -26,7 +26,7 @@ long long sum(int **a)
 int main()
 {
     int **a = (int**)malloc((N * sizeof(int*)) + (N * (N * sizeof(int))));
-    int *buf
+    int *buf;
     buf = (int*)(a + N);
     for (int i = 0; i < N; i++) {
         a[i] = buf + i * N;
@@ -36,6 +36,7 @@ int main()
     for (int i = 0; i < 10; ++i)
         s = sum(a); //WARMUP
 
+    fill_arr(a);
     int entire = 0;
     Timer t;
     for (int i = 0; i < TESTS_CNT; ++i)
