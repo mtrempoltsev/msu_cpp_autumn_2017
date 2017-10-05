@@ -37,16 +37,48 @@ enum class Lexem
     add = '+',
     sub = '-',
     mul = '*',
-    div = '/',
-    num = '0'
+    div = '/'
 };
 
-Lexem
-next_elem(Striter &s, Striter &end, int &value, Operation &op)
+void skip_trash(Striter &s, Striter &end) 
 {
-    while (isspace(*s) && s != end) {
+    while (s != end && isspace(*s)) {
         s++;
+    }                                
+}
+
+int
+get_number(Striter &s, Striter &end)
+{
+    skip_trash(s, end);
+    if (s == end) {
+        throw std::invalid_argument("no number");
     }
+    bool flag = false;                          
+    int value;
+    int sign = 1;                               
+    if (*s == '-') {                            
+        s++;
+        sign = -1;                              
+    }
+    value = 0;                                  
+    while (s != end && *s <= '9' && *s >= '0') {
+        value *= 10;                            
+        value += *s - '0';                      
+        flag = true;                            
+        s++;
+    }            
+    if (!flag) {
+        throw std::invalid_argument("bad number");
+    }
+    value *= sign;
+    return value;
+}
+
+Lexem
+next_elem(Striter &s, Striter &end, Operation &op)
+{
+    skip_trash(s, end);
     if (s == end) {
         return Lexem::eof;
     }
@@ -66,41 +98,19 @@ next_elem(Striter &s, Striter &end, int &value, Operation &op)
             op = divi;
             return Lexem::div;
         default:
-            bool flag = false;
-            int sign = 1;
-            s--;
-            if (*s == '-') {
-                sign = -1;
-            }
-            value = 0;
-            while (s != end && *s <= '9' && *s >= '0') {
-                value *= 10;
-                value += *s - '0';
-                flag = true;
-                s++;
-            }
-            value *= sign;
-            return flag ? Lexem::num : Lexem::nop;
+            return Lexem::nop;
     }
 }
 
 int
 term (Striter &s, Striter &end, Lexem &lex, Operation &op) {
     int n = 0, res = 0; 
-    lex = next_elem(s, end, res, op);
-    if (lex != Lexem::num) {
-        throw std::invalid_argument("error in term");
-        return 0;
-    }
-    lex = next_elem(s, end, n, op);
+    res = get_number(s, end);
+    lex = next_elem(s, end, op);
     while (lex == Lexem::mul || lex == Lexem::div) {
-        lex = next_elem(s, end, n, op);
-        if (lex != Lexem::num) {
-            throw std::invalid_argument("error in term");
-            return 0;     
-        }
+        n = get_number(s, end);
         res = op(res, n); 
-        lex = next_elem(s, end, n, op);
+        lex = next_elem(s, end, op);
     }
     return res;
 }
@@ -129,9 +139,15 @@ main(int argc, char *argv[])
         std::cout << "Usage: " << argv[0] << " Expr." << std::endl;
         return 0;
     }
+
     std::string str = std::string(argv[1]);
     Striter s = str.begin();
     Striter end = str.end();
-    std::cout << expr(s, end) << std::endl;
+    try {
+        std::cout << expr(s, end) << std::endl;
+    } catch (std::invalid_argument &e) {
+        std::cout << e.what() << std::endl;
+        return 134;
+    }
     return 0;
 }
