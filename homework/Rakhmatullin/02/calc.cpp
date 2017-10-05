@@ -10,7 +10,7 @@ enum class Token
     Number, //5
     End //6
 };
-Token token; //variable that holds current token
+//Token token; //variable that holds current token
 Token getToken(const char*& text) //parsing token from string
 {
     while (const auto c = *text++)
@@ -32,12 +32,12 @@ Token getToken(const char*& text) //parsing token from string
     return Token::End;
 }
 //parsing number
-int prim(const char*& text)
+int prim(const char*& text, Token* ptr_token)
 {
     int result = 0;
-    token = getToken(text);
+    *ptr_token = getToken(text);
     --text;
-    if (token == Token::Number)
+    if (*ptr_token == Token::Number)
     {
         while(*text >= '0' && *text <= '9')
         {
@@ -46,10 +46,10 @@ int prim(const char*& text)
         }
         return result;
     }
-    if (token == Token::Minus)
+    if (*ptr_token == Token::Minus)
     {
         ++text;
-        return (-1)*prim(text);
+        return (-1)*prim(text, ptr_token);
     }
     else
     {
@@ -57,50 +57,50 @@ int prim(const char*& text)
     }
 }
 //parsing multiplication/division
-int term(const char*& text)
+int term(const char*& text, Token* ptr_token)
 {
-    int leftOperand = prim(text);
-    token = getToken(text);
+    int leftOperand = prim(text, ptr_token);
+    *ptr_token = getToken(text);
     --text;
-    while(token != Token::End && (token == Token::Mul || token == Token::Div))
+    while(*ptr_token != Token::End && (*ptr_token == Token::Mul || *ptr_token == Token::Div))
     {
-        if(token == Token::Mul)
+        if(*ptr_token == Token::Mul)
         {
             ++text;
-            leftOperand *= prim(text);
-            token = getToken(text);
+            leftOperand *= prim(text, ptr_token);
+            *ptr_token = getToken(text);
             --text;
         }
-        if(token == Token::Div)
+        if(*ptr_token == Token::Div)
         {
             ++text;
-            int tmp = prim(text);
+            int tmp = prim(text, ptr_token);
             if (tmp == 0)
             {
                 throw "Zero division";
             }
             leftOperand /= tmp;
-            token = getToken(text);
+            *ptr_token = getToken(text);
             --text;
         }
     }
     return leftOperand;
 }
 //parsing sum/difference
-int expr(const char*& text)
+int expr(const char*& text, Token* ptr_token)
 {
-    int leftOperand = term(text);
-    while(token != Token::End && (token == Token::Plus || token == Token::Minus))
+    int leftOperand = term(text, ptr_token);
+    while(*ptr_token != Token::End && (*ptr_token == Token::Plus || *ptr_token == Token::Minus))
     {
-        if(token == Token::Plus)
+        if(*ptr_token == Token::Plus)
         {
             ++text;
-            leftOperand += term(text);
+            leftOperand += term(text, ptr_token);
         }
-        if(token == Token::Minus)
+        if(*ptr_token == Token::Minus)
         {
             ++text;
-            leftOperand -= term(text);
+            leftOperand -= term(text, ptr_token);
         }
     }
     return leftOperand;
@@ -109,6 +109,8 @@ int expr(const char*& text)
 int main(int argc, char * argv[])
 {
     const char* text = argv[1];
+    Token* ptr_token = nullptr;
+    Token token;
     if (argc < 2)
     {
         std::cout << "no expression" << std::endl;
@@ -116,7 +118,10 @@ int main(int argc, char * argv[])
     }
     try
     {
-        std::cout <<expr(text);
+        token = getToken(text);
+        ptr_token = &token;
+        --text;
+        std::cout <<expr(text, ptr_token);
     }
     catch(const char* text)
     {
