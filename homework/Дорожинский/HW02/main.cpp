@@ -144,10 +144,14 @@ int doTests() {
 }
 
 int main(int argc, char const *argv[]) {
-	if (argc > 1) {
-		std::cout << calc(argv[1]) << std::endl;
-	} else {
-		doTests();
+	try {
+		if (argc > 1) {
+			std::cout << calc(argv[1]) << std::endl;
+		} else {
+			doTests();
+		}
+	} catch (const std::runtime_error& e) {
+		std::cout << "During calculation error occured: " << e.what() << std::endl;
 	}
 	
 	return 0;
