@@ -1,3 +1,0 @@
-/home/vladimir/Cloud Mail.ru/Sphere Mail.ru/С++/Repository/msu_cpp_autumn_2017/homework/Belyaev/02/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/vladimir/Cloud Mail.ru/Sphere Mail.ru/С++/Repository/msu_cpp_autumn_2017/homework/Belyaev/02/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/vladimir/Cloud Mail.ru/Sphere Mail.ru/С++/Repository/msu_cpp_autumn_2017/homework/Belyaev/02/cmake-build-debug/CMakeFiles/02.dir

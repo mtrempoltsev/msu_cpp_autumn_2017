@@ -1,4 +1,0 @@
-/home/vladimir/Downloads/Software/clion-2017.2.2/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/home/vladimir/Cloud Mail.ru/Sphere Mail.ru/С++/Repository/msu_cpp_autumn_2017/homework/Belyaev/02"
--- Configuring done
--- Generating done
--- Build files have been written to: /home/vladimir/Cloud Mail.ru/Sphere Mail.ru/С++/Repository/msu_cpp_autumn_2017/homework/Belyaev/02/cmake-build-debug
