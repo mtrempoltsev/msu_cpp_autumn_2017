@@ -27,7 +27,7 @@ Token getToken(const char*& text) //parsing token from string
         {
             return Token::Number;
         }
-        else return Token::Invalid;
+        else throw "Unexpected symbol";;
     }
     return Token::End;
 }
@@ -74,7 +74,12 @@ int term(const char*& text)
         if(token == Token::Div)
         {
             ++text;
-            leftOperand /= prim(text);
+            int tmp = prim(text);
+            if (tmp == 0)
+            {
+                throw "Zero division";
+            }
+            leftOperand /= tmp;
             token = getToken(text);
             --text;
         }
