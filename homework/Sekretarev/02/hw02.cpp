@@ -73,19 +73,6 @@ int main(int argc, char* argv[]) {
 		strcpy((char*)(ch + j), argv[i]);
 		j += strlen(argv[i]);
 	}
-	printf("%s\n", ch);
 	printf("%f\n", equation(ch));
-	//printf("%c\n", argv[1][2]);
-	//printf("%c\n", argv[1][5]);
-	//printf("len = %d\n", strlen(argv[1]));
-	//printf("%s\n", ch);
-	//printf("len = %d\n", strlen(ch));
-	
-	
-	
-	/*
-	int k;
-	scanf("%d", &k);
-	*/
 	return 0; 
 }
