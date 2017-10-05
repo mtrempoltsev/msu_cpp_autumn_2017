@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int term(const char*& input, bool inverse=0);
+int term(const char*& input, int inverse=0);
 int prim(const char*& input);
 
 enum symbol{
@@ -28,7 +28,7 @@ symbol next(const char*& input){
 			return symbol::number;
 		else{
 			cerr<<"Wrong input"<<endl; //проверяем, что введены только цифры или +,-,*,/	
-			exit(0);
+			exit(3);
 		}
 		}
 	return symbol::end;
@@ -44,7 +44,7 @@ int expr(const char*& input) //разбиваем на слагаемые
 		return res;
 }
 
-int term(const char*& input, bool inverse) //разбиваем на множители 
+int term(const char*& input, int inverse) //разбиваем на множители 
 {
 	int res=prim(input); //  6/2*2 воспринимается, как 6/(2*2), значит если было деление, то следующую операцию необходимо инвертировать
 	symbol s=next(input);
@@ -56,7 +56,7 @@ int term(const char*& input, bool inverse) //разбиваем на множи�
 		if (check==0)//проверка деления на ноль
 		{
 			cerr<<"Zero division error"<<endl;
-			exit(0);
+			exit(1);
 		}
 		return (inverse & 1) ? res/check : res*check;
 		}
@@ -76,7 +76,7 @@ int prim(const char*& input) //считывание числа
 	int res=0;
 	if ((s==symbol::plus)||(s==symbol::divide)||(s==symbol::multiply)){ //проверяем, что подряд не идут операции, напр */
 		cerr<<"Two or more operations is a row"<<endl;
-		exit(0);
+		exit(3);
 	}
 	if (s==symbol::number){
 		input--;
@@ -97,14 +97,14 @@ int main(int argc, const char* argv[])
 	//проверяем, сколько ввели параметров в командной строке
 	if (argc!=2){
 		cout<<"Wrong number of arguments"<<endl;
-		return 0;
+		return 2;
 	}
 
 	const char* input=argv[1];
 
 	cout<<expr(input)<<endl;
 
-return 1;
+return 0;
 }
 
 
