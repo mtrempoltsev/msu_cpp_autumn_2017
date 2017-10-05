@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
             e = expression(data, 0, len, true);
             cout << e << "\n";
         } else {
-            cout << "r u kiddin' me?" << "\n";
+            cout << "The program processes an arithmetic expression of integers!" << "\n";
             return -1;
         }
     }
