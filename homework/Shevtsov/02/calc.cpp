@@ -17,8 +17,7 @@ enum class Token
 };
 
 
-int global_num = 0;
-int error = 0;
+
 // считывает токен, меняет позицию прочитанного текста и записывает число в глобальную переменную
 Token getToken(const char*& text)
 {
@@ -34,16 +33,6 @@ Token getToken(const char*& text)
     }
     if (c >= '0' && c < '9')
     {
-      --text;
-      auto f = *text;
-      int num = 0;
-      while (f >= '0' && f <= '9') // преобразование многозначного чила в целый тип
-      {
-        num = num * 10 + f - '0';
-	++text;
-	f = *text;
-      }
-      global_num = num;
       return Token::Number;
     }
     return Token::Invalid;
@@ -61,50 +50,29 @@ int primary (Token& token, const char*& text);
 
 int expression (Token& token, const char*& text) { // выражение
   int left = term(token, text);
-    //cout << "expression error" << error << endl;
-    if (error == 1)
+  while (token != Token::End) {
+    switch(token)
     {
-      return left;
-    }
-    while (token != Token::End) {
-      switch(token)
-      {
-        case Token::Plus:{
-          left += term(token, text);
-	  if (error == 1)
-	  {
-	    return left;
-	  }
+      case Token::Plus:{
+        left += term(token, text);
         break;
       }
       case Token::Minus:{
         left -= term(token, text);
-        if (error == 1)
-	{
-	  return left;
-	}
         break;
       }
       case Token::End:{
         return left;
       }
       default:
-	//cout << "Invalid symbole" << endl;
-	error = 1;
-	return left;
-      }
+        return left;
     }
-    return left;
+  }
+  return left;
 }
 
 int term (Token& token, const char*& text) { // слагаемое
   int left_term = primary(token, text);
-	//cout << "term error:" << error << endl;
-	if (error == 1)
-	{
-	  //cout << "if-cycle" << endl;
-          return left_term;
-	}
   while (token != Token::End){
     switch(token){
       case Token::Mul:{
@@ -112,60 +80,56 @@ int term (Token& token, const char*& text) { // слагаемое
         break;
       }
       case Token::Div:{
-	int denominator = primary(token, text);
+        int denominator = primary(token, text);
 	if (denominator == 0) {  // Обработка случая деления на ноль
-	  cout << "Error! Can't devide by zero" << endl;
-	  error = 1;
-          break;
+	  throw "Error! Can't devide by zero";
+	  break;
 	}
 	else {
           left_term /= denominator;
           break;
 	}
       }
-      case Token::Plus:{
-	return left_term;
-      }
-      case Token::Minus:{
-	return left_term;
-      }
-      case Token::End:{
-	return left_term;
-      }
-      default:
-        cout << "Invalid symbol" << endl;
-	error = 1;
-	return left_term;
-     }
-  } 
+        case Token::Plus:{
+	  return left_term;
+        }
+	case Token::Minus:{
+	  return left_term;
+	}
+	case Token::End:{
+	  return left_term;
+	}
+	default:
+	  throw "Invalid symbol";
+	  return left_term;
+    }
+  }
   return left_term;
 }
 
 int primary (Token& token, const char*& text) { // множитель
   token = getToken(text);
-	//cout << int(token) << endl;
   switch(token){
     case Token::Number: {
-      int v = global_num;
+      --text;
+      auto f = *text;
+      int num = 0;
+      while (f >= '0' && f <= '9') // преобразование многозначного чила в целый тип
+      {
+        num = num * 10 + f - '0';
+	++text;
+	f = *text;
+      }
       token = getToken(text);
-    return v;
+      return num;
     }
-    case Token::Minus:{ // унарный минус
+      case Token::Minus:{ // унарный минус
       return -primary(token, text);
     }
-    /*
-    case Token::End:{
-      cout << "End";
-      int v = global_num;
-      return v;
-    }
-    */
     default:
-      cout << "Invalid symbol" << endl;
-      error = 1;
-      int v = global_num;
-      return v;
-    }
+      throw "Invalid symbol";
+      return 1;
+  }
 }
 
 
@@ -175,15 +139,18 @@ int primary (Token& token, const char*& text) { // множитель
 
 int main(int argc, char* argv[])
 {
-  //const char* text = "1 * 6 + 3 / 2 - 2 * 2";
-  const char* text = argv[1];
-  //cout << text << endl;
-  Token token; // преобразовали текст в токены
-  int result = expression(token, text); // вычислелние выражения
-  if (error == 1)
+  try
   {
+    //const char* text = "1 * 6 + 3 / 2 - 2 * 2";
+    const char* text = argv[1];
+    //cout << text << endl;
+    Token token; // преобразовали текст в токены
+    int result = expression(token, text); // вычислелние выражения
+    cout << result << endl;
+      return 0;
+  }
+  catch (const char* str){
+    cout << str << endl;
     return 1;
   }
-  cout << result << endl;
-  return 0;
 }

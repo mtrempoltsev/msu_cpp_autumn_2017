@@ -1,11 +1,14 @@
 // Vasilii Bodnariuk
 
-#include <stdlib.h>
+#include <math.h>
 #include <iostream>
-#include <string.h>
 #include <string>
 
 using namespace std;
+
+enum errors {
+    ERR_ZERO_DIV = 0,
+};
 
 int good_str(char* data) {
     int i = 0;
@@ -83,7 +86,11 @@ double term(char* data, int start, int len, bool last_mult) {
                 if (true) {
                     double tail = term(data, i + 1, len, data[i] == '*');
                     if((data[i] == '/') == last_mult) {
-                        return number(data, start, i) / tail;
+                        double result = number(data, start, i) / tail;
+                        if(isinf(result)) {
+                            throw ERR_ZERO_DIV;
+                        }
+                        return result;
                     }
                     else {
                         return number(data, start, i) * tail;
@@ -123,23 +130,33 @@ double expression(char* data, int start, int len, bool last_plus) {
 
 int main(int argc, char* argv[])
 {
+    bool error_while_processing = false;
     if(argc != 2) {
+        error_while_processing = true;
         cout << "usage:" << '\n';
         cout << argv[0] << " expression" << '\n';
         cout << "example:" << '\n';
         cout << argv[0] << " \"-12 * 2 / 3 + 8 * 2 / 1\"" << '\n';
     } else {
         auto data = argv[1];
-        double e;
+        double result;
         int len = good_str(data);
-        if (len > 0) {
-            e = expression(data, 0, len, true);
-            cout << e << "\n";
+        if(len > 0) {
+            try {
+                result = expression(data, 0, len, true);
+                cout << result << "\n";
+            } catch(errors e) {
+                switch (e) {
+                    case ERR_ZERO_DIV:
+                        cout << "Zero division error!" << "\n";
+                }
+                error_while_processing = true;
+            }
         } else {
-            cout << "r u kiddin' me?" << "\n";
-            return -1;
+            cout << "The program processes an arithmetic expression of integers!" << "\n";
+            error_while_processing = true;
         }
     }
 
-    return 0;
+    return error_while_processing ? -1 : 0;
 }
