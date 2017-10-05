@@ -130,7 +130,9 @@ double expression(char* data, int start, int len, bool last_plus) {
 
 int main(int argc, char* argv[])
 {
+    bool error_while_processing = false;
     if(argc != 2) {
+        error_while_processing = true;
         cout << "usage:" << '\n';
         cout << argv[0] << " expression" << '\n';
         cout << "example:" << '\n';
@@ -148,12 +150,13 @@ int main(int argc, char* argv[])
                     case ERR_ZERO_DIV:
                         cout << "Zero division error!" << "\n";
                 }
+                error_while_processing = true;
             }
         } else {
             cout << "The program processes an arithmetic expression of integers!" << "\n";
-            return -1;
+            error_while_processing = true;
         }
     }
 
-    return 0;
+    return error_while_processing ? -1 : 0;
 }
