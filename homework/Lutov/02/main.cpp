@@ -121,6 +121,9 @@ parse_term_tail(Lexems::const_iterator &next, intmax_t prev)
   } else if (next->first == Token::Divide) {
     ++ next;
     intmax_t prim = parse_prim(next);
+    if (prim == 0) {
+      throw std::runtime_error("Zero division");
+    }
     return parse_term_tail(next, prev / prim);
   } else {
     return prev;
@@ -193,8 +196,13 @@ main(int argc, char **argv)
     std::cerr << "Usage: " << argv[0] << " expression" << std::endl;
     return 1;
   } else {
-    // Get lexems and parse it!
-    std::cout << parser(lexer(argv[1]).cbegin()) << std::endl;
+    try {
+      // Get lexems and parse it!
+      std::cout << parser(lexer(argv[1]).cbegin()) << std::endl;
+    } catch (const std::runtime_error &error) {
+      std::cerr << "INVALID" << std::endl;
+      return 1;
+    }
     return 0;
   }
 }
