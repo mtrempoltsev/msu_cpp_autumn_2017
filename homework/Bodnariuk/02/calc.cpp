@@ -1,11 +1,16 @@
 // Vasilii Bodnariuk
 
-#include <stdlib.h>
+// #include <stdlib.h>
+// #include <string.h>
+#include <math.h>
 #include <iostream>
-#include <string.h>
 #include <string>
 
 using namespace std;
+
+enum errors {
+    ERR_ZERO_DIV = 0,
+};
 
 int good_str(char* data) {
     int i = 0;
@@ -83,7 +88,11 @@ double term(char* data, int start, int len, bool last_mult) {
                 if (true) {
                     double tail = term(data, i + 1, len, data[i] == '*');
                     if((data[i] == '/') == last_mult) {
-                        return number(data, start, i) / tail;
+                        double result = number(data, start, i) / tail;
+                        if(isinf(result)) {
+                            throw ERR_ZERO_DIV;
+                        }
+                        return result;
                     }
                     else {
                         return number(data, start, i) * tail;
@@ -130,11 +139,18 @@ int main(int argc, char* argv[])
         cout << argv[0] << " \"-12 * 2 / 3 + 8 * 2 / 1\"" << '\n';
     } else {
         auto data = argv[1];
-        double e;
+        double result;
         int len = good_str(data);
-        if (len > 0) {
-            e = expression(data, 0, len, true);
-            cout << e << "\n";
+        if(len > 0) {
+            try {
+                result = expression(data, 0, len, true);
+                cout << result << "\n";
+            } catch(errors e) {
+                switch (e) {
+                    case ERR_ZERO_DIV:
+                        cout << "Zero division error!" << "\n";
+                }
+            }
         } else {
             cout << "The program processes an arithmetic expression of integers!" << "\n";
             return -1;
