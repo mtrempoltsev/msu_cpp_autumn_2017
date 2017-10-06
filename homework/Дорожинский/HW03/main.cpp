@@ -126,13 +126,6 @@ public:
 		return _calc();
 	}
 private:
-	Tokenizer tokenizer;
-
-	std::unordered_map<std::string, double> constants = {
-        { "Pi", 3.14 },
-        { "e", 2.7 }
-    };
-
 	int _calc() { // Here we add or subtract items. Item is a sequence of multiplications/divisions
 		int result = getItem();
 		while ((tokenizer.getCurrentToken() == Token::Plus) || (tokenizer.getCurrentToken() == Token::Minus)) {
@@ -191,6 +184,13 @@ private:
 		throw std::runtime_error("Unexpected token: " + tokenizer.tokenToStr(tokenizer.getCurrentToken()));
 		return 0;
 	}
+	
+	Tokenizer tokenizer;
+
+	std::unordered_map<std::string, double> constants = {
+		{ "Pi", 3.14 },
+		{ "e", 2.7 }
+	};
 };
 
 int assert(const char* expr, int expect) {
