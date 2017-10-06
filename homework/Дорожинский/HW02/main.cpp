@@ -152,6 +152,7 @@ int main(int argc, char const *argv[]) {
 		}
 	} catch (const std::runtime_error& e) {
 		std::cout << "During calculation error occured: " << e.what() << std::endl;
+		return 1;
 	}
 	
 	return 0;
