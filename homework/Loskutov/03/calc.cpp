@@ -6,7 +6,6 @@ using namespace std;
 //Класс enum, который описывает возможные токены,
 //которые мы можем встретить когда будем идти по выражению
 enum class Token {
-    Invalid,  //Неверное выражение
     Minus,    //Знак минус
     Plus,     //Знак плюс
     Mul,      //Знак умножение
@@ -14,157 +13,189 @@ enum class Token {
     Number,   //Число
     End,      //Конец выражения
     Null,     //Пустой токен
-    BktLeft,
-    BktRight,
+    BktLeft,  //Левая скобка
+    BktRight, //Правая скобка
     Pi,       //Число Pi
     e         //Число e
 };
 
 class Calculator {
 public:
-    Token *token;
-    char* text;
-    int res;
-    int pos;
-    bool bkt;
+    //Конструктор класса без полей
+    Calculator();
     
-    Calculator() {
-        token = (Token*)malloc(sizeof(Token*));
-        *token = Token::Null;
-        text = nullptr;
-        res = 0;
-        pos = 0;
-    }
+    //Конструктор класса, принимающий выражение, которое надо посчитать
+    Calculator(const char* text_);
     
-    Calculator(const char* text_) {
-        token = (Token*)malloc(sizeof(Token*));
-        *token = Token::Null;
-        text = (char*)malloc((strlen(text_)+1)*sizeof(char));
-        int count = 0;
-        for (int i = 0; i < strlen(text_); i++) {
-            text[i] = text_[i];
-            if (text[i] == '(') {
-                count++;
-            }
-            if (text[i] == ')') {
-                count--;
-            }
-        }
-        text[strlen(text_)] = '\0';
-        if (count != 0) {
-            throw invalid_argument("Bad expression!");
-        }
-        res = 0;
-        pos = 0;
-        bkt = false;
-    }
+    //Деструктор класса
+    ~Calculator();
     
-    ~Calculator() {
-        free(text);
-    }
+    //Функция реализует часть грамматики:
+    //expr = term
+    //    | expr + term
+    //    | expr - term
+    void expr();
     
-    void getToken() {
-        while (const auto c = text[pos]) {
-            switch (c) {
-                case ' ':
-                    pos++;
-                    continue;
-                case '-':
-                    pos++;
-                    *token = Token::Minus;
-                    return;
-                case '+':
-                    pos++;
-                    *token = Token::Plus;
-                    return;
-                case '*':
-                    pos++;
-                    *token = Token::Mul;
-                    return;
-                case '/':
-                    pos++;
-                    *token = Token::Div;
-                    return;
-                case '(':
-                    pos++;
-                    *token = Token::BktLeft;
-                    return;
-                case ')':
-                    pos++;
-                    *token = Token::BktRight;
-                    return;
-            }
-            if ((c >= '0') && (c < '9')) {
-                *token = Token::Number;
-                return;
-            }
-            if (c == 'P') {
-                pos++;
-                if (text[pos] == 'i') {
-                    pos++;
-                    *token = Token::Pi;
-                    return;
-                }
-            }
-            if (c == 'e') {
-                pos++;
-                *token = Token::e;
-                return;
-            }
-            throw invalid_argument("Bad expression!");
-        }
-        *token = Token::End;
-    }
+    //Функция возвращает результат подсчета
+    int getResult();
+    
+private:
+    //Функция получения следующего токена
+    void getToken();
     
     //Функция реализует часть грамматики:
     //prim = number
     //    | -number
     //number = [0-9]+
-    int prim() {
-        if (*token == Token::End) {
-            throw invalid_argument("Bad expression!");
+    int prim();
+    
+    //Функция реализует часть грамматики:
+    //bkts = ( expr)
+    //    | number
+    int bkts();
+    
+    //Функция реализует часть грамматики:
+    //term = bkts
+    //    | term * bkts
+    //    | term / bkts
+    void term();
+    
+    //Поля класса
+    Token *token; //Токен, который сейчас обрабатывается
+    char* text; //Поле, в котором хранится выражение
+    int res; //Поле, в котором хранится результат
+    int pos; //Поле, в котором хранится место обрабатываемого символа в строке text
+};
+
+Calculator::Calculator() {
+    token = (Token*)malloc(sizeof(Token*));
+    *token = Token::Null;
+    text = nullptr;
+    res = 0;
+    pos = 0;
+}
+
+Calculator::Calculator(const char* text_) {
+    token = (Token*)malloc(sizeof(Token*));
+    *token = Token::Null;
+    text = (char*)malloc((strlen(text_)+1)*sizeof(char));
+    int count = 0;
+    for (int i = 0; i < strlen(text_); i++) {
+        text[i] = text_[i];
+        if (text[i] == '(') {
+            count++;
         }
-        if (*token == Token::Minus) {
-            getToken();
-            if (*token == Token::Pi) {
-                *token = Token::Null;
-                return -3;
-            }
-            if (*token == Token::e) {
-                *token = Token::Null;
-                return -2;
-            }
-            if (*token != Token::Number) {
-                throw invalid_argument("Bad expression!");
-            }
-            char *buf;
-            buf = (char*)calloc(20, sizeof(char));
-            int i = 0;
-            for (; (text[pos] >= '0') && (text[pos] <= '9'); ++pos) {
-                buf[i] = text[pos];
-                i++;
-            }
-            buf[i] = '\0';
-            int num = atoi(buf);
-            free(buf);
-            *token = Token::Null;
-            return -num;
+        if (text[i] == ')') {
+            count--;
         }
+    }
+    text[strlen(text_)] = '\0';
+    if (count != 0) {
+        throw invalid_argument("Bad expression!");
+    }
+    res = 0;
+    pos = 0;
+}
+
+Calculator::~Calculator() {
+    free(text);
+}
+
+void Calculator::expr() {
+    term();
+    if (*token == Token::Null) {
+        getToken();
+    }
+    if (*token == Token::Plus) {
+        *token = Token::Null;
+        int num = res;
+        expr();
+        res += num;
+    } else if (*token == Token::Minus) {
+        *token = Token::Null;
+        int num = res;
+        expr();
+        res -= num;
+    }
+}
+
+int Calculator::getResult() {
+    return res;
+}
+
+void Calculator::getToken() {
+    while (const auto c = text[pos]) {
+        switch (c) {
+            case ' ':
+                pos++;
+                continue;
+            case '-':
+                pos++;
+                *token = Token::Minus;
+                return;
+            case '+':
+                pos++;
+                *token = Token::Plus;
+                return;
+            case '*':
+                pos++;
+                *token = Token::Mul;
+                return;
+            case '/':
+                pos++;
+                *token = Token::Div;
+                return;
+            case '(':
+                pos++;
+                *token = Token::BktLeft;
+                return;
+            case ')':
+                pos++;
+                *token = Token::BktRight;
+                return;
+        }
+        if ((c >= '0') && (c < '9')) {
+            *token = Token::Number;
+            return;
+        }
+        if (c == 'P') {
+            pos++;
+            if (text[pos] == 'i') {
+                pos++;
+                *token = Token::Pi;
+                return;
+            }
+        }
+        if (c == 'e') {
+            pos++;
+            *token = Token::e;
+            return;
+        }
+        throw invalid_argument("Bad expression!");
+    }
+    *token = Token::End;
+}
+
+int Calculator::prim() {
+    if (*token == Token::End) {
+        throw invalid_argument("Bad expression!");
+    }
+    if (*token == Token::Minus) {
+        getToken();
         if (*token == Token::Pi) {
             *token = Token::Null;
-            return 3;
+            return -3;
         }
         if (*token == Token::e) {
             *token = Token::Null;
-            return 2;
+            return -2;
         }
         if (*token != Token::Number) {
-            throw invalid_argument("Bad expression!");;
+            throw invalid_argument("Bad expression!");
         }
         char *buf;
         buf = (char*)calloc(20, sizeof(char));
         int i = 0;
-        buf[0] = text[pos];
         for (; (text[pos] >= '0') && (text[pos] <= '9'); ++pos) {
             buf[i] = text[pos];
             i++;
@@ -173,81 +204,70 @@ public:
         int num = atoi(buf);
         free(buf);
         *token = Token::Null;
-        return num;
+        return -num;
     }
-    
-    
-    //Функция реализует часть грамматики:
-    //bkts = ( expr)
-    //    | number
-    int bkts() {
-        getToken();
-        if (*token == Token::BktLeft) {
-            *token = Token::Null;
-            bkt = true;
-            expr();
-        } else if (*token == Token::BktRight) {
-            *token = Token::Null;
-        } else {
-            return prim();
-        }
+    if (*token == Token::Pi) {
         *token = Token::Null;
-        return res;
+        return 3;
     }
-    
-    //Функция реализует часть грамматики:
-    //term = bkts
-    //    | term * bkts
-    //    | term / bkts
-    void term() {
-        int left = bkts();
-        if (*token == Token::Null) {
-            getToken();
-        }
-        while ((*token == Token::Mul) || (*token == Token::Div)) {
-            if (*token == Token::Mul) {
-                *token = Token::Null;
-                int right = bkts();
-                left *= right;
-            } else if (*token == Token::Div) {
-                *token = Token::Null;
-                int right = bkts();
-                if (right == 0) {
-                    throw invalid_argument("Bad expression!");
-                }
-                left /= right;
+    if (*token == Token::e) {
+        *token = Token::Null;
+        return 2;
+    }
+    if (*token != Token::Number) {
+        throw invalid_argument("Bad expression!");;
+    }
+    char *buf;
+    buf = (char*)calloc(20, sizeof(char));
+    int i = 0;
+    buf[0] = text[pos];
+    for (; (text[pos] >= '0') && (text[pos] <= '9'); ++pos) {
+        buf[i] = text[pos];
+        i++;
+    }
+    buf[i] = '\0';
+    int num = atoi(buf);
+    free(buf);
+    *token = Token::Null;
+    return num;
+}
+
+int Calculator::bkts() {
+    getToken();
+    if (*token == Token::BktLeft) {
+        *token = Token::Null;
+        expr();
+    } else if (*token == Token::BktRight) {
+        *token = Token::Null;
+    } else {
+        return prim();
+    }
+    *token = Token::Null;
+    return res;
+}
+
+void Calculator::term() {
+    int left = bkts();
+    if (*token == Token::Null) {
+        getToken();
+    }
+    while ((*token == Token::Mul) || (*token == Token::Div)) {
+        if (*token == Token::Mul) {
+            *token = Token::Null;
+            int right = bkts();
+            left *= right;
+        } else if (*token == Token::Div) {
+            *token = Token::Null;
+            int right = bkts();
+            if (right == 0) {
+                throw invalid_argument("Bad expression!");
             }
-            getToken();
+            left /= right;
         }
-        res = left;
+        getToken();
     }
-    
-    //Функция реализует часть грамматики:
-    //expr = term
-    //    | expr + term
-    //    | expr - term
-    void expr() {
-        term();
-        if (*token == Token::Null) {
-            getToken();
-        }
-        if (*token == Token::Plus) {
-            *token = Token::Null;
-            int num = res;
-            expr();
-            res += num;
-        } else if (*token == Token::Minus) {
-            *token = Token::Null;
-            int num = res;
-            expr();
-            res -= num;
-        }
-    }
-    
-    int getResult() {
-        return res;
-    }
-};
+    res = left;
+}
 
 int main(int argc, const char * argv[]) {
     if (argc < 2) {
