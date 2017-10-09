@@ -35,16 +35,11 @@ void RDParser::_checkbrackets(const char *str){
 
 RDParser::RType RDParser::_prim(const char*& str){
 
-	// if (*str == '('){
-	// 	return _expr(++str);
-	// }
-
-
 	std::string name = "";
 	while (std::isalpha(*str)){
 		name += std::tolower(*str++);
 	}
-	// std::cout << name;
+
 	if (name!=""){
 		if (NamedConstants.count(name)!=0){
 			str--;
