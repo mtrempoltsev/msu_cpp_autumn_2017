@@ -128,28 +128,32 @@ public:
 private:
 	int _calc() { // Here we add or subtract items. Item is a sequence of multiplications/divisions
 		int result = getItem();
+		validateOperation();
 		while ((tokenizer.getCurrentToken() == Token::Plus) || (tokenizer.getCurrentToken() == Token::Minus)) {
 			if (tokenizer.getCurrentToken() == Token::Plus) {
 				result += getItem();
 			} else {
 				result -= getItem();
 			}
+			validateOperation();
 		}
 		return result;
 	}
 
 	int getItem() {
 		int result = getNumber();
+		validateOperation();
 		while ((tokenizer.getCurrentToken() == Token::Mult) || (tokenizer.getCurrentToken() == Token::Div)) {
 			if (tokenizer.getCurrentToken() == Token::Mult) {
 				result *= getNumber();
 			} else {
 				int value = getNumber();
 				if (value == 0) {
-					throw std::runtime_error("Zero division!");
+					throw std::runtime_error("Zero division");
 				}
 				result /= value;
 			}
+			validateOperation();
 		}
 		return result;
 	}
@@ -184,6 +188,13 @@ private:
 		throw std::runtime_error("Unexpected token: " + tokenizer.tokenToStr(tokenizer.getCurrentToken()));
 		return 0;
 	}
+
+	void validateOperation() { // Throws if tokenizer's currentToken is not set to a valid operation or end
+		Token token = tokenizer.getCurrentToken();
+		if ((token == Token::Num) || (token == Token::OpenBracket) || (token == Token::Word)) {
+			throw std::runtime_error("Unexpected token: " + tokenizer.tokenToStr(token));
+		}
+	}
 	
 	Tokenizer tokenizer;
 
@@ -194,19 +205,32 @@ private:
 };
 
 int assert(const char* expr, int expect) {
-	static int testNumber = 1;
+	static int testNumber = 0;
+	++testNumber;
 	Calculator calc;
 	int result = calc.calculate(expr);
 	if (result == expect) {
-		std::cout << "Test " << testNumber << " succeeded! (" << expr << " = " << expect << ")" << std::endl;
-		++testNumber;
+		std::cout << "[ OK ] Test " << testNumber << " succeeded! [ " << expr << " = " << expect << " ]" << std::endl;
 		return 0;
 	} else {
-		std::cout << "Test " << testNumber << " failed. :(" << std::endl;
-		std::cout << "For [" << expr << "] got " << result << ". " << expect << " expexted." << std::endl;
-		++testNumber;
+		std::cout << "[ FAIL ] Test " << testNumber << " failed. :(" << std::endl;
+		std::cout << "   For [" << expr << "] got " << result << ". " << expect << " expexted." << std::endl;
 		return 1;
 	}
+}
+
+int assertFail(const char* expr) {
+	static int testNumber = 0;
+	++testNumber;
+	Calculator calc;
+	try {
+		calc.calculate(expr);
+	} catch (const std::runtime_error& e) {
+		std::cout << "[ OK ] Test " << testNumber << " thrown as expected. [ " << expr << " ]" << std::endl;
+		return 0;
+	}
+	std::cout << "[ FAIL ] Test " << testNumber << " expected to throw but returned a value. [ " << expr << " ]" << std::endl;
+	return 1;
 }
 
 int doTests() {
@@ -246,8 +270,23 @@ int doTests() {
 	fails += assert("Pi", 3);
 	fails += assert("-(Pi)", -3);
 
+	fails += assertFail("(2 / 0)");
+	fails += assertFail("(2 / 0))");
+	fails += assertFail("(2 / 1))");
+	fails += assertFail("2 -+ 2");
+	fails += assertFail("2 ++ 2");
+	fails += assertFail("2 c (0)");
+	fails += assertFail("1.5 + 1.5");
+	fails += assertFail("(2 + 0");
+	fails += assertFail("2a");
+	fails += assertFail("2 2");
+	fails += assertFail("2 (");
+	fails += assertFail("2 )");
+
 	if (fails == 0) {
 		std::cout << "All tests have passed successfully!" << std::endl;
+	} else {
+		std::cout << "One or more tests failed." << std::endl;
 	}
 	return fails;
 }

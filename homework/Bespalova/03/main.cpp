@@ -26,7 +26,6 @@ private:
     
     double get_number_without_sign()
     {
-        cout << "get number without" << endl;
         double res = 0;
         if (counter < str.length() && str[counter] == '(')
         {
@@ -71,7 +70,7 @@ private:
 
     double get_number()
     {
-        cout << "get number" << endl;
+        
         double res = 0;
         if (counter < str.length() && str[counter] == '(')
         {
@@ -100,7 +99,7 @@ private:
 
     double get_term() //слагаемое
     {
-        cout << "get term" << endl;
+        
         double res = 0;
         if (counter < str.length() && str[counter] == '(')
         {
@@ -139,7 +138,7 @@ private:
     
     double calculate()
     {
-        cout << "calc" << endl;
+        
         double res = get_term();
         
         while (counter < str.length() && (str[counter] == '+' || str[counter] == '-'))
