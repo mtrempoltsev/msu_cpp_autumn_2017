@@ -29,8 +29,9 @@ Output: -4
 Определим то, каким может быть арифметическое выражение ```<expr>```, используя форму <a href="https://en.wikipedia.org/wiki/Backus–Naur_form">Бэкуса-Наура</a>:
 
 ```
-<expr> ::= <term>|(<expr>)|<expr> + <expr>|<expr> - <expr>
-<term> ::= <prim>|<term> * <prim>|<term> / <prim>
+<expr> ::= <term>|<expr> + <expr>|<expr> - <expr>
+<term> ::= <extprim>|<term> * <extprim>|<term> / <extprim>
+<extprim> ::= <prim>|(<expr>)
 <prim> ::= <realnumber>|-<realnumber>
 <realnumber> = <number>|<number>.<number>|Pi|e
 <number> ::= <digit>|<number><digit>
