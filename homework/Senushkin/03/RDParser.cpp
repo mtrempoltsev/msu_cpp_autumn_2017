@@ -63,6 +63,10 @@ RDParser::RType RDParser::_prim(const char*& str){
 		return sign*_expr(++str);
 	}
 
+	if (!std::isalpha(*str) && !std::isdigit(*str)){
+		throw std::invalid_argument("Unauthorized expression in parentheses");
+	}
+
 	RType result = *str - '0';
 	while(*(str+1) != '\n' && std::isdigit(*(str+1))){
 		result = result * 10 + (*++str - '0');
