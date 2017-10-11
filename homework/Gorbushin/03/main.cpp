@@ -167,7 +167,10 @@ private:
         if (expr[cur_pos] == '-') {
             if (cur_pos + 1 == len) throwError(EndOfLine);
             cur_pos++;
-            return -numberValue();
+
+            if ('0' <= expr[cur_pos] && expr[cur_pos] <= '9') return -numberValue();
+            else return -constValue();
+
         } else if ('0' <= expr[cur_pos] && expr[cur_pos] <= '9') {
             return numberValue();
         } else return constValue();

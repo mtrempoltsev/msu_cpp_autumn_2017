@@ -2,7 +2,7 @@ TARGET = eval
 CC = g++
 OPTIONS = -std=c++11 -O2 -Wall
 
-all: eval
+all: $(TARGET)
 
 clean:
 	rm -rf $(TARGET) *.o
