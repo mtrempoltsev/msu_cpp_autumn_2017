@@ -1,16 +1,11 @@
 #include <algorithm>
+#include <cinttypes>
 #include <iostream>
 #include <string>
 #include <stdexcept>
 #include <vector>
 #include <utility>
 #include <unordered_map>
-
-std::unordered_map<std::string, double> constants =
-{
-   {"Pi", 3.14},
-   {"e", 2.7}
-};
 
 enum class Token {
   Number,
@@ -26,6 +21,72 @@ enum class Token {
 
 using Lexem = std::pair<Token, std::string>;
 using Lexems = std::vector<Lexem>;
+
+class Fixed {
+private:
+  int64_t value;
+
+  static auto
+  from_value(int64_t value)
+  {
+    auto result = Fixed();
+    result.value = value;
+    return result;
+  }
+
+public:
+  static const int64_t ONE = static_cast<int64_t>(1) << 32;
+  static const int64_t INT_MAX = static_cast<int64_t>(1) << 63;
+
+  Fixed(int32_t integer=0, int32_t fraction=0) :
+    value(integer * ONE + fraction)
+  {
+  }
+
+  operator int() const {
+    return value / ONE;
+  }
+
+  Fixed &
+  operator+=(const Fixed &other) {
+    this->value += other.value;
+    return *this;
+  }
+
+  Fixed &
+  operator-=(const Fixed &other) {
+    this->value -= other.value;
+    return *this;
+  }
+
+  Fixed &
+  operator*=(const Fixed &other) {
+    auto remainder = this->value % Fixed::ONE;
+    this->value /= Fixed::ONE;
+    this->value *= other.value;
+    this->value += (remainder * (other.value / Fixed::ONE));
+    this->value += (remainder * (other.value % Fixed::ONE) / Fixed::ONE);
+    std::cout << static_cast<float>(this->value) / Fixed::ONE << std::endl;
+    return *this;
+  }
+
+  Fixed &
+  operator/=(const Fixed &other) {
+    *this *= Fixed::from_value(-(Fixed::INT_MAX / other.value * 2));
+    return *this;
+  }
+
+  Fixed
+  operator-() const {
+    return Fixed::from_value(-this->value);
+  }
+};
+
+std::unordered_map<std::string, Fixed> constants =
+{
+   {"Pi", Fixed(3, 14 * Fixed::ONE / 100)},
+   {"e", Fixed(2, 7 * Fixed::ONE / 10)}
+};
 
 class Lexer {
 private:
@@ -124,15 +185,15 @@ private:
     return std::runtime_error("Unexpected lexem " + next->second);
   }
 
-  intmax_t
+  Fixed
   prim()
   {
     if (next->first == Token::Number) {
-      intmax_t number = std::stoll(next->second);
+      auto number = Fixed(std::stoi(next->second));
       ++ next;
       return number;
     } else if (next->first == Token::Const) {
-      intmax_t constant = constants[next->second];
+      auto constant = constants[next->second];
       ++ next;
       return constant;
     } else if (next->first == Token::Minus) {
@@ -140,7 +201,7 @@ private:
       return -this->prim();
     } else if (next->first == Token::LeftBracket) {
       ++ next;
-      const intmax_t expr = this->expr();
+      const auto expr = this->expr();
       if (next->first == Token::RightBracket) {
         ++ next;
         return expr;
@@ -152,38 +213,38 @@ private:
     }
   }
 
-  intmax_t
+  Fixed
   term()
   {
     // prim ([*/] prim)*
-    intmax_t term = this->prim();
+    auto term = this->prim();
     while (next->first == Token::Multiply || next->first == Token::Divide) {
       if (next->first == Token::Multiply) {
         ++ next;
-        intmax_t prim = this->prim();
+        auto prim = this->prim();
         term *= prim;
       } else {
         ++ next;
-        intmax_t prim = this->prim();
+        auto prim = this->prim();
         term /= prim;
       }
     }
     return term;
   }
 
-  intmax_t
+  Fixed
   expr()
   {
     // term ([+-] term)*
-    intmax_t expr = this->term();
+    auto expr = this->term();
     while (next->first == Token::Plus || next->first == Token::Minus) {
       if (next->first == Token::Plus) {
         ++ next;
-        intmax_t term = this->term();
+        auto term = this->term();
         expr += term;
       } else {
         ++ next;
-        intmax_t term = this->term();
+        auto term = this->term();
         expr -= term;
       }
     }
@@ -203,10 +264,11 @@ private:
   Lexems::const_iterator next;
 
 public:
-  intmax_t result = 0;
+  Fixed result;
 
   Parser(Lexems::const_iterator &&_next) :
-    next(_next)
+    next(_next),
+    result(Fixed())
   {
     this->result = this->expr();
     this->eof(); // eof should be last
@@ -222,7 +284,7 @@ main(int argc, char **argv)
   } else {
     try {
       // Get lexems and parse it!
-      std::cout << Parser(Lexer(argv[1]).lexems.cbegin()).result << std::endl;
+      std::cout << int(Parser(Lexer(argv[1]).lexems.cbegin()).result) << std::endl;
     } catch (const std::runtime_error &error) {
       std::cerr << "INVALID" << std::endl;
       return 1;
