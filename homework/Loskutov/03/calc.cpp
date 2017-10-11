@@ -116,7 +116,8 @@ void Calculator::expr() {
         *token = Token::Null;
         double num = res;
         expr();
-        res -= num;
+        num -= res;
+        res = num;
     }
 }
 
@@ -236,7 +237,10 @@ double Calculator::prim() {
 double Calculator::bkts() {
     getToken();
     if (*token == Token::BktLeft) {
-        *token = Token::Null;
+        getToken();
+        if (*token == Token::BktRight) {
+            throw invalid_argument("Bad expression!");
+        }
         expr();
     } else if (*token == Token::BktRight) {
         *token = Token::Null;
