@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cctype>
 #include <cstdlib>
+#include <climits>
 using namespace std;
 
 
@@ -88,7 +89,7 @@ int get_expr(const char *&s, int &err)
         if (err) {
             return 0;
         }
-        if (__builtin(op1, op2, &op1)) {
+        if (__builtin_add_overflow(op1, op2, &op1)) {
             err = 1;
             return 0;
         }
@@ -110,9 +111,9 @@ int main(int argc, char *argv[])
     }
     char error_desc[4][30] = {
         " ",
-        "overflow",
-        "zero divide",
-        "incorrect input"
+        "overflow\n",
+        "zero divide\n",
+        "incorrect input\n"
     };
     int err = 0;
     const char *t = argv[1];
@@ -122,5 +123,6 @@ int main(int argc, char *argv[])
     } else {
         cout << ans;
     }
+    cout << '\n';
     return 0;
 }
