@@ -2,6 +2,9 @@
 #include <string>
 #include <unordered_map>
 
+/**
+ * Describes type of token
+ */
 enum class TokenType
 {
     OpenBracket,
@@ -19,12 +22,18 @@ enum class TokenType
     End
 };
 
+/**
+ * Presents string as sequence of token
+ */
 class Tokenizer
 {
     const char *_token_start;
     const char *_token_end;
-
     TokenType _token_type;
+
+    /**
+     * sets _token_end to end of numeric token
+     */
     void scan_number() {
         const char *p = _token_start;
         while (std::isdigit(*p)) {
@@ -33,6 +42,9 @@ class Tokenizer
         _token_end = p;
     }
 
+    /**
+     * sets _token_end to end of constant token
+     */
     void scan_constant() {
         const char *p  = _token_start;
         while (std::isalpha(*p)) {
@@ -40,7 +52,10 @@ class Tokenizer
         }
         _token_end = p;
     }
-    
+
+    /**
+     * returns token type based on it's first character
+     */    
     TokenType get_token_type(char c) {
         switch (c) {
         case '(': return TokenType::OpenBracket;
@@ -82,6 +97,9 @@ public:
         return _token_type;
     }
 
+    /**
+     * changes focus to next token
+     */
     void next_token() {
         _token_start = _token_end;
         while (std::isspace(*_token_start)) {
@@ -108,18 +126,33 @@ public:
     }
 };
 
+/**
+ * Describes errors which can occure during parsing
+ */
 struct ParsingError
 {
     const char *point;
     const char *msg;
 };
 
+/**
+ * parses & evaluates string during initialization
+ * throws ParsingError if failed 
+ * Grammar is
+ * <expr> ::= <term> | <expr> + <term> | <expr> - <term>
+ * <term> ::= <prim> | <term> * <prim> | <term> / <prim>
+ * <prim> ::= <factor> | - <factor>
+ * <factor> ::= <number> | <constant> | ( <expr> )
+ */
 class Parser
 {
     Tokenizer _tk;
     std::unordered_map<std::string, double> &_constants;
     double _value;
-    
+
+    /**
+     * parses <expr>
+     */ 
     double expr() {
         double value = term();
         TokenType tt = _tk.token_type();
@@ -136,6 +169,9 @@ class Parser
         return value;
     }
 
+    /**
+     * parses <term>
+     */
     double term() {
         double value = prim();
         TokenType tt = _tk.token_type();
@@ -152,17 +188,23 @@ class Parser
         return value;
     }
 
+    /**
+     * parses <prim>
+     */
     double prim() {
         TokenType tt = _tk.token_type();
         if (tt == TokenType::Minus) {
             _tk.next_token();
-            return fact();
+            return -fact();
         }
         else {
             return fact();
         }
     }
 
+    /**
+     * parses <fact>
+     */
     double fact() {
         TokenType tt =_tk.token_type();
         if (tt == TokenType::Number) {
@@ -174,8 +216,15 @@ class Parser
 
         if (tt == TokenType::Constant) {
             std::string constant_name(_tk.token_start(), _tk.token_end());
+            const char *name_start = _tk.token_start();
             _tk.next_token();
-            return _constants[constant_name];
+            auto key_value = _constants.find(constant_name);
+            if (key_value != _constants.end()) {
+                return key_value->second;
+            }
+            else {
+                throw ParsingError{name_start, "unknown constant name"};
+            }
         }
         
         if (tt == TokenType::OpenBracket) {

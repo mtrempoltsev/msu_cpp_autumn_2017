@@ -1,5 +1,5 @@
 #! /usr/bin/python3
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, DEVNULL
 tests = [
     ('1+2', 3),
     ('2*3', 6),
@@ -10,18 +10,22 @@ tests = [
     ('-1', -1),
     ('-  1', -1),
     ('1/0', None),
-    (str(2**32), None)
+    (str(2**32), None),
+    ('Pi + 2', 5.1415),
+    ('1+2*(3-1)', 5),
+    ('1+2*(3', None),
+    ('fedor', None)
 ]
 
 failed_count = 0
 for i, (test, expected) in enumerate(tests):
-    process = Popen(['./calc', test], stdout=PIPE)
+    process = Popen(['./calc', test], stdout=PIPE, stderr=DEVNULL)
     output, error = process.communicate()
     output = output.decode().strip()
     if expected == None and error != 0 or expected != None and output == str(expected):
         pass
     else:
-        print('Test no %d failed: %s' % (i, test))
+        print('Test no %d failed: %s, (%s, %s)' % (i, test, output))
         failed_count += 1
 
 if failed_count == 0:
