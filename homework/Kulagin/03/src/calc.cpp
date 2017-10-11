@@ -3,6 +3,9 @@
 
 #include "../include/calc.hpp"
 
+std::unordered_map<std::string, double> Calculator::constants;
+
+
 int Calculator::get_prim(char*& expr) {
 	skip_spaces(expr);
 	
@@ -60,8 +63,8 @@ int Calculator::get_prim(char*& expr) {
 			expr++;
 		} while(is_letter(*expr));
 		
-		if(contants.find(s) != contants.end()) {
-			prim = contants[s];
+		if(constants.find(s) != constants.end()) {
+			prim = constants[s];
 		} else {
 			std::stringstream err;
 			err << "Constant: \"" << s << "\" is not found" << endl;
