@@ -54,10 +54,10 @@ public:
 				}
 				return Token::Number;
 			}
-			if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'  ) 
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')  ) 
 			{	
 				auto c1 = *tmp;
-				while (c1 >= 'a' && c1 <= 'z' || c1 >= 'A' && c1 <= 'Z')
+				while ((c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z'))
 				{				
 					c1 = *(++tmp);
 				}
@@ -94,10 +94,10 @@ public:
 				}
 				return Token::Number;
 			}
-			if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') 
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) 
 			{	
 				auto c1 = *text;
-				while (c1 >= 'a' && c1 <= 'z' || c1 >= 'A' && c1 <= 'Z')
+				while ((c1 >= 'a' && c1 <= 'z') || (c1 >= 'A' && c1 <= 'Z'))
 				{				
 					c1 = *(++text);
 				}
@@ -301,7 +301,7 @@ private:
 			c = *tmp;
 		}
 
-		while( c >= 'a' && c <= 'z' || c >= 'A' && c < 'Z')
+		while( (c >= 'a' && c <= 'z') || (c >= 'A' && c < 'Z'))
 		{	
 			iden += c;
 			tmp++;
