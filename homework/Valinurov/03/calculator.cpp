@@ -130,7 +130,7 @@ private:
             brace_balance++;
             int result = Expr();
             if (last_token != Token::Br_Close)
-                throw "Unpaired brace\n";
+                throw "Unpaired braces\n";
             brace_balance--;
             return result;
         } else
@@ -148,8 +148,12 @@ private:
             if (last_token == Token::Mul)
                 result *= Prim();
             else if (last_token == Token::Div)
-                result /= Prim();
-            else
+            {
+                int divisor = Prim();
+                if (divisor == 0)
+                    throw "Division by 0\n";
+                result /= divisor;
+            } else
                 throw "Invalid Term\n";
             last_token = tokenizer->getToken();
         }
@@ -179,8 +183,8 @@ int main(int argc, char* argv[])
         int result = calc.Expr();
         std::cout << result << std::endl;
     }
-    catch (const char*){
-        std::cout << "Invalid String\n" << std::endl;
+    catch (const char* ms){
+        std::cout << ms << std::endl;
         return 1;
     }
 
