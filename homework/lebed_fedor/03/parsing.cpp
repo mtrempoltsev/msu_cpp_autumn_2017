@@ -238,7 +238,7 @@ class Parser
             return value;
         }
 
-        throw ParsingError{_tk.token_start(), "number or subexpression expected"};
+        throw ParsingError{_tk.token_start(), "number, constant or subexpression expected"};
     }
 
 public:
