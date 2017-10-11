@@ -53,6 +53,7 @@ struct symbol {
 class Calculator {
 private:
     symbol curr_symbol;
+    int num_opened;
     char* text;
 public:
 
@@ -60,6 +61,7 @@ public:
         text = expression;
         symbol s;
         curr_symbol = s;
+        num_opened = 0;
     }
     
     double expr();
@@ -115,6 +117,14 @@ double Calculator::term() {
                 }
                 left /= d;
                 break;
+            case Token::RP:
+                if (this->num_opened == 0) {
+                    cerr << "Wrong bracket sequence" << endl;
+                    exit(1);
+                }
+                else {
+                    return left;
+                }
             default:
                 return left;
         }
@@ -133,11 +143,13 @@ double Calculator::prim() {
             return -Calculator::prim();
             
         case Token::LP:
+            this->num_opened++;
             e = expr();
             if (this->curr_symbol.tok != RP) {
                 cerr << ") needed" << endl;
                 exit(1);
             }
+            this->num_opened--;
             getToken();
             return e;
         
