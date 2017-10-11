@@ -35,21 +35,6 @@ void RDParser::_checkbrackets(const char *str){
 
 RDParser::RType RDParser::_prim(const char*& str){
 
-	std::string name = "";
-	while (std::isalpha(*str)){
-		name += std::tolower(*str++);
-	}
-
-	if (name!=""){
-		if (NamedConstants.count(name)!=0){
-			str--;
-			return NamedConstants[name];
-		}
-		else{
-			throw std::invalid_argument("Undefined constant name.");
-		}
-	}
-
 	int sign = 1;
 	if (*str == '-'){
 		if (*(str+1) == '-'){
@@ -58,6 +43,23 @@ RDParser::RType RDParser::_prim(const char*& str){
 		sign = -1;
 		str++;
 	}
+
+
+	std::string name = "";
+	while (std::isalpha(*str)){
+		name += std::tolower(*str++);
+	}
+
+	if (name!=""){
+		if (NamedConstants.count(name)!=0){
+			str--;
+			return sign*NamedConstants[name];
+		}
+		else{
+			throw std::invalid_argument("Undefined constant name.");
+		}
+	}
+
 
 	if (*str == '('){
 		return sign*_expr(++str);

@@ -7,6 +7,7 @@
 /*
 * Exit codes
 * 1: incorrect expression notation
+* 2: division by zero
 */
 
 std::unordered_map<std::string, double> Calculator::constants =
@@ -154,7 +155,11 @@ double Calculator::getTerm() {
 		if (op == Operation::mul) {
 			res *= getExtPrim();
 		} else {
-			res /= getExtPrim();
+			double d = getExtPrim();
+			if (d == 0) {
+				exit(2);
+			}
+			res /= d;
 		}
 		nextTokenPos();
 	}
