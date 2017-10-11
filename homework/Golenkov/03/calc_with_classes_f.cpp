@@ -174,13 +174,13 @@ int Calculator::processingTerms()
     }
 	while (operation == Token::Star || operation == Token::Slash || operation == Token::Number)
 	{
-	    int prim = processingPrimitives();
 		if (operation == Token::Star)
         {
-			result *= prim;
+			result *= processingPrimitives();
         }
 		else if (operation == Token::Slash)
         {
+            int prim = processingPrimitives();
             if (prim != 0)
             {
                 result /= prim;
