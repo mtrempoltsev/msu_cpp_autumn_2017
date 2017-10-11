@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SIZE=20000
+SIZE=10000
 COUNT=3
 
 make

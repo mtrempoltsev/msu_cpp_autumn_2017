@@ -3,50 +3,49 @@
 template<typename T>
 class Matrix
 {
-    T* p;
-    size_t size;
+    T* data_;
+    size_t size_;
 
     class Row
     {
-        T* q;
+        T* rowStart_;
 
     public:
-        Row(T* n)
-            : q(n)
+        Row(T* start)
+            : rowStart_(start)
         {
         }
 
-        T& operator[](size_t m)
+        T& operator[](size_t n)
         {
-            return *(q + m);
+            return *(rowStart_ + n);
         }
 
-        const T& operator[](size_t m) const
+        const T& operator[](size_t n) const
         {
-            return *(q + m);
+            return *(rowStart_ + n);
         }
     };
 
 public:
-    Matrix(size_t size_)
-        : p(new T[size_ * size_])
-        , size(size_)
+    Matrix(size_t size)
+        : data_(new T[size * size]())
+        , size_(size)
     {
-        // no initialization of p
     }
 
     ~Matrix()
     {
-        delete[] p;
+        delete[] data_;
     }
 
-    Row operator[](T n)
+    Row operator[](size_t n)
     {
-        return Row(p + n * size);
+        return Row(data_ + n * size_);
     }
 
-    Row operator[](T n) const
+    const Row operator[](size_t n) const
     {
-        return Row(p + n * size);
+        return Row(data_ + n * size_);
     }
 };
