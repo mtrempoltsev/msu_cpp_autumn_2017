@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdexcept>
+#include <cmath>
 
 using namespace std;
 
@@ -47,12 +48,12 @@ private:
     //prim = number
     //    | -number
     //number = [0-9]+
-    int prim();
+    double prim();
     
     //Функция реализует часть грамматики:
     //bkts = ( expr)
     //    | number
-    int bkts();
+    double bkts();
     
     //Функция реализует часть грамматики:
     //term = bkts
@@ -63,7 +64,7 @@ private:
     //Поля класса
     Token *token; //Токен, который сейчас обрабатывается
     char* text; //Поле, в котором хранится выражение
-    int res; //Поле, в котором хранится результат
+    double res; //Поле, в котором хранится результат
     int pos; //Поле, в котором хранится место обрабатываемого символа в строке text
 };
 
@@ -71,7 +72,7 @@ Calculator::Calculator() {
     token = (Token*)malloc(sizeof(Token*));
     *token = Token::Null;
     text = nullptr;
-    res = 0;
+    res = 0.;
     pos = 0;
 }
 
@@ -93,7 +94,7 @@ Calculator::Calculator(const char* text_) {
     if (count != 0) {
         throw invalid_argument("Bad expression!");
     }
-    res = 0;
+    res = 0.;
     pos = 0;
 }
 
@@ -108,19 +109,19 @@ void Calculator::expr() {
     }
     if (*token == Token::Plus) {
         *token = Token::Null;
-        int num = res;
+        double num = res;
         expr();
         res += num;
     } else if (*token == Token::Minus) {
         *token = Token::Null;
-        int num = res;
+        double num = res;
         expr();
         res -= num;
     }
 }
 
 int Calculator::getResult() {
-    return res;
+    return floor(res);
 }
 
 void Calculator::getToken() {
@@ -176,7 +177,7 @@ void Calculator::getToken() {
     *token = Token::End;
 }
 
-int Calculator::prim() {
+double Calculator::prim() {
     if (*token == Token::End) {
         throw invalid_argument("Bad expression!");
     }
@@ -184,11 +185,11 @@ int Calculator::prim() {
         getToken();
         if (*token == Token::Pi) {
             *token = Token::Null;
-            return -3;
+            return -3.14;
         }
         if (*token == Token::e) {
             *token = Token::Null;
-            return -2;
+            return -2.72;
         }
         if (*token != Token::Number) {
             throw invalid_argument("Bad expression!");
@@ -201,18 +202,18 @@ int Calculator::prim() {
             i++;
         }
         buf[i] = '\0';
-        int num = atoi(buf);
+        double num = atof(buf);
         free(buf);
         *token = Token::Null;
         return -num;
     }
     if (*token == Token::Pi) {
         *token = Token::Null;
-        return 3;
+        return 3.14;
     }
     if (*token == Token::e) {
         *token = Token::Null;
-        return 2;
+        return 2.72;
     }
     if (*token != Token::Number) {
         throw invalid_argument("Bad expression!");;
@@ -226,13 +227,13 @@ int Calculator::prim() {
         i++;
     }
     buf[i] = '\0';
-    int num = atoi(buf);
+    double num = atof(buf);
     free(buf);
     *token = Token::Null;
     return num;
 }
 
-int Calculator::bkts() {
+double Calculator::bkts() {
     getToken();
     if (*token == Token::BktLeft) {
         *token = Token::Null;
@@ -247,19 +248,19 @@ int Calculator::bkts() {
 }
 
 void Calculator::term() {
-    int left = bkts();
+    double left = bkts();
     if (*token == Token::Null) {
         getToken();
     }
     while ((*token == Token::Mul) || (*token == Token::Div)) {
         if (*token == Token::Mul) {
             *token = Token::Null;
-            int right = bkts();
+            double right = bkts();
             left *= right;
         } else if (*token == Token::Div) {
             *token = Token::Null;
-            int right = bkts();
-            if (right == 0) {
+            double right = bkts();
+            if (fabs(right) < 1e-20) {
                 throw invalid_argument("Bad expression!");
             }
             left /= right;
