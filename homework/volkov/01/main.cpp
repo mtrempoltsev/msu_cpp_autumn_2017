@@ -2,8 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "matrix.h"
-#include "timer.h"
+#include "Matrix.hpp"
+#include "Timer.hpp"
 
 using SumType = int;
 
