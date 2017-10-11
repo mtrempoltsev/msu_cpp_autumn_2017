@@ -24,6 +24,8 @@ public:
 		if (lex.type != LEX_FIN) {
 			throw "Incorrect ending";
 		}
+		
+		return value;
 	}
 };
 
@@ -72,6 +74,8 @@ Parser::prim()
 	} else {
 		return number();
 	}
+	
+	return 0.0;
 }
 
 double
@@ -92,4 +96,6 @@ Parser::number()
 	} else {
 		throw "wrong lexeme";
 	}
+	
+	return 0.0;
 }
