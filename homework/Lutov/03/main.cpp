@@ -36,7 +36,7 @@ private:
 
 public:
   static const int64_t ONE = static_cast<int64_t>(1) << 32;
-  static const int64_t INT_MAX = static_cast<int64_t>(1) << 63;
+  static const int64_t MINTMAX = static_cast<int64_t>(1) << 63;
 
   Fixed(int32_t integer=0, int32_t fraction=0) :
     value(integer * ONE + fraction)
@@ -66,14 +66,17 @@ public:
     this->value *= other.value;
     this->value += (remainder * (other.value / Fixed::ONE));
     this->value += (remainder * (other.value % Fixed::ONE) / Fixed::ONE);
-    std::cout << static_cast<float>(this->value) / Fixed::ONE << std::endl;
     return *this;
   }
 
   Fixed &
   operator/=(const Fixed &other) {
-    *this *= Fixed::from_value(-(Fixed::INT_MAX / other.value * 2));
-    return *this;
+    if (other.value == 0) {
+      throw std::runtime_error("Zero division");
+    } else {
+      *this *= Fixed::from_value(-(Fixed::MINTMAX / other.value * 2));
+      return *this;
+    }
   }
 
   Fixed
