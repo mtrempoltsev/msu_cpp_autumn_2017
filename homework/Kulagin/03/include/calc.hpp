@@ -10,16 +10,22 @@ using namespace std;
 class Calculator {
 
 public:
-	Calculator() {}
+	Calculator() {
+		init_constants();
+	}
+	
 	~Calculator() {}
 	
 	int eval(char* expr);	// calculate the value of input expression
 	
+	static std::unordered_map<std::string, double> constants;
+	
 private:
-	std::unordered_map<std::string, double> contants = {
-		{ "Pi", 3.14 },
-		{ "e", 2.7 }
-	};
+
+	void init_constants() {
+		constants["Pi"] = 3.14;
+		constants["e"] = 2.7;
+	}
 	
 	bool is_letter(char c) {
 		return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
