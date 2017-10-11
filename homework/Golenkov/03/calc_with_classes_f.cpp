@@ -174,13 +174,22 @@ int Calculator::processingTerms()
     }
 	while (operation == Token::Star || operation == Token::Slash || operation == Token::Number)
 	{
+	    int prim = processingPrimitives();
 		if (operation == Token::Star)
         {
-			result *= processingPrimitives();
+			result *= prim;
         }
 		else if (operation == Token::Slash)
         {
-            result /= processingPrimitives();
+            if (prim != 0)
+            {
+                result /= prim;
+            }
+            else
+            {
+                // case of the zero divisor
+                throw -2;
+            }
         }
 		else
         {
