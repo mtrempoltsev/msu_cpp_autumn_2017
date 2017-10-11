@@ -21,7 +21,7 @@ Output: -13
 При получение некорректной строки программа выводит сообщение об ошибке, например
 ```
 Input : ./calc '1-2+'
-Output: Erorr: number or subexpression expected
+Output: Erorr: number constant or subexpression expected
         1-2+
             ^
 ```
