@@ -1,6 +1,7 @@
 #include <cctype>
 #include <string>
 #include <unordered_map>
+#include <errno.h>
 
 /**
  * Describes type of token
@@ -146,6 +147,9 @@ struct ParsingError
  */
 class Parser
 {
+    using Number = int;
+    static constexpr const char *NUMBER_SCAN_FORMAT = "%d";
+    
     Tokenizer _tk;
     std::unordered_map<std::string, double> &_constants;
     double _value;
@@ -153,16 +157,21 @@ class Parser
     /**
      * parses <expr>
      */ 
-    double expr() {
-        double value = term();
+    Number expr() {
+        Number value = term();
         TokenType tt = _tk.token_type();
         while (tt == TokenType::Plus || tt == TokenType::Minus) {
+            const char *op_start = _tk.token_start();
             _tk.next_token();
             if (tt == TokenType::Plus) {
-                value += term();
+                if (__builtin_add_overflow(value, term(), &value)) {
+                    throw ParsingError{op_start, "add overflow"};
+                }
             }
             else {
-                value -= term();
+                if (__builtin_sub_overflow(value, term(), &value)) {
+                    throw ParsingError{op_start, "sub overflow"};
+                }
             }
             tt = _tk.token_type();
         }
@@ -172,16 +181,26 @@ class Parser
     /**
      * parses <term>
      */
-    double term() {
-        double value = prim();
+    Number term() {
+        Number value = prim();
         TokenType tt = _tk.token_type();
         while (tt == TokenType::Mul || tt == TokenType::Div) {
+            const char *op_start = _tk.token_start();
             _tk.next_token();
             if (tt == TokenType::Mul) {
-                value *= prim();
+                if (__builtin_mul_overflow(value, prim(), &value)) {
+                    throw ParsingError{op_start, "mul overflow"};
+                }
             }
             else {
-                value /= prim();
+                // division cannot overflow
+                Number prim_value = prim();
+                if (prim_value) {
+                    value /= prim_value;
+                }
+                else {
+                    throw ParsingError{op_start, "division by 0 detected"};
+                }
             }
             tt = _tk.token_type();
         }
@@ -191,11 +210,16 @@ class Parser
     /**
      * parses <prim>
      */
-    double prim() {
+    Number prim() {
         TokenType tt = _tk.token_type();
         if (tt == TokenType::Minus) {
+            const char *op_start = _tk.token_start();
+            Number neg_value;
             _tk.next_token();
-            return -fact();
+            if (__builtin_sub_overflow(0, fact(), &neg_value)) {
+                throw ParsingError{op_start, "unary minus overflow"};
+            }
+            return neg_value;
         }
         else {
             return fact();
@@ -205,11 +229,15 @@ class Parser
     /**
      * parses <fact>
      */
-    double fact() {
+    Number fact() {
         TokenType tt =_tk.token_type();
         if (tt == TokenType::Number) {
-            double value;
-            sscanf(_tk.token_start(), "%lg", &value);
+            Number value;
+            errno = 0;
+            sscanf(_tk.token_start(), NUMBER_SCAN_FORMAT, &value);
+            if (errno == ERANGE) {
+                throw ParsingError{_tk.token_start(), "value out of range"};
+            }
             _tk.next_token();
             return value;
         }
@@ -223,14 +251,14 @@ class Parser
                 return key_value->second;
             }
             else {
-                throw ParsingError{name_start, "unknown constant name"};
+                throw ParsingError{name_start, "unknown constant"};
             }
         }
         
         if (tt == TokenType::OpenBracket) {
             const char *open_br = _tk.token_start();
             _tk.next_token();
-            double value = expr();
+            Number value = expr();
             if (_tk.token_type() != TokenType::CloseBracket) {
                 throw ParsingError{open_br, "unmached bracket"};
             }
@@ -250,7 +278,7 @@ public:
         }
     }
 
-    double value() {
+    Number value() {
         return _value;
     }
 };
