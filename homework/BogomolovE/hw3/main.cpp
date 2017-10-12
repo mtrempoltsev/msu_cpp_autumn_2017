@@ -26,32 +26,41 @@ enum class Token // enum class cannot be cast to type int
 class Calculator
 {
 public:
-    Token token;
-    const char *prev;
+    Token token; // is for token
+    const char *prev; // is for pointing the current
     //cannot change pointed memory but  can change the pointer with effect outside of the function
     //this function gets token from string passing the spaces between tokens
-
+    int opened_brackets = 0;
     Calculator(const char *&text)
     {
 
       prev = text;
-      getToken(text);
+      getToken(text); // initialize token
 
 
     }
+    // Returns if token is end of line
     int isEnd(void)
     {
        return (token == Token::End);
     }
-
+    // Returns if token is Invalid
     int isInvalid(void)
     {
        return (token == Token::Invalid);
     }
 
+  
+    int isConstant(void)
+    {
+        return(token == Token::Constant);
+    }
+
     void getToken(const char *&text)
     {
         while (const auto c = *text++){
+          // memorize the start of the token and missing spaces
+            prev = text-1;
             switch (c){
                 case ' ': continue;
                 case '-': token = Token::Minus; return;
@@ -89,24 +98,26 @@ public:
     //this function returns primary expression
     int prim(const char *&text)
     {
+
         getToken(text);// read token
         switch (token){ // if number then take it from position prev
             case Token::Number:{
                 int number = atoi(prev);
                 getToken(text);
-                prev = text;
-
-                if (isInvalid()) throw 0; // if invalid token throw an exception
+                if (isInvalid() || isConstant()) throw 0; // if invalid token throw an exception
 
                 return number;
             }
             case Token::Minus:{
                 int number = prim(text);
-                return number;
+                return -number;
             }
             case Token::Constant:{
+                //read constant name
                 auto name = std::string(prev, text - prev);
                 auto iter = constants.find(name);
+
+                // if there's no such constant throwing an exception
                 if (iter == constants.end()){
                     throw 0;
                 }
@@ -114,21 +125,21 @@ public:
                 int number = constants[name];
 
                 getToken(text);
-                prev = text;
                 if (isInvalid()) throw 0;
 
                 return number;
             }
             case Token::LBracket: {
-                prev = text;
 
-    						int result = expr(text);
+                //calculating an expression inside the brackets
+                opened_brackets++;
+                int result = expr(text);
     						if (token != Token::RBracket) {
     							cout<<"Unbalanced brackets"<<endl;
     							throw 0;
     						}
+                opened_brackets--;
     						getToken(text);
-                prev = text;
     						return result;
             }
             default: throw 0;
@@ -149,6 +160,11 @@ public:
                     if (divisor == 0) throw 0;
                     left /= divisor;
                     break;
+                }
+                case Token::RBracket: {
+                    if (!opened_brackets){
+                          throw 0;
+                    }
                 }
                 default: return left;
             }
@@ -193,6 +209,7 @@ int main(int argc, char *argv[])
     }
     if (!calc.isInvalid()){// if token is valid then calculate an expression
         text = prev; // point main text pointer to the start of string
+        calc.prev = prev;
         try
         {
             std::cout << calc.expr(text) << std::endl;
