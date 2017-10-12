@@ -36,9 +36,9 @@ Token getToken(const char*& text) //Указатель будет сдвигат
         }
         if (c >= '0' && c <= '9')
             return Token::Number;
-        /*if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')){
+        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')){
             return Token::Const;
-        }*/
+        }
         throw std::runtime_error("Invalid Symbol"); // Вместо return Token::Invalid;
     }
     return Token::End;
@@ -54,11 +54,7 @@ public:
         std::cout << expr(expression) << std::endl;
     }
 
-    std::unordered_map<std::string, double> constants =
-            {
-                    { "Pi", 3.14 },
-                    { "e", 2.7 }
-            };
+
 private:
     int prim(const char *&text) {
         bool isPositive = true;
@@ -79,16 +75,17 @@ private:
         if (thisToken == Token::End) {
             return 0;
         }
-       /* if (thisToken == Token::Const){
+        if (thisToken == Token::Const){
             int length = 1;
-            ++text;
+            ++text ;
             while ((*text >= 'A' && *text <= 'Z') || (*text >= 'a' && *text <= 'z')) {
                 length += 1;
                 ++text;
-
             }
-            return constants[(std::string(text - length, text - 1))];
-        }*/
+            std::string* var = new std::string();
+            var->assign(text-length, length);
+            return constants.at(*var) * (2 * isPositive - 1);
+        }
         if (thisToken != Token::Number) {
             throw std::runtime_error("Syntax error");
         }
@@ -133,7 +130,8 @@ private:
             } else if (thisToken == Token::Minus) {
                 c -= term(text);
                 thisToken = getToken(text);
-            }
+            } else
+                throw std::runtime_error("Syntax error");
         }
         if (thisToken == Token::LBrace){
             throw std::runtime_error("Brace syntax error");
@@ -144,21 +142,27 @@ private:
         throw std::runtime_error("Brace syntax error");
     }
     const char* expression;
+    std::unordered_map<std::string, double> constants =
+            {
+                    { "Pi", 3.14 },
+                    { "e", 2.7 }
+            };
 
 };
 
 
 int main(int argc, char* argv[]) {
 
-    /*if(argc<2){
+    if(argc<2){
         throw std::runtime_error("No input expression");
     }
     const char* expression = argv[1];
-    std::cout << calculator::expr(expression) << std::endl;*/
-    const char* test_exp = "(2+3)*(4+5)";
-    //std::cout << calculator::expr(test_exp) << std::endl;
-    calculator* myCalc = new calculator(test_exp);
+    calculator* myCalc = new calculator(expression);
     myCalc->calculate();
+
+    /*const char* test_exp = "2 + 2";
+    calculator* myCalc = new calculator(test_exp);
+    myCalc->calculate();*/
 
 
     return 0;
