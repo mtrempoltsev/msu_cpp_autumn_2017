@@ -76,15 +76,12 @@ private:
         --text;
         if (thisToken.thisToken == Tokenizer::Token::Minus) { //Checking if number is positive/negative
             isPositive = false;
-            thisToken.updateToken(++text);
-            //thisToken = getToken(++text); //Checking what goes after subtraction symbol
+            thisToken.updateToken(++text); //Checking what goes after subtraction symbol
             --text;
         }
         if(thisToken.thisToken == Tokenizer::Token::LBrace){//If there are braces - create loop to calculate expr in braces.
             ++text;
             int c = expr(text, true);
-            //++text;
-            //thisToken = getToken(text);//Looking for the next token after RBrace
             return c * (2 * isPositive - 1);
         }
         if (thisToken.thisToken == Tokenizer::Token::End) {
@@ -97,7 +94,7 @@ private:
                 length += 1;
                 ++text;
             }
-            std::string* var = new std::string();
+            auto* var = new std::string();
             var->assign(text-length, length);
             return constants.at(*var) * (2 * isPositive - 1);
         }
@@ -175,11 +172,5 @@ int main(int argc, char* argv[]) {
     const char* expression = argv[1];
     calculator* myCalc = new calculator(expression);
     myCalc->calculate();
-
-    /*const char* test_exp = "2 + 2";
-    calculator* myCalc = new calculator(test_exp);
-    myCalc->calculate();*/
-
-
     return 0;
 }
