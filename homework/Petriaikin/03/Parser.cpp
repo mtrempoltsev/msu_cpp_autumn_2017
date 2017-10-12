@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <algorithm>
@@ -27,7 +27,7 @@ void GetExpression(std::string& expr, int count_args, char* args [])
 	{
 		expr = args [1];
 	}
-	expr.erase(std::remove(expr.begin(), expr.end(), ' '), expr.end()); //Игнорируем пробелы
+	expr.erase(std::remove(expr.begin(), expr.end(), ' '), expr.end()); //РРіРЅРѕСЂРёСЂСѓРµРј РїСЂРѕР±РµР»С‹
 
 	for (auto pair : constants_c)
 	{
@@ -44,12 +44,12 @@ int main(int count_args, char* args [])
 
 	int final_position = 0;
 	
-	try //Могут быть исключения!
+	try //РњРѕРіСѓС‚ Р±С‹С‚СЊ РёСЃРєР»СЋС‡РµРЅРёСЏ!
 	{
 		SumDifference grammar(source_str.c_str(), 0);
 		final_position = grammar.GetShift();
 
-		if (final_position != source_str.length()) //Разбор не дошел до конца - вероятно, встретился неизвестный символ
+		if (final_position != source_str.length()) //Р Р°Р·Р±РѕСЂ РЅРµ РґРѕС€РµР» РґРѕ РєРѕРЅС†Р° - РІРµСЂРѕСЏС‚РЅРѕ, РІСЃС‚СЂРµС‚РёР»СЃСЏ РЅРµРёР·РІРµСЃС‚РЅС‹Р№ СЃРёРјРІРѕР»
 		{
 			std::cout << source_str << std::endl;
 			std::cout << std::string(final_position, ' ') << '^' << std::endl;

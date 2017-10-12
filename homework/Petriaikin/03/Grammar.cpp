@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+п»ї#define _CRT_SECURE_NO_WARNINGS
 
 #include <math.h>
 
@@ -25,7 +25,7 @@ BinaryGrammarElement<NextElementType, operations>::BinaryGrammarElement (const c
 	Parse_();
 }
 
-//Без этого линкер g++ отказывается собирать
+//Р‘РµР· СЌС‚РѕРіРѕ Р»РёРЅРєРµСЂ g++ РѕС‚РєР°Р·С‹РІР°РµС‚СЃСЏ СЃРѕР±РёСЂР°С‚СЊ
 template<> SumDifference::BinaryGrammarElement(const char* str, int shift) : GrammarElement(str, shift)
 {
 	Parse_();
@@ -45,7 +45,7 @@ const BinaryOperation* BinaryGrammarElement<NextElementType, operations>::GetOpe
 template<typename NextElementType, typename operations>
 void BinaryGrammarElement<NextElementType, operations>::Parse_()
 {
-	if (string_ [shift_] == '\0') { return; } //Разбор дошел до конца
+	if (string_ [shift_] == '\0') { return; } //Р Р°Р·Р±РѕСЂ РґРѕС€РµР» РґРѕ РєРѕРЅС†Р°
 	const BinaryOperation* current_operation = nullptr;
 
 	while (true)
@@ -54,7 +54,7 @@ void BinaryGrammarElement<NextElementType, operations>::Parse_()
 		subelements_.push_back(new_element);
 		shift_ = new_element->GetShift();
 
-		if (string_ [shift_] == '\0') { break; } //Дошли до конца строки
+		if (string_ [shift_] == '\0') { break; } //Р”РѕС€Р»Рё РґРѕ РєРѕРЅС†Р° СЃС‚СЂРѕРєРё
 
 		current_operation = GetOperationFromSymbol_(string_ [shift_]);
 		if (current_operation == nullptr) { break; }
@@ -67,7 +67,7 @@ void BinaryGrammarElement<NextElementType, operations>::Parse_()
 	}
 }
 
-//Обычный прямой порядок
+//РћР±С‹С‡РЅС‹Р№ РїСЂСЏРјРѕР№ РїРѕСЂСЏРґРѕРє
 template<typename NextElementType, typename operations>
 double BinaryGrammarElement<NextElementType, operations>::GetValue() const
 {
@@ -82,7 +82,7 @@ double BinaryGrammarElement<NextElementType, operations>::GetValue() const
 	return result;
 }
 
-//Для степени: обратный порядок
+//Р”Р»СЏ СЃС‚РµРїРµРЅРё: РѕР±СЂР°С‚РЅС‹Р№ РїРѕСЂСЏРґРѕРє
 template<> double Pow::GetValue() const
 {
 	CALC_ASSERT(subelements_.size() > 0);
@@ -106,7 +106,7 @@ AtomicExpression::AtomicExpression(const char* str, int shift) : GrammarElement(
 
 void AtomicExpression::Parse_()
 {
-	//Если скобка
+	//Р•СЃР»Рё СЃРєРѕР±РєР°
 	if (string_ [shift_] == '(')
 	{
 		shift_++;
@@ -122,7 +122,7 @@ void AtomicExpression::Parse_()
 		return;
 	}
 
-	//Если число
+	//Р•СЃР»Рё С‡РёСЃР»Рѕ
 	int count_readed = 0;
 	int result = sscanf(string_+shift_, "%lf%n", &value_, &count_readed);
 	if (result == 0 || result == EOF)
@@ -141,7 +141,7 @@ double AtomicExpression::GetValue() const
 
 //=========================================================================================
 
-//Спецификация бинарной грамматики
+//РЎРїРµС†РёС„РёРєР°С†РёСЏ Р±РёРЅР°СЂРЅРѕР№ РіСЂР°РјРјР°С‚РёРєРё
 const BinaryOperations PowOperations::operations =
 {
 	{'^', [](double a, double b)
@@ -153,7 +153,7 @@ const BinaryOperations PowOperations::operations =
 const BinaryOperations MulDivOperations::operations =
 {
 	{'*', [](double a, double b) { return a * b; }},
-	{'/', [](double a, double b) //Деление на 0 требует особого внимания
+	{'/', [](double a, double b) //Р”РµР»РµРЅРёРµ РЅР° 0 С‚СЂРµР±СѓРµС‚ РѕСЃРѕР±РѕРіРѕ РІРЅРёРјР°РЅРёСЏ
 		  {
 		      if (b == 0) { throw std::invalid_argument("Dividing by zero!"); }
 			  return a / b;

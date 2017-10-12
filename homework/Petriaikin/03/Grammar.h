@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #ifndef _GRAMMAR_ELEMENT_H_
 #define _GRAMMAR_ELEMENT_H_
@@ -20,21 +20,21 @@
 //Atomic = Number <or> '(' Sum ')'
 //Number = (-)[0...9].[0...9] <or> Pi <or> e
 
-//GrammarElement строит дерево разбора. Дерево нужно, потому что некоторые операции выполняются справа налево, а некоторые слева направо
+//GrammarElement СЃС‚СЂРѕРёС‚ РґРµСЂРµРІРѕ СЂР°Р·Р±РѕСЂР°. Ж’РµСЂРµРІРѕ РЅСѓР¶РЅРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РЅРµРєРѕС‚РѕСЂС‹Рµ РѕРїРµСЂР°С†РёРё РІС‹РїРѕР»РЅВ¤СЋС‚СЃВ¤ СЃРїСЂР°РІР° РЅР°Р»РµРІРѕ, Р° РЅРµРєРѕС‚РѕСЂС‹Рµ СЃР»РµРІР° РЅР°РїСЂР°РІРѕ
 class GrammarElement
 {
 	protected:
-		const char* string_; //Строка для разбора (без смещения)
-		int shift_; //Текущее смещение
+		const char* string_; //вЂ”С‚СЂРѕРєР° РґР»В¤ СЂР°Р·Р±РѕСЂР° (Р±РµР· СЃРјРµС‰РµРЅРёВ¤)
+		int shift_; //вЂњРµРєСѓС‰РµРµ СЃРјРµС‰РµРЅРёРµ
 
-		std::vector<GrammarElement*> subelements_; //Подчиненные элементы
+		std::vector<GrammarElement*> subelements_; //С•РѕРґС‡РёРЅРµРЅРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹
 
 	protected:
-		virtual void Parse_() = 0; //Выделяет подэлементы
+		virtual void Parse_() = 0; //В¬С‹РґРµР»В¤РµС‚ РїРѕРґСЌР»РµРјРµРЅС‚С‹
 
 	public:
 		GrammarElement(const char* str, int shift);
-		virtual double GetValue() const = 0; //Возвращает значение в узле
+		virtual double GetValue() const = 0; //В¬РѕР·РІСЂР°С‰Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ РІ СѓР·Р»Рµ
 
 		int GetShift() const { return shift_; }
 
@@ -47,13 +47,13 @@ using BinaryOperationFunction = std::function<double(double, double)>;
 using BinaryOperation  = std::pair<char, BinaryOperationFunction>;
 using BinaryOperations = std::vector<BinaryOperation>;
 
-//Тип operations должен содержать статическую переменную operations типа BinaryOperations, описывающую возможные действия для правила грамматики
-//NextElementType - правило более высокого приоритета
+//вЂњРёРї operations РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ СЃС‚Р°С‚РёС‡РµСЃРєСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ operations С‚РёРїР° BinaryOperations, РѕРїРёСЃС‹РІР°СЋС‰СѓСЋ РІРѕР·РјРѕР¶РЅС‹Рµ РґРµР№СЃС‚РІРёВ¤ РґР»В¤ РїСЂР°РІРёР»Р° РіСЂР°РјРјР°С‚РёРєРё
+//NextElementType - РїСЂР°РІРёР»Рѕ Р±РѕР»РµРµ РІС‹СЃРѕРєРѕРіРѕ РїСЂРёРѕСЂРёС‚РµС‚Р°
 template<typename NextElementType, typename operations>
 class BinaryGrammarElement : public GrammarElement
 {
 	protected:
-		std::vector<BinaryOperationFunction> opetations_between_arguments_; //Запоминает операции между аргументами - из operations
+		std::vector<BinaryOperationFunction> opetations_between_arguments_; //В«Р°РїРѕРјРёРЅР°РµС‚ РѕРїРµСЂР°С†РёРё РјРµР¶РґСѓ Р°СЂРіСѓРјРµРЅС‚Р°РјРё - РёР· operations
 
 	protected:
 		virtual void Parse_();
@@ -68,7 +68,7 @@ class BinaryGrammarElement : public GrammarElement
 
 //=========================================================================================
 
-//lower_rule - правило грамматики, которое будет стоять в скобках - не получается, требуется циклический шаблон
+//lower_rule - РїСЂР°РІРёР»Рѕ РіСЂР°РјРјР°С‚РёРєРё, РєРѕС‚РѕСЂРѕРµ Р±СѓРґРµС‚ СЃС‚РѕВ¤С‚СЊ РІ СЃРєРѕР±РєР°С… - РЅРµ РїРѕР»СѓС‡Р°РµС‚СЃВ¤, С‚СЂРµР±СѓРµС‚СЃВ¤ С†РёРєР»РёС‡РµСЃРєРёР№ С€Р°Р±Р»РѕРЅ
 class AtomicExpression : public GrammarElement
 {
 	protected:
@@ -85,19 +85,19 @@ class AtomicExpression : public GrammarElement
 
 //=========================================================================================
 
-//Для добавления бинарной операции: создается структура, которая содержит BinaryOperation для передачи в BinaryGrammarElement
-//Новая спецификация BinaryGrammarElement именуется (для возможного изменения поведения, например, в случае степени - другой порядок исполнения)
+//Ж’Р»В¤ РґРѕР±Р°РІР»РµРЅРёВ¤ Р±РёРЅР°СЂРЅРѕР№ РѕРїРµСЂР°С†РёРё: СЃРѕР·РґР°РµС‚СЃВ¤ СЃС‚СЂСѓРєС‚СѓСЂР°, РєРѕС‚РѕСЂР°В¤ СЃРѕРґРµСЂР¶РёС‚ BinaryOperation РґР»В¤ РїРµСЂРµРґР°С‡Рё РІ BinaryGrammarElement
+//РЊРѕРІР°В¤ СЃРїРµС†РёС„РёРєР°С†РёВ¤ BinaryGrammarElement РёРјРµРЅСѓРµС‚СЃВ¤ (РґР»В¤ РІРѕР·РјРѕР¶РЅРѕРіРѕ РёР·РјРµРЅРµРЅРёВ¤ РїРѕРІРµРґРµРЅРёВ¤, РЅР°РїСЂРёРјРµСЂ, РІ СЃР»СѓС‡Р°Рµ СЃС‚РµРїРµРЅРё - РґСЂСѓРіРѕР№ РїРѕСЂВ¤РґРѕРє РёСЃРїРѕР»РЅРµРЅРёВ¤)
 
-//name_operation - имя класса декларируемой бинарной операции
-//next_operation - имя класса следующей по приоритету операции
-//name_struct - вспомогательное имя структуры
-//После добавления нужно инициализировать name_operation::operations в cpp файле
+//name_operation - РёРјВ¤ РєР»Р°СЃСЃР° РґРµРєР»Р°СЂРёСЂСѓРµРјРѕР№ Р±РёРЅР°СЂРЅРѕР№ РѕРїРµСЂР°С†РёРё
+//next_operation - РёРјВ¤ РєР»Р°СЃСЃР° СЃР»РµРґСѓСЋС‰РµР№ РїРѕ РїСЂРёРѕСЂРёС‚РµС‚Сѓ РѕРїРµСЂР°С†РёРё
+//name_struct - РІСЃРїРѕРјРѕРіР°С‚РµР»СЊРЅРѕРµ РёРјВ¤ СЃС‚СЂСѓРєС‚СѓСЂС‹
+//С•РѕСЃР»Рµ РґРѕР±Р°РІР»РµРЅРёВ¤ РЅСѓР¶РЅРѕ РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ name_operation::operations РІ cpp С„Р°Р№Р»Рµ
 
 #define DEFINE_BINARY_OPERATION(name_operation, next_operation, name_struct)\
 										struct name_struct {static const BinaryOperations operations;};\
 										using name_operation = BinaryGrammarElement<next_operation, name_struct>
 
-DEFINE_BINARY_OPERATION(Pow, AtomicExpression, PowOperations); //Не получается построить шаблонный AtomicExpression - циклический шаблон!
+DEFINE_BINARY_OPERATION(Pow, AtomicExpression, PowOperations); //РЊРµ РїРѕР»СѓС‡Р°РµС‚СЃВ¤ РїРѕСЃС‚СЂРѕРёС‚СЊ С€Р°Р±Р»РѕРЅРЅС‹Р№ AtomicExpression - С†РёРєР»РёС‡РµСЃРєРёР№ С€Р°Р±Р»РѕРЅ!
 DEFINE_BINARY_OPERATION(MultiplicationDivision, Pow, MulDivOperations);
 DEFINE_BINARY_OPERATION(SumDifference, MultiplicationDivision, SumDiffOperation);
 
