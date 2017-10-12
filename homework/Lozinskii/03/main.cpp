@@ -12,7 +12,10 @@ class Computer
     int compute(std::string str) {
             s = str.begin();
             end = str.end();
-            return expr();
+            int res = expr();
+            if (bracket_count != 0)
+                throw std::invalid_argument("Bracket count error");
+            return res;
         }
     using Operation = std::function<int(int, int)>;
     
@@ -33,7 +36,7 @@ class Computer
         };
 
         Striter s, end;
- 
+        int bracket_count = 0; 
         int
         expr () {
             Operation op = add;
@@ -107,6 +110,7 @@ class Computer
             int sign = 1;
             if (*s == '(') {
                 s++;
+                bracket_count++;
                 return expr();
             }
             if (*s == 'P') {
@@ -162,6 +166,7 @@ class Computer
                     op = divi;
                     return Lexem::div;
                 case ')':
+                    bracket_count--;
                     return Lexem::eof;
                 default:
                     return Lexem::nop;
