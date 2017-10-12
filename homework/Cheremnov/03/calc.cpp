@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <unordered_map>
+#include <math.h>
 #include "errcalc.h"
 
 using namespace std;
@@ -113,7 +114,7 @@ class Calculator{
 					}
 					else{
 						//If the overflow's occured, we leave the program
-						exit(process_errors(OVERFLOW));
+						exit(process_errors(OVERFLOW_CASE));
 					}
 				}
 				//If the number is above or equal zero
@@ -125,7 +126,7 @@ class Calculator{
 					}
 					else{
 						//If the overflow's occured, we leave the program
-						exit(process_errors(OVERFLOW));
+						exit(process_errors(OVERFLOW_CASE));
 					}
 				}
 			}
@@ -176,7 +177,7 @@ class Calculator{
 				}
 				else{
 					//If the overflow's occured, we leave the program
-					exit(process_errors(OVERFLOW));
+					exit(process_errors(OVERFLOW_CASE));
 				}
 			}
 			else {
@@ -222,7 +223,7 @@ class Calculator{
 				}
 				else{
 					//If the overflow's occured, we leave the program
-					exit(process_errors(OVERFLOW));
+					exit(process_errors(OVERFLOW_CASE));
 				}
 			}
 			else {
@@ -232,7 +233,7 @@ class Calculator{
 				}
 				else{
 					//If the overflow's occured, we leave the program
-					exit(process_errors(OVERFLOW));
+					exit(process_errors(OVERFLOW_CASE));
 				}
 			}
 			//Then we get another token of operation
@@ -318,6 +319,9 @@ int main(int argc, char** argv) {
 	Calculator calc = Calculator(start, finish, constants, _tok);
 	//Calculating expression
 	double res = calc.get_expression();
+	if(calc._tokenize.get_token() != Token::End){
+		exit(process_errors(MISMATCHED_BRACKET));
+	}
 	printf("%lf", res);
 	return 0;
 }

@@ -15,12 +15,14 @@ Token Tokenizer::get_token() {
                 return Token::Div;
             case '(':
                 brackets_balance_ += 2;  //при разборе мы дважды обращаемся к
-                                         //правым скобкам, поэтому левуе
-                                         //учитываем с двойным весом
+                //правым скобкам, поэтому левые
+                //учитываем с двойным весом
+                // cout<<brackets_balance_<<c<<endl;
                 return Token::LBracket;
             case ')':
 
                 brackets_balance_--;
+                // cout<<brackets_balance_<<c<<endl;
                 return Token::RBracket;
         }
 
@@ -32,11 +34,7 @@ Token Tokenizer::get_token() {
         } else
             return Token::Invalid;
     }
-    if (brackets_balance_ != 0) {
-        cout << message << endl;
-        cerr << "Imbalanced brackets\n";
-        exit(1);
-    }
+
     return Token::End;
 }
 
@@ -77,8 +75,24 @@ void Tokenizer::check_pointer() {
         exit(1);
     }
 }
+void Tokenizer::check_balance() {
+    if (brackets_balance_ != 0) {
+        cout << message << endl;
+        cerr << "Imbalanced brackets\n";
+        exit(1);
+    }
+}
 
-int Parser::calculate() { return parse_expression(); }
+int Parser::calculate() {
+    int value = parse_expression();
+    tokenizer_.check_balance();
+    if (reached_end_ == 0) {
+        cout << message << endl;
+        cerr << "Extra characters\n";
+        exit(1);
+    }
+    return value;
+}
 
 //выделяем целые числа
 int Parser::parse_primary() {
@@ -158,6 +172,9 @@ int Parser::parse_expression() {
             cout << message << endl;
             cerr << "Incorrect symbol\n";
             exit(1);
+        case Token::End:
+            reached_end_ = 1;
+            return left;
         default:
             return left;
     }

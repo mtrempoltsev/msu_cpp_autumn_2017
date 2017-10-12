@@ -20,17 +20,19 @@ enum class Token {
 };
 
 extern const char* message;
-//отвечает за техническую работу по извлечению токенов из строки, считыванию чисел и констант посимвольно
+//отвечает за техническую работу по извлечению токенов из строки, считыванию
+//чисел и констант посимвольно
 class Tokenizer {
    public:
     Tokenizer(char* input, unordered_map<string, double> constants)
         : input_(input), constants_(constants) {}
-    
-    Token get_token(); 
-    void token_back(); 
-    int read_number(); 
+
+    Token get_token();
+    void token_back();
+    int read_number();
     int read_constant();
     void check_pointer();
+    void check_balance();
 
    private:
     char* input_;
@@ -47,6 +49,7 @@ class Parser {
 
    private:
     Tokenizer tokenizer_;
+    int reached_end_ = 0;
 
     int parse_primary();
     int parse_term();

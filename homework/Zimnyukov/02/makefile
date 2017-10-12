@@ -1,3 +1,3 @@
 OPTIONS = -std=gnu++14
-hello: main.cpp
-	g++ main.cpp -o hello $(OPTIONS)
+calc: main.cpp
+	g++ main.cpp -o calc $(OPTIONS)
