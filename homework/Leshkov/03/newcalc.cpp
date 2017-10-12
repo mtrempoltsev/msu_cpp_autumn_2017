@@ -110,7 +110,6 @@ void strperform(char* arg, char* str){
 		cout<<"Check parens\n";
 		throw '1';
 	}
-	cout<<str<<endl;
 	return;
 }
 
