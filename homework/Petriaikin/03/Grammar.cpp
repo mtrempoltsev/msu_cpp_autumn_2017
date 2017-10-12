@@ -123,6 +123,11 @@ void AtomicExpression::Parse_()
 	}
 
 	//Если число
+	//Запретить унарный плюс
+	if (string_ [shift_] == '+')
+	{
+		throw std::logic_error("Unary plus is prohibited");
+	}
 	int count_readed = 0;
 	int result = sscanf(string_+shift_, "%lf%n", &value_, &count_readed);
 	if (result == 0 || result == EOF)
