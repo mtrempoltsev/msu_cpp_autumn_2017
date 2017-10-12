@@ -22,7 +22,7 @@ enum class Token {
 using Lexem = std::pair<Token, std::string>;
 using Lexems = std::vector<Lexem>;
 
-class Fixed {
+class Fixed { // Fixed point arithmetic
 private:
   int64_t value;
 
@@ -36,7 +36,7 @@ private:
 
 public:
   static const int64_t ONE = static_cast<int64_t>(1) << 32;
-  static const int64_t MINTMAX = static_cast<int64_t>(1) << 63;
+  static const int64_t MINTMAX = static_cast<int64_t>(1) << 63; // This number used for devision hack
 
   Fixed(int32_t integer=0, int64_t fraction=0) :
     value(integer * ONE + fraction)
@@ -61,6 +61,8 @@ public:
 
   Fixed &
   operator*=(const Fixed &other) {
+    // Hard multiply algorithm. It needs to stay in int64_t type.
+    // ai.af * bi.bf = ai * bi.bf + 0.af * bi + 0.af * 0.bf
     auto remainder = this->value % Fixed::ONE;
     this->value /= Fixed::ONE;
     this->value *= other.value;
@@ -71,10 +73,11 @@ public:
 
   Fixed &
   operator/=(const Fixed &other) {
+    // a / b = a * (1 / b)
     if (other.value == 0) {
       throw std::runtime_error("Zero division");
     } else {
-      *this *= Fixed::from_value(-(Fixed::MINTMAX / other.value * 2));
+      *this *= Fixed::from_value(-(Fixed::MINTMAX / other.value * 2)); // * 1 / other
       return *this;
     }
   }
