@@ -146,6 +146,10 @@ private:
 	int get_term()
   {
 		int result = get_item();
+		if (tokenizer.getCurrentToken() == Token::Word)
+		{
+			throw runtime_error("Error");
+		}
 		while ((tokenizer.getCurrentToken() == Token::Plus) || (tokenizer.getCurrentToken() == Token::Minus))
     {
 			if (tokenizer.getCurrentToken() == Token::Plus)
@@ -227,6 +231,10 @@ private:
 				tokenizer.getToken();
 				return 2.71 * sign;
 			}
+			else
+			{
+				throw runtime_error("Error");
+			}
 		}
 		throw runtime_error("Error");
 		return 0;
@@ -251,7 +259,6 @@ int main(int argc, char const *argv[])
 	}
   catch (const runtime_error& e)
   {
-		//cout  << e.what() << endl;
 		return 1;
 	}
 	return 0;
