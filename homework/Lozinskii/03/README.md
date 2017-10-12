@@ -27,7 +27,5 @@ make
     <expr> ::= <term>|<expr> + <term>|<expr> - <term>
     <term> ::= <prim>|<term> * <prim>|<term> / <prim>
     <prim> ::= <number>|-<number>
-    <number> ::= <digit>|<number><digit>|(<expr>)
+    <number> ::= <digit>|<number><digit>|(<expr>)|Pi|e
     <digit> ::= 0|1|2|3|4|5|6|7|8|9
-
-Также можно использовать константы Pi и e
