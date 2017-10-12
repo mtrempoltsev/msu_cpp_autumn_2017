@@ -57,11 +57,10 @@ TExitCode TTokenizer::IsValidExpr(const char* expr) {
     size_t cntBrackets = 0;
     std::string buf;
     while (prevCh) {
-        if (prevCh == ' ')
-            continue;
         if ((prevCh >= 'a' && prevCh <= 'z') || (prevCh >= 'A' && prevCh <= 'Z'))
-            buf += prevCh;
-        else break;
+            buf += prevCh;            
+        else if (prevCh != ' ')
+            break;
         prevCh = *expr++;
     }
     if (buf.length() > 0) {
@@ -76,7 +75,7 @@ TExitCode TTokenizer::IsValidExpr(const char* expr) {
             cntOperators++;
         if (prevCh == '(')
             cntBrackets++;
-        while (const auto ch = *expr++) {            
+        while (const auto ch = *expr++) {   
             switch (ch) {
                 case ' ': continue;
                 case '-': 

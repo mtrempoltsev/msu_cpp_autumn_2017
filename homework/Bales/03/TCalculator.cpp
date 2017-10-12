@@ -7,7 +7,6 @@ double TCalculator::ToCalculate(const char* expr) {
     if (exitCode != TExitCode::OK) { 
         throw ExitCodeException(exitCode);
     }
-    
     TTokenizer* tokenizer = new TTokenizer(expr);
     auto res = _Expr(tokenizer);
     delete tokenizer;
