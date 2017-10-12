@@ -9,7 +9,7 @@ enum
 	INVALID_NUMBER_OF_ARGUMENTS = 1,
 	
 	//Error when overflow occures
-	OVERFLOW = 2,
+	OVERFLOW_CASE = 2,
 	
 	//Error when user enters wrong expression
 	INVALID_EXPRESSION = 3,
@@ -32,9 +32,9 @@ int process_errors(int errcode)
 		case INVALID_NUMBER_OF_ARGUMENTS:
 			std::cout << "You've entered invalid number of command line arguments" << std::endl;
 			return INVALID_NUMBER_OF_ARGUMENTS; 
-		case OVERFLOW:
-			std::cout << "The calculator can't calculate this expression due to overflow" << std::endl;
-			return OVERFLOW;
+		case OVERFLOW_CASE:
+			std::cout << "The calculator can't calculate this expression due to OVERFLOW_CASE" << std::endl;
+			return OVERFLOW_CASE;
 		case INVALID_EXPRESSION:
 			std::cout << "Invalid construction of expression" << std::endl;
 			return INVALID_EXPRESSION;

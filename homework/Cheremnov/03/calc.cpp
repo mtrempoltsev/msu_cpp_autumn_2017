@@ -113,7 +113,7 @@ class Calculator{
 					}
 					else{
 						//If the overflow's occured, we leave the program
-						exit(process_errors(OVERFLOW));
+						exit(process_errors(OVERFLOW_CASE));
 					}
 				}
 				//If the number is above or equal zero
@@ -125,7 +125,7 @@ class Calculator{
 					}
 					else{
 						//If the overflow's occured, we leave the program
-						exit(process_errors(OVERFLOW));
+						exit(process_errors(OVERFLOW_CASE));
 					}
 				}
 			}
@@ -176,7 +176,7 @@ class Calculator{
 				}
 				else{
 					//If the overflow's occured, we leave the program
-					exit(process_errors(OVERFLOW));
+					exit(process_errors(OVERFLOW_CASE));
 				}
 			}
 			else {
@@ -222,7 +222,7 @@ class Calculator{
 				}
 				else{
 					//If the overflow's occured, we leave the program
-					exit(process_errors(OVERFLOW));
+					exit(process_errors(OVERFLOW_CASE));
 				}
 			}
 			else {
@@ -232,7 +232,7 @@ class Calculator{
 				}
 				else{
 					//If the overflow's occured, we leave the program
-					exit(process_errors(OVERFLOW));
+					exit(process_errors(OVERFLOW_CASE));
 				}
 			}
 			//Then we get another token of operation
