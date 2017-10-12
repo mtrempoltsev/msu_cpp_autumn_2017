@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <cstdlib>
 using namespace std;
+
+
 /*
 	Grammar:
  S -> D{+D} | D{-D}
@@ -10,7 +12,6 @@ using namespace std;
  T -> -N | N
  N -> [0-9] {[0-9]}
 */
-
 int S(const char* s, int &i);
 int D(const char* s, int &i);
 int T(const char* s, int &i);
@@ -28,13 +29,12 @@ int main(int argc, char* argv[]){
 	//Сhecking amount of Аrgs
 	int i=0;
 	int j=0;
-	char* str=(char*)malloc(strlen(argv[1]+2));
+	char* str=(char*)malloc(strlen(argv[1])+1);
 	for(i=0; i<strlen(argv[1]); i++){
 		if(argv[1][i]!=' ')
 			str[j++]=argv[1][i];
 	}
-	
-	str[j] == '\0';
+	str[j] = '\0';
 	//Making input string without spaces
 
 
