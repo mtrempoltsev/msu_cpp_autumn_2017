@@ -71,9 +71,9 @@ int get_prim(const char *&s, int &err, int op_allowed)
     if (*s == '(') {
         s++;
         int k = get_expr(s, err, 1);
-        if (err) {
-            return 0;
-        }
+//        if (err) {
+//            return 0;
+//        }
         if (m_flag) {
             if (k == INT_MAX) {
                 err = 1;
@@ -128,9 +128,9 @@ int get_term(const char *&s, int &err, int flag)
     int op1 = 0;
     op1 = get_prim(s, err, flag);
     //cout << op1 << '\n';
-    if (err) {
-        return 0;
-    }
+//    if (err) {
+//        return 0;
+//    }
     skip_spaces(s);
     while (is_mult_op(s)) {
         int flag = 0;
@@ -140,9 +140,9 @@ int get_term(const char *&s, int &err, int flag)
         s++;
         int op2 = get_prim(s, err, 1);
         //cout << op2 << '\n';
-        if (err) {
-            return 0;
-        }
+//        if (err) {
+//            return 0;
+//        }
         if (flag) {
             if ((op1 != INT_MIN || op2 != -1) && op2) {
                 op1 /= op2;
@@ -164,14 +164,14 @@ int get_term(const char *&s, int &err, int flag)
 int get_expr(const char *&s, int &err, int flag)
 {
     int op1 = get_term(s, err, 1);
-    if (err) {
-        return 0;
-    }
+//    if (err) {
+//        return 0;
+//    }
     while (is_add_op(s)) {
         int op2 = get_term(s, err, 2);
-        if (err) {
-            return 0;
-        }
+//        if (err) {
+//            return 0;
+//        }
         if (__builtin_add_overflow(op1, op2, &op1)) {
             err = 1;
             exit(1);
@@ -206,7 +206,7 @@ int get_expr(const char *&s, int &err, int flag)
 int main(int argc, char *argv[])
 {
     if (argc != 2) {
-        cout << "Wrong format\n";
+       // cout << "Wrong format\n";
         exit(1);
     }
     char error_desc[4][30] = {
