@@ -1,4 +1,7 @@
-#include<iostream>
+#include <iostream>
+#include <unordered_map>
+#include <cstring>
+
 enum class Token
 {
     Minus,
@@ -43,7 +46,21 @@ Token getToken(const char*& text) //Указатель будет сдвигат
 
 class calculator {
 public:
-    static int prim(const char *&text) {
+    calculator(const char *&text){
+        expression = text;
+    }
+
+    int calculate(){
+        std::cout << expr(expression) << std::endl;
+    }
+
+    std::unordered_map<std::string, double> constants =
+            {
+                    { "Pi", 3.14 },
+                    { "e", 2.7 }
+            };
+private:
+    int prim(const char *&text) {
         bool isPositive = true;
         Token thisToken = getToken(text);
         --text;
@@ -62,6 +79,16 @@ public:
         if (thisToken == Token::End) {
             return 0;
         }
+       /* if (thisToken == Token::Const){
+            int length = 1;
+            ++text;
+            while ((*text >= 'A' && *text <= 'Z') || (*text >= 'a' && *text <= 'z')) {
+                length += 1;
+                ++text;
+
+            }
+            return constants[(std::string(text - length, text - 1))];
+        }*/
         if (thisToken != Token::Number) {
             throw std::runtime_error("Syntax error");
         }
@@ -76,7 +103,7 @@ public:
 
     }
 
-    static int term(const char *&text) {
+    int term(const char *&text) {
         int c = prim(text);
         Token thisToken = getToken(text);
         while (thisToken == Token::Mul || thisToken == Token::Div) {
@@ -96,7 +123,7 @@ public:
     }
 
 
-    static int expr(const char *&text, bool fromPrim = false) {
+    int expr(const char *&text, bool fromPrim = false) {
         int c = term(text);
         Token thisToken = getToken(text);
         while (thisToken != Token::End && thisToken != Token::RBrace && thisToken != Token::LBrace) {
@@ -116,21 +143,22 @@ public:
         }
         throw std::runtime_error("Brace syntax error");
     }
-
+    const char* expression;
 
 };
 
 
 int main(int argc, char* argv[]) {
 
-    if(argc<2){
+    /*if(argc<2){
         throw std::runtime_error("No input expression");
     }
     const char* expression = argv[1];
-    std::cout << calculator::expr(expression) << std::endl;
-
-    /*const char* test_exp = "(2+3)(4+5";
-    std::cout << calculator::expr(test_exp) << std::endl;*/
+    std::cout << calculator::expr(expression) << std::endl;*/
+    const char* test_exp = "(2+3)*(4+5)";
+    //std::cout << calculator::expr(test_exp) << std::endl;
+    calculator* myCalc = new calculator(test_exp);
+    myCalc->calculate();
 
 
     return 0;

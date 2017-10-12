@@ -17,8 +17,8 @@ enum symbol{
 	number,
 	exp,
 	Pi,
-	left,
-	right,
+	open_br,
+	close_br,
 	wrong,
 	end
 };
@@ -58,10 +58,10 @@ symbol Calculator::next(){  //смотрим какой объект сейча�
 		s_prev=s;
 		switch (curr){
 			case ' ': continue;
-			case '(': return symbol::left;
-			case ')': return symbol::right;
+			case '(': return symbol::open_br;
+			case ')': return symbol::close_br;
 			case '+': {
-					if (s_prev==symbol::left){
+					if (s_prev==symbol::open_br){
 						cerr<<"Wrong input (+"<<endl;
 						exit(5);
 					}
@@ -69,14 +69,14 @@ symbol Calculator::next(){  //смотрим какой объект сейча�
 			}
 			case '-': return symbol::minus;
 			case '*': {
-					if (s_prev==symbol::left){
+					if (s_prev==symbol::open_br){
 						cerr<<"Wrong input (*"<<endl;
 						exit(5);
 					}
 					return symbol::multiply;
 			}
 			case '/': {
-					if (s_prev==symbol::left){
+					if (s_prev==symbol::open_br){
 						cerr<<"Wrong input (/"<<endl;
 						exit(5);
 					}
@@ -106,8 +106,8 @@ symbol Calculator::next(){  //смотрим какой объект сейча�
 int Calculator::expr() //разбиваем на слагаемые
 {
 	int res=term(inverse=0);
-	if (s==symbol::right){
-		s_prev=symbol::right;
+	if (s==symbol::close_br){
+		s_prev=symbol::close_br;
 		bracket_count--;
 		return res;
 	}
@@ -161,7 +161,7 @@ int Calculator::term(int inverse) //разбиваем на множители
 		}
 
 	}
-	if (s==symbol::right)
+	if (s==symbol::close_br)
 		return res;
 	--input; //могли считать + или -, а не * или / => возвращаем в input
 	return res;
@@ -171,32 +171,37 @@ int Calculator::prim() //считывание числа
 {
 	s=next();
 	int res=0;
-	if ((s_prev!=symbol::left)&&(s_prev!=symbol::right)){
+	if ((s_prev!=symbol::close_br)&&(s_prev!=symbol::open_br)){
 		if ((s==symbol::plus)||(s==symbol::divide)||(s==symbol::multiply)){ 
 			cerr<<"Two or more operations is a row"<<endl; //проверяем, что подряд не идут операции, или операция и )
 			exit(3);
 		}
-		if (s==symbol::right){
+		if (s==symbol::close_br){
 			cerr<<"Operation and ) in a row"<<endl;
 			exit(5);
 		}
 	}
-		if (s==symbol::number) {
-			input--;
-			char currs=*input;
-			while ((currs>='0')&&(currs<='9')){
-				res = res * 10 + currs - '0'; //переводим из char в int
-				currs=*++input;
-			if (currs=='\0')
-				s=symbol::end;
-			}
-			return res;
+	if ((s_prev==symbol::open_br)&&(s==symbol::close_br)){
+		cerr<<"Nothing in brackets"<<endl;
+		exit(6);
+	}
+	if (s==symbol::number) {
+		input--;
+		char currs=*input;
+		while ((currs>='0')&&(currs<='9')){
+			res = res * 10 + currs - '0'; //переводим из char в int
+			currs=*++input;
+		if (currs=='\0')
+			s=symbol::end;
 		}
-		if (s==symbol::minus)  return -prim(); 
-		if (s==symbol::exp)  return constants["exp"];
-		if (s==symbol::Pi)  return constants["Pi"];
-		if (s==symbol::left)  {bracket_count++;res=expr(); return res;}
-		if (s==symbol::right) {bracket_count--;return res;}
+		return res;
+	}
+	if (s==symbol::minus)  return -prim(); 
+	if (s==symbol::exp)  return constants["e"];
+	if (s==symbol::Pi)  return constants["Pi"];
+	if (s==symbol::open_br)  {bracket_count++;res=expr(); return res;}
+	if (s==symbol::close_br) {bracket_count--;return res;}
+
 	return res;
 }
 
