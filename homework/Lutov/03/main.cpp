@@ -38,7 +38,7 @@ public:
   static const int64_t ONE = static_cast<int64_t>(1) << 32;
   static const int64_t MINTMAX = static_cast<int64_t>(1) << 63;
 
-  Fixed(int32_t integer=0, int32_t fraction=0) :
+  Fixed(int32_t integer=0, int64_t fraction=0) :
     value(integer * ONE + fraction)
   {
   }
