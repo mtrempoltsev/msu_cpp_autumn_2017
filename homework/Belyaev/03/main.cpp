@@ -64,7 +64,7 @@ public:
         expression = text;
     }
 
-    int calculate(){
+    void calculate(){
         std::cout << expr(expression) << std::endl;
     }
 
