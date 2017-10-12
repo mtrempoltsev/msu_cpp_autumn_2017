@@ -147,7 +147,7 @@ double Calc::N(){
 	if (((s[i]<'0')||(s[i]>'9'))
 		&&(s[i]!='P')&&(s[i]!='e')){
 		
-		cout<< "Invalid Syntax N\n";
+		cout<< "Invalid Syntax N: "<<s[i]<<endl;
 		throw s[i];
 		//Исключает тройные минусы
 	}
