@@ -44,6 +44,9 @@ int process_errors(int errcode)
 		case INVALID_CONSTANT:
 			std::cout << "Invalid constant is entered" << std::endl;
 			return INVALID_CONSTANT;
+		case MISMATCHED_BRACKET:
+			std::cout << "Mismatched brackets are found" << std::endl;
+			return MISMATCHED_BRACKET;
 		default:
 			//If errcode doesn't match any error code
 			std::cout << "Unexpected error. Aborting program execution" << std::endl;

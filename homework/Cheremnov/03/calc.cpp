@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <unordered_map>
+#include <math.h>
 #include "errcalc.h"
 
 using namespace std;
@@ -318,6 +319,9 @@ int main(int argc, char** argv) {
 	Calculator calc = Calculator(start, finish, constants, _tok);
 	//Calculating expression
 	double res = calc.get_expression();
+	if(calc._tokenize.get_token() != Token::End){
+		exit(process_errors(MISMATCHED_BRACKET));
+	}
 	printf("%lf", res);
 	return 0;
 }
