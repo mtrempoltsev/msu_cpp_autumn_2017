@@ -14,7 +14,7 @@
 int error(const char* err_msg)
 {
 	std::cerr << err_msg << std::endl;
-	return 1;
+	exit(1);
 }
 
 enum class Token

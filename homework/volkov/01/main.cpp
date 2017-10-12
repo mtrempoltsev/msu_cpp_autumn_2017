@@ -2,8 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "matrix.h"
-#include "timer.h"
+#include "Matrix.hpp"
+#include "Timer.hpp"
 
 using SumType = int;
 
@@ -12,16 +12,32 @@ inline SumType fill(size_t i)
     return i * i;
 }
 
+[[noreturn]] void usage(const char* cmd)
+{
+    using namespace std;
+
+    cerr << "usage: " << cmd << " <N> <col|row>" << endl;
+    exit(1);
+}
+
 int main(int argc, char* argv[])
 {
     using namespace std;
 
     if (argc != 3) {
-        cerr << "usage: " << argv[0] << " <N> <col|row>" << endl;
-        exit(1);
+        usage(argv[0]);
     }
+
     size_t size = atoi(argv[1]);
-    bool byColumn = string("col") == argv[2];
+
+    bool byColumn = false;
+    if (string("col") == argv[2]) {
+        byColumn = true;
+    } else if (string("row") == argv[2]) {
+        byColumn = false;
+    } else {
+        usage(argv[0]);
+    }
 
     Matrix<SumType> array(size);
 

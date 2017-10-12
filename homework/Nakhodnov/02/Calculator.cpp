@@ -151,9 +151,12 @@ char * getExpr(char *S, lli &value) {
 
 int main(int argc, char *argv[])
 {
-    if(argc != 2) printError(string("Incorrect amount of arguments"));
+    /*if(argc != 2) printError(string("Incorrect amount of arguments"));
     lli value;
-    getExpr(argv[1], value);
+    getExpr(argv[1], value);*/
+    string b;
+    cin.getline(b);
+    getExpr(b.c_str());
     cout << value << endl;
     return 0;
 }
