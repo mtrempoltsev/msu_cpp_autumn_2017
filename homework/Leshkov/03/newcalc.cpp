@@ -144,6 +144,14 @@ int Calc::M(){
 
 double Calc::N(){
 	double num=0;
+	if (((s[i]<'0')||(s[i]>'9'))
+		&&(s[i]!='P')&&(s[i]!='e')){
+		
+		cout<< "Invalid Syntax N\n";
+		throw s[i];
+		//Исключает тройные минусы
+	}
+	
 	if ((s[i]=='P')&&(s[i+1]=='i')){
 		i+=2;
 		return 3.14;
