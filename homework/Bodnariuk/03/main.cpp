@@ -28,11 +28,11 @@ int main(int argc, char* argv[])
                 case ERR_ZERO_DIV:
                     cout << "Zero division error!" << '\n';
                     break;
-                case ERR_UNKNOWN_SYMBOL:
-                    cout << "The program processes an arithmetic expression of integers!" << '\n';
+                case ERR_UNBALANCED_PAR:
+                    cout << "Parentheses unbalanced!" << '\n';
                     break;
                 case ERR_BAD_STRUCTURE:
-                    cout << "This is not an arithmetic expression!" << '\n';
+                    cout << "The program processes an arithmetic expression of integers!" << '\n';
                     break;
             }
             error_while_processing = true;

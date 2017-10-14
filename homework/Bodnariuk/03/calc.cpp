@@ -8,12 +8,19 @@
 
 using namespace std;
 
+std::unordered_map<std::string, double> constants =
+   {
+       { "Pi", 3.14 },
+       { "e", 2.7 }
+   };
+
 int digit(char c) {
     return int(c) - '0';
 }
 
 double Calc::calculate(char* data) {
     _data = data;
+    _expr_level = 0;
 
     return expression(0, true);
 }
@@ -26,7 +33,7 @@ int Calc::skip_blanks(int start) {
     return start;
 }
 
-int Calc::number(int start, int len) {
+double Calc::number(int start, int len) {
     int accumulator = 0;
     int i = skip_blanks(start);
     bool negative = _data[i] == '-';
@@ -34,8 +41,18 @@ int Calc::number(int start, int len) {
         ++i;
         i = skip_blanks(i);
     }
+
     if(i == len) {
         throw ERR_BAD_STRUCTURE;
+    }
+
+    switch (_data[i]) {
+        case 'e':
+            return constants["e"];
+        case 'P':
+            if(_data[i + 1] == 'i') {
+                return constants["Pi"];
+            }
     }
 
     while(i < len && _data[i] != ' ')
