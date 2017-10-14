@@ -35,6 +35,14 @@ void deleteSpace(char* src) {
 			dets++;
 }
 
+//Unary minus
+int prim(char*& str) { 
+	if (*str == '-') { 
+		++str;
+		return -number(str);
+	}
+	return number(str);
+}
 
 int main(int argc, char* argv[]) {
 	if (argc != 2) { 
@@ -86,15 +94,6 @@ int _expr(char*& str, int left_operand) {
 	else { // another operand
 		return  _expr(str, select_operation(left_operand, right_operand, operation));
 	}
-}
-
-//Unary minus
-int prim(char*& str) { 
-	if (*str == '-') { 
-		++str;
-		return -number(str);
-	}
-	return number(str);
 }
 
 int term(char*& str) {
