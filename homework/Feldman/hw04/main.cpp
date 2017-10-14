@@ -57,6 +57,7 @@ void checkGetSet()
 		//m2 == m3;	
 		//m2 != m3;
 		//m3 *= v1;
+		//Тут должен вызваться assert
 	}
 	catch (const char* msg) {
 		std::cout << msg;
