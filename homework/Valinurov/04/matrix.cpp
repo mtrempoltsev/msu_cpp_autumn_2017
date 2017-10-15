@@ -43,11 +43,6 @@ public:
                 matr_[i][j] = right.matr_[i][j];
     }
 
-    ~Matrix()
-    {
-        matr_.clear();
-    }
-
     Matrix_row operator[](size_t ind)
     {
         if (ind < 0 || ind >= nrow_)
