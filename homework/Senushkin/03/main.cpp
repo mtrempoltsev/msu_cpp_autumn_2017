@@ -8,6 +8,7 @@ int main(int argc, char * argv[]){
 	}
 	catch(const std::invalid_argument& e){
 		std::cout << e.what() << std::endl;
+		exit(1);
 	}
 
 	return 0;

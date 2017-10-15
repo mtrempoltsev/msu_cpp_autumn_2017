@@ -40,7 +40,7 @@ tuple<int, double> num(string& str, int end) {
 }
 
 tuple<int, double> prim(string& str, int end) {
-    if (str[end] >= '0' && str[end] <= '9') {
+    if(str[end] >= '0' && str[end] <= '9') {
         tuple<int, double> tmp = num(str, end);
         if(str[get<0>(tmp)] != '-') {
             return make_tuple(get<0>(tmp), get<1>(tmp));
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
         cout << "no arguments" << endl;
         return -1;
     }
-    string str = "";
+    string str = "0";
     int len = strlen(argv[1]);
     for(int i = 0; i < len; i++) {
         if(!isspace(argv[1][i])) {

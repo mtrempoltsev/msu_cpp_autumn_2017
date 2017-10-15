@@ -127,7 +127,6 @@ private:
 				}
 				++norb;  // Increase the number of right braces
 				if (norb > nolb){
-					cout << norb << " " << nolb << endl;
 					cout << "Incorrect input data10" << endl;
 					help();
 					exit(-1);
@@ -135,7 +134,7 @@ private:
 				return s;
 			}
 			else if (token == Token::Plus){
-				int r = calc(1);
+				double r = calc(1);
 				if (st == "unary minus"){
 					cout << "Incorrect input data3" << endl;
 					help();

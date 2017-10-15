@@ -56,15 +56,18 @@ private:
                                 return 3.14;
                             }
                         }
-                        else //если число
-                        {
-                            while (counter < str.length() && str[counter] <= '9' && str[counter] >= '0')
+                        else
+                           if (counter < str.length() && isdigit(str[counter])) 
                             {
-                                res = res * 10 + (str[counter] - '0');
-                                counter++;
+                                while (counter < str.length() && str[counter] <= '9' && str[counter] >= '0')
+                                {
+                                    res = res * 10 + (str[counter] - '0');
+                                    counter++;
+                                }
+                                return res;
                             }
-                            return res;
-                        }
+                            else
+                                throw "Invalid expression";
         return 1;
     }
 

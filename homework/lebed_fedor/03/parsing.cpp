@@ -1,7 +1,11 @@
 #include <cctype>
 #include <string>
 #include <unordered_map>
+#include <errno.h>
 
+/**
+ * Describes type of token
+ */
 enum class TokenType
 {
     OpenBracket,
@@ -19,12 +23,18 @@ enum class TokenType
     End
 };
 
+/**
+ * Presents string as sequence of token
+ */
 class Tokenizer
 {
     const char *_token_start;
     const char *_token_end;
-
     TokenType _token_type;
+
+    /**
+     * sets _token_end to end of numeric token
+     */
     void scan_number() {
         const char *p = _token_start;
         while (std::isdigit(*p)) {
@@ -33,6 +43,9 @@ class Tokenizer
         _token_end = p;
     }
 
+    /**
+     * sets _token_end to end of constant token
+     */
     void scan_constant() {
         const char *p  = _token_start;
         while (std::isalpha(*p)) {
@@ -40,7 +53,10 @@ class Tokenizer
         }
         _token_end = p;
     }
-    
+
+    /**
+     * returns token type based on it's first character
+     */    
     TokenType get_token_type(char c) {
         switch (c) {
         case '(': return TokenType::OpenBracket;
@@ -82,6 +98,9 @@ public:
         return _token_type;
     }
 
+    /**
+     * changes focus to next token
+     */
     void next_token() {
         _token_start = _token_end;
         while (std::isspace(*_token_start)) {
@@ -108,80 +127,138 @@ public:
     }
 };
 
+/**
+ * Describes errors which can occure during parsing
+ */
 struct ParsingError
 {
     const char *point;
     const char *msg;
 };
 
+/**
+ * parses & evaluates string during initialization
+ * throws ParsingError if failed 
+ * Grammar is
+ * <expr> ::= <term> | <expr> + <term> | <expr> - <term>
+ * <term> ::= <prim> | <term> * <prim> | <term> / <prim>
+ * <prim> ::= <factor> | - <factor>
+ * <factor> ::= <number> | <constant> | ( <expr> )
+ */
 class Parser
 {
+    using Number = int;
+    static constexpr const char *NUMBER_SCAN_FORMAT = "%d";
+    
     Tokenizer _tk;
     std::unordered_map<std::string, double> &_constants;
     double _value;
-    
-    double expr() {
-        double value = term();
+
+    /**
+     * parses <expr>
+     */ 
+    Number expr() {
+        Number value = term();
         TokenType tt = _tk.token_type();
         while (tt == TokenType::Plus || tt == TokenType::Minus) {
+            const char *op_start = _tk.token_start();
             _tk.next_token();
             if (tt == TokenType::Plus) {
-                value += term();
+                if (__builtin_add_overflow(value, term(), &value)) {
+                    throw ParsingError{op_start, "add overflow"};
+                }
             }
             else {
-                value -= term();
+                if (__builtin_sub_overflow(value, term(), &value)) {
+                    throw ParsingError{op_start, "sub overflow"};
+                }
             }
             tt = _tk.token_type();
         }
         return value;
     }
 
-    double term() {
-        double value = prim();
+    /**
+     * parses <term>
+     */
+    Number term() {
+        Number value = prim();
         TokenType tt = _tk.token_type();
         while (tt == TokenType::Mul || tt == TokenType::Div) {
+            const char *op_start = _tk.token_start();
             _tk.next_token();
             if (tt == TokenType::Mul) {
-                value *= prim();
+                if (__builtin_mul_overflow(value, prim(), &value)) {
+                    throw ParsingError{op_start, "mul overflow"};
+                }
             }
             else {
-                value /= prim();
+                // division cannot overflow
+                Number prim_value = prim();
+                if (prim_value) {
+                    value /= prim_value;
+                }
+                else {
+                    throw ParsingError{op_start, "division by 0 detected"};
+                }
             }
             tt = _tk.token_type();
         }
         return value;
     }
 
-    double prim() {
+    /**
+     * parses <prim>
+     */
+    Number prim() {
         TokenType tt = _tk.token_type();
         if (tt == TokenType::Minus) {
+            const char *op_start = _tk.token_start();
+            Number neg_value;
             _tk.next_token();
-            return fact();
+            if (__builtin_sub_overflow(0, fact(), &neg_value)) {
+                throw ParsingError{op_start, "unary minus overflow"};
+            }
+            return neg_value;
         }
         else {
             return fact();
         }
     }
 
-    double fact() {
+    /**
+     * parses <fact>
+     */
+    Number fact() {
         TokenType tt =_tk.token_type();
         if (tt == TokenType::Number) {
-            double value;
-            sscanf(_tk.token_start(), "%lg", &value);
+            Number value;
+            errno = 0;
+            sscanf(_tk.token_start(), NUMBER_SCAN_FORMAT, &value);
+            if (errno == ERANGE) {
+                throw ParsingError{_tk.token_start(), "value out of range"};
+            }
             _tk.next_token();
             return value;
         }
 
         if (tt == TokenType::Constant) {
             std::string constant_name(_tk.token_start(), _tk.token_end());
+            const char *name_start = _tk.token_start();
             _tk.next_token();
-            return _constants[constant_name];
+            auto key_value = _constants.find(constant_name);
+            if (key_value != _constants.end()) {
+                return key_value->second;
+            }
+            else {
+                throw ParsingError{name_start, "unknown constant"};
+            }
         }
         
         if (tt == TokenType::OpenBracket) {
             const char *open_br = _tk.token_start();
             _tk.next_token();
-            double value = expr();
+            Number value = expr();
             if (_tk.token_type() != TokenType::CloseBracket) {
                 throw ParsingError{open_br, "unmached bracket"};
             }
@@ -189,7 +266,7 @@ class Parser
             return value;
         }
 
-        throw ParsingError{_tk.token_start(), "number or subexpression expected"};
+        throw ParsingError{_tk.token_start(), "number, constant or subexpression expected"};
     }
 
 public:
@@ -201,7 +278,7 @@ public:
         }
     }
 
-    double value() {
+    Number value() {
         return _value;
     }
 };

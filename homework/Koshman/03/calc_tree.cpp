@@ -134,16 +134,15 @@ Token getToken(const char *&text) {
 double getNumber(const char *start, const char *end) {
 
     double result = 0.0;
-
+    while (*start == ' ')
+        ++start;
     if (*start == 'e')
         return constants["e"];
-    else if (*start == 'P')
+    if (*start == 'P')
         return constants["Pi"];
-    while (start <= end) {
-        if (*start != ' ') {
-            if (*start >= '0' && *start <= '9')
-                result = result * 10 + *start - 48;
-        }
+
+    while (start < end) {
+        result = result * 10 + *start - 48;
         ++start;
     }
 

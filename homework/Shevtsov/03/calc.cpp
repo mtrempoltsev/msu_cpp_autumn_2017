@@ -34,6 +34,7 @@ public:
   Calculator(); // Конструктор на случай если текста нет
   Calculator(const char*& text); // Конструктор
   int expression(); // вызов метода для подсчета выражения калькулятора записанного в text
+  int count;
 private:
   Token getToken();
   int primary();
@@ -48,11 +49,13 @@ private:
 Calculator::Calculator() {
   text = nullptr;
   token = Token::Null;
+  count = 0;
 }
 
 Calculator::Calculator(const char*& txt) {
   token = Token::Null;
   text = txt;
+  count = 0;
 }
 
 // считывает токен, меняет позицию прочитанного текста и записывает число в
@@ -71,7 +74,7 @@ Token Calculator::getToken()
       case '(': return Token::LP;
       case ')': return Token::RP;
     }
-    if (c >= '0' && c < '9')
+    if (c >= '0' && c <= '9')
     {
       return Token::Number;
     }
@@ -149,6 +152,7 @@ int Calculator::term () { // слагаемое
 	  return left_term;
 	}
   case Token::RP:{
+    count--;
     return left_term;
   }
 	default:
@@ -188,6 +192,7 @@ int Calculator::primary () { // множитель
         return num;
       }
       case Token::LP:{ // обработка скобок
+        count++;
         int num = expression(); // считается выражение внутри скобок
         if (token != Token::RP) {
           throw "Error!";
@@ -219,6 +224,12 @@ int main(int argc, char* argv[])
     const char* text = argv[1];
     Calculator calc(text);
     int result = calc.expression();
+
+
+    if (calc.count != 0){
+      cout << "Invalid" << endl;
+      return 1;
+    }
     cout << result << endl;
       return 0;
   }

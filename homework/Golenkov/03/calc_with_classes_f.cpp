@@ -180,7 +180,16 @@ int Calculator::processingTerms()
         }
 		else if (operation == Token::Slash)
         {
-            result /= processingPrimitives();
+            int prim = processingPrimitives();
+            if (prim != 0)
+            {
+                result /= prim;
+            }
+            else
+            {
+                // case of the zero divisor
+                throw -2;
+            }
         }
 		else
         {

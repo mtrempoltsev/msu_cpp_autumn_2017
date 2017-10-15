@@ -119,6 +119,7 @@ public:
 	{	
 		text = expression;
 		result = expr();
+		if (Tokenizer::nextToken(text) != Token::End) return error("Invalid brackets");
 		return result;
 	}
 
