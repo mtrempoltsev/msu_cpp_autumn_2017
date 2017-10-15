@@ -45,8 +45,6 @@ public:
 
     ~Matrix()
     {
-        for (size_t i = 0; i < nrow_; i++)
-            matr_[i].clear();
         matr_.clear();
     }
 
