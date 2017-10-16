@@ -15,7 +15,8 @@ tests = [
     ('Pi + 2', '5'),
     ('1+2*(3-1)', '5'),
     ('1+2*(3', None),
-    ('fedor', None)
+    ('fedor', None),
+    ('(2 / 0)', None)
 ]
 
 failed_count = 0
