@@ -10,6 +10,8 @@
 // Vector
 
 struct Vector : public std::vector<double> {
+  static const double EPS;
+
   double
   operator[](size_t i) const {
     if (i < this->size()) {
@@ -58,8 +60,26 @@ struct Vector : public std::vector<double> {
   }
 
   static int
-  compare(const Vector &a, const Vector &b);
+  compare(const Vector &a, const Vector &b) {
+    for (size_t i = 0; i < a.size() && i < b.size(); ++ i) {
+      if (a[i] - b[i] > Vector::EPS) {
+        return 1;
+      } else if (a[i] - b[i] < -Vector::EPS) {
+        return -1;
+      }
+    }
+
+    if (a.size() < b.size()) {
+      return -1;
+    } else if (a.size() > b.size()) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
 };
+
+const double Vector::EPS = 1e-6;
 
 bool
 operator==(const Vector &a, const Vector &b)
@@ -168,28 +188,6 @@ struct Matrix : public std::vector<Vector>
 
 };
 
-const double Matrix::EPS = 1e-6;
-
-int
-Vector::compare(const Vector &a, const Vector &b) {
-  for (size_t i = 0; i < a.size() && i < b.size(); ++ i) {
-    if (a[i] < b[i] - Matrix::EPS) {
-      return -1;
-    } else if (a[i] > b[i] + Matrix::EPS) {
-      return 1;
-    }
-  }
-
-  if (a.size() < b.size()) {
-    return -1;
-  } else if (a.size() > b.size()) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
-
 Vector
 operator*(const Matrix &A, const Vector &b)
 {
@@ -261,7 +259,7 @@ check_init()
 
   for (size_t i = 0; i < m.rows; ++ i) {
     for (size_t j = 0; j < m.cols; ++ j) {
-      check(fabs(m[i][j]) <= Matrix::EPS);
+      check(fabs(m[i][j]) <= Vector::EPS);
     }
   }
 
@@ -270,10 +268,10 @@ check_init()
   check(m.rows == 2);
   check(m.cols == 2);
 
-  check(fabs(m[0][0] - 1) <= Matrix::EPS);
-  check(fabs(m[0][1] - 2) <= Matrix::EPS);
-  check(fabs(m[1][0] - 3) <= Matrix::EPS);
-  check(fabs(m[1][1] - 4) <= Matrix::EPS);
+  check(fabs(m[0][0] - 1) <= Vector::EPS);
+  check(fabs(m[0][1] - 2) <= Vector::EPS);
+  check(fabs(m[1][0] - 3) <= Vector::EPS);
+  check(fabs(m[1][1] - 4) <= Vector::EPS);
 
   raises([]{ Matrix({{1, 2}, {3}}); });
 
@@ -293,16 +291,16 @@ check_get_set()
   m[1][1] = 5;
   m[1][2] = 6;
 
-  check(fabs(m[0][0] - 1) <= Matrix::EPS);
-  check(fabs(m[0][1] - 2) <= Matrix::EPS);
-  check(fabs(m[0][2] - 3) <= Matrix::EPS);
-  check(fabs(m[1][0] - 4) <= Matrix::EPS);
-  check(fabs(m[1][1] - 5) <= Matrix::EPS);
-  check(fabs(m[1][2] - 6) <= Matrix::EPS);
+  check(fabs(m[0][0] - 1) <= Vector::EPS);
+  check(fabs(m[0][1] - 2) <= Vector::EPS);
+  check(fabs(m[0][2] - 3) <= Vector::EPS);
+  check(fabs(m[1][0] - 4) <= Vector::EPS);
+  check(fabs(m[1][1] - 5) <= Vector::EPS);
+  check(fabs(m[1][2] - 6) <= Vector::EPS);
 
   m[1][2] = 100;
 
-  check(fabs(m[1][2] - 100) <= Matrix::EPS);
+  check(fabs(m[1][2] - 100) <= Vector::EPS);
 
   std::cout << "OK" << std::endl;
 }
