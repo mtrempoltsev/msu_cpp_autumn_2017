@@ -261,7 +261,7 @@ check_init()
 
   for (size_t i = 0; i < m.rows; ++ i) {
     for (size_t j = 0; j < m.cols; ++ j) {
-      check(abs(m[i][j]) <= Matrix::EPS);
+      check(fabs(m[i][j]) <= Matrix::EPS);
     }
   }
 
@@ -270,10 +270,10 @@ check_init()
   check(m.rows == 2);
   check(m.cols == 2);
 
-  check(abs(m[0][0] - 1) <= Matrix::EPS);
-  check(abs(m[0][1] - 2) <= Matrix::EPS);
-  check(abs(m[1][0] - 3) <= Matrix::EPS);
-  check(abs(m[1][1] - 4) <= Matrix::EPS);
+  check(fabs(m[0][0] - 1) <= Matrix::EPS);
+  check(fabs(m[0][1] - 2) <= Matrix::EPS);
+  check(fabs(m[1][0] - 3) <= Matrix::EPS);
+  check(fabs(m[1][1] - 4) <= Matrix::EPS);
 
   raises([]{ Matrix({{1, 2}, {3}}); });
 
@@ -293,16 +293,16 @@ check_get_set()
   m[1][1] = 5;
   m[1][2] = 6;
 
-  check(abs(m[0][0] - 1) <= Matrix::EPS);
-  check(abs(m[0][1] - 2) <= Matrix::EPS);
-  check(abs(m[0][2] - 3) <= Matrix::EPS);
-  check(abs(m[1][0] - 4) <= Matrix::EPS);
-  check(abs(m[1][1] - 5) <= Matrix::EPS);
-  check(abs(m[1][2] - 6) <= Matrix::EPS);
+  check(fabs(m[0][0] - 1) <= Matrix::EPS);
+  check(fabs(m[0][1] - 2) <= Matrix::EPS);
+  check(fabs(m[0][2] - 3) <= Matrix::EPS);
+  check(fabs(m[1][0] - 4) <= Matrix::EPS);
+  check(fabs(m[1][1] - 5) <= Matrix::EPS);
+  check(fabs(m[1][2] - 6) <= Matrix::EPS);
 
   m[1][2] = 100;
 
-  check(abs(m[1][2] - 100) <= Matrix::EPS);
+  check(fabs(m[1][2] - 100) <= Matrix::EPS);
 
   std::cout << "OK" << std::endl;
 }
