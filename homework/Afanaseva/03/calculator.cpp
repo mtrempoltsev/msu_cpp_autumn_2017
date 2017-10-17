@@ -4,7 +4,7 @@ std::unordered_map<std::string, double> constants = {
     { "Pi", 3.14 },
     { "e", 2.7 }};
 
-Calculator::Calculator(): result(0), value(0), level(0), unshifted_text(nullptr), text(nullptr)
+Calculator::Calculator(): value(0), level(0), text(nullptr)
 {}
 
 Token Calculator::getToken() // if Token has type - Number, then value replaces by ridden number

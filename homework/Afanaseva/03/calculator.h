@@ -32,10 +32,8 @@ extern std::unordered_map<std::string, double> constants;
 class Calculator
 {
 private:
-    int result;
     int value;
     int level;
-    const char* unshifted_text;
     const char* text;
 
     Token getToken();
