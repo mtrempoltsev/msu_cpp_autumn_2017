@@ -8,9 +8,9 @@ using Striter = std::string::const_iterator;
 class Computer  
 {
     // Коды ошибок:
-    // 134 - невалидное выражение
+    // 1 - невалидное выражение
     public:
-    int ErrorCode = 134;
+    int ErrorCode = 1;
     int compute(std::string str) {
             s = str.begin();
             end = str.end();
