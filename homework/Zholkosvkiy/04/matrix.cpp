@@ -45,18 +45,18 @@ public:
 	//constructor
 	Matrix(int rows, int cols)
 	{
-			if ((rows < 1) || (cols < 1))
-			{
-				throw runtime_error("Error");
-			}
-			Matrix::rows = rows;
-			Matrix::cols = cols;
-			//the first index is column, the second - row
-			data = new double[cols*rows];
+		if ((rows < 1) || (cols < 1))
+		{
+			throw runtime_error("Error");
+		}
+		Matrix::rows = rows;
+		Matrix::cols = cols;
+		//the first index is column, the second - row
+		data = new double[cols*rows];
 
-			for(int i=0; i<rows; i++)
-				for(int j=0; j<cols; j++)
-					set(i,j, 0);
+		for(int i=0; i<rows; i++)
+			for(int j=0; j<cols; j++)
+				set(i,j, 0);
 	}
 	//copy matrix
 	Matrix(const Matrix& orig)
@@ -262,7 +262,7 @@ int checkGetSet()
 		}
 	}
 	catch (const runtime_error& e)
-    {
+	{
 		cout << "failed" << endl;
   	}
 	return 1;
