@@ -6,7 +6,7 @@ using namespace std;
 
 class Row_proxy
 {
-public:
+	public:
 
 	int row_size;
 	double* row;
@@ -24,13 +24,13 @@ public:
 	}
 
 	double &operator[](size_t j)
- 	{
+	{
 		if (j >= row_size)
 		{
-			//error
+			throw runtime_error("Error");
 		}
 		return row[j];
- 	}
+	}
 };
 
 class Matrix
@@ -44,7 +44,7 @@ private:
 public:
 	//constructor
 	Matrix(int rows, int cols)
-	{
+		{
 		if ((rows < 1) || (cols < 1))
 		{
 			throw runtime_error("Error");
@@ -85,7 +85,7 @@ public:
 		row.set(data + (i*cols), cols);
 		return row;
 	}
-	//multiply by number
+		//multiply by number
 	Matrix& operator*=(const double& num)
 	{
 		for (int i=0; i<cols*rows; i++)
@@ -149,14 +149,14 @@ public:
 		}
 		if (cols != other.cols)
 		{
-		    return false;
+			return false;
 		}
 		for (size_t i=0; i<rows*cols; i++)
 		{
-		    if (data[i] != other.data[i])
+			if (data[i] != other.data[i])
 			{
-		        return false;
-		    }
+				return false;
+			}
 		}
 		return true;
 	}
@@ -206,7 +206,7 @@ public:
 		}
 	}
 
-};
+	};
 
 
 int check(bool A)
@@ -220,13 +220,13 @@ int check(bool A)
 
 int checkGetSet()
 {
-    Matrix m(2, 3);
-    m[0][0] = 1;
-    m[0][1] = 2;
-    m[0][2] = 3;
-    m[1][0] = 4;
-    m[1][1] = 5;
-    m[1][2] = 6;
+	Matrix m(2, 3);
+	m[0][0] = 1;
+	m[0][1] = 2;
+	m[0][2] = 3;
+	m[1][0] = 4;
+	m[1][1] = 5;
+	m[1][2] = 6;
 
 	int s=0;
 	try
@@ -258,13 +258,13 @@ int checkGetSet()
 		cout << "There were " << s <<" errors" << endl;
 		if (s==0)
 		{
-			return 0;
+		return 0;
 		}
 	}
 	catch (const runtime_error& e)
 	{
 		cout << "failed" << endl;
-  	}
+	}
 	return 1;
 }
 
