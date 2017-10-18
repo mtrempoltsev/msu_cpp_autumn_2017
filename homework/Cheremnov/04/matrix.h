@@ -195,5 +195,4 @@ class Matrix
 		vector <double> data;
 		//Number of rows and columns of matrix
 		unsigned rows, columns;
-		//Proxy class for the operator [][]
 };
