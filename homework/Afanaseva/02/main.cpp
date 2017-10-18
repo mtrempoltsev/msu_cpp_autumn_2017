@@ -109,13 +109,18 @@ int term(const char*& text)
     int value = 0;
     const char* text_ptr = text;
     auto token = getToken(text, value);
+    int divisor = 0;
 
     while (token != Token::End)
     {
         switch (token) {
         case Token::Div:
-	    int divisor = prim(text);
-	    if (divisor == 0) throw "Division by zero.";
+	    divisor = prim(text);
+	    if (divisor == 0)
+	    {
+		throw "Division by zero.";
+		break;
+	    }
 	    answer /= divisor;
             text_ptr = text;
             break;
