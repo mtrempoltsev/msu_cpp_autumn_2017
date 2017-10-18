@@ -59,7 +59,7 @@ public:
         return n;
     }
 
-    Matrix& operator=(Matrix mt)
+    Matrix& operator=(Matrix& mt)
     {
         int row = mt.n, col = mt.m;
         free(arr);
@@ -102,7 +102,22 @@ public:
                 res[i][0] += arr[i][j] * v[j];
             }
         }
-        *this = res;
+
+        int row = res.n, col = res.m;
+        free(arr);
+        arr = (double **)malloc(row * sizeof(double*) + row * col * sizeof(double));
+        double *buf;
+        buf = (double*)(arr + row);
+        for (int i = 0; i < row; ++i) {
+            arr[i] = buf + i * col;
+        }
+        n = row;
+        m = col;
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < m; ++j) {
+                arr[i][j] = res.arr[i][j];
+            }
+        }
         return *this;
     }
 
@@ -116,20 +131,20 @@ public:
         return *this;
     }
 
-    int operator==(Matrix mt)
+    int operator==(Matrix& mt)
     {
-        if (n != mt.n || m != mt.m)
+        if (n != mt.rows() || m != mt.columns())
             return 0;
         int flag = 1;
         for (size_t i = 0; i < n && flag; ++i) {
             for (size_t j = 0; j < m && flag; ++j) {
-                flag = arr[i][j] == mt.arr[i][j];
+                flag = (arr[i][j] == mt[i][j]);
             }
         }
         return flag;
     }
 
-    int operator!=(Matrix mt)
+    int operator!=(Matrix& mt)
     {
         return !(*this == mt);
     }
@@ -161,3 +176,4 @@ public:
 
 
 };
+
