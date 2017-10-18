@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
     }
     text = argv[1];
 
-    std::cout<<"INPUT: "<<text<<std::endl;
+   // std::cout<<"INPUT: "<<text<<std::endl;
 
     try
     {
