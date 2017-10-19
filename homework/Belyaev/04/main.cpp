@@ -9,9 +9,7 @@ class row{
 public:
     row(size_t elem, double* ptr):
             elem(elem),v(ptr){}
-    ~row(){
-        free(v);
-    }
+    ~row();
     double& operator[](const size_t pos){
         if(pos >= elem){
             assert(!"index out of range");;
