@@ -56,10 +56,27 @@ void MultiplicationCheck(){
 	m.print_matrix();
 	cout << "End of matrix" << endl;
 	m *= 3; // multiplication on number
+	//Check if multiplication on number is right
+	check(m[1][2] == 15);
+	check(m[1][1] == 9);
+	check(m[0][1] == 6);
+	for(int i = 0; i < 5; i++){
+		for(int j = 0; j < 3; j++){
+			if((i == 1 && j == 0) || (i == 0 && j != 1) || i > 1){
+				check(m[i][j] == 0);
+			}
+		}
+	}
 	m.print_matrix();
 	cout << "End of matrix" << endl;
-	std::vector<double> v = { 1, 2, 3 };
+	std::vector<double> v = { 1, 2, 3 }; 
 	m *= v;
+	//Check if multiplication on vector is right
+	check(m[0][0] == 12);
+	check(m[1][0] == 63);
+	for(int i = 2; i < 5; i++){
+		check(m[i][0] == 0);
+	}
 	m.print_matrix();
 	cout << "End of matrix" << endl;
 	Matrix m1(rows, cols);
@@ -70,6 +87,10 @@ void MultiplicationCheck(){
 	cout << "End of matrix" << endl;
 	std::vector<double> v1 = { 1, 2, 3, 4, 5};
 	m1 *= v1;
+	//Check if multiplication on vector is right
+	check(m1[0][0] == 0);
+	check(m1[0][1] == 10);
+	check(m1[0][2] == 15);
 	m1.print_matrix();
 	cout << "End of matrix" << endl;
 }
