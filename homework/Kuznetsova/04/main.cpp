@@ -6,6 +6,7 @@ void check_get_rows_number();
 void check_get_columns_number();
 void check_multiplication();
 void check_vector_multiplication();
+void check_vector_multiplication_assignment();
 void check_equality();
 void check_non_equality();
 
@@ -21,6 +22,8 @@ int main() {
     check_multiplication();
     std::cout << "Vector multiplication" << std::endl;
     check_vector_multiplication();
+    std::cout << "Vector multiplication with assignment" << std::endl;
+    check_vector_multiplication_assignment();
     std::cout << "Equality" << std::endl;
     check_equality();
     std::cout << "Non-equality" << std::endl;
@@ -90,8 +93,24 @@ void check_vector_multiplication() {
     m[1][1] = 5;
     m[1][2] = 6;
     std::vector<double> v = {1, 2, 3};
-    std::vector<double> v1 = (m *= v);
+    std::vector<double> v1 = (m * v);
     check(v1 == std::vector<double> ({14, 32}));
+}
+
+void check_vector_multiplication_assignment() {
+    Matrix m(2, 3);
+    m[0][0] = 1;
+    m[0][1] = 2;
+    m[0][2] = 3;
+    m[1][0] = 4;
+    m[1][1] = 5;
+    m[1][2] = 6;
+    std::vector<double> v = {1, 2, 3};
+    m *= v;
+    check(m.get_columns_number() == 1);
+    check(m.get_rows_number() == 2);
+    check(m[0][0] == 14);
+    check(m[1][0] == 32);
 }
 
 void check_equality() {

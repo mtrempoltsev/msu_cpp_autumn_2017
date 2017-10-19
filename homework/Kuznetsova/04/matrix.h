@@ -25,6 +25,8 @@ class Matrix {
     };
 
     Matrix(const size_t rows, const size_t columns);
+   
+    Matrix(const Matrix& other);    
 
     ~Matrix();
 
@@ -33,12 +35,13 @@ class Matrix {
 
     Matrix& operator*=(double scalar);
 
-    std::vector<double> operator*=(std::vector<double>& vector);  // multiply
+    std::vector<double> operator*(std::vector<double>& vector);  // multiply
                                                                   // matrix with
                                                                   // vector
                                                                   // vector1 =
                                                                   // (matrix *=
                                                                   // vector)
+    Matrix& operator*=(std::vector<double>& vector);
 
     bool operator==(const Matrix& other);
 
@@ -62,7 +65,7 @@ class Matrix {
     }
 
    private:
-    const size_t rows_;
-    const size_t columns_;
+    size_t rows_;
+    size_t columns_;
     double* ptr_;
 };
