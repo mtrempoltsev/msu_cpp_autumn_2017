@@ -65,7 +65,7 @@ public:
         auto vt = result_v.begin();
         
         for(;
-            it < matrix.end(), vt < result_v.end();
+            (it < matrix.end() && vt < result_v.end());
             vt++) {
 
             double new_value = 0;
@@ -92,7 +92,7 @@ bool operator==(const Matrix &l, const Matrix &r) { //Matrix friend overload[] m
     }
     auto it_l = l.matrix.begin();
     auto it_r = r.matrix.begin();
-    for(; it_l < l.matrix.end(), it_r < r.matrix.end(); it_l++, it_r++) {
+    for(; (it_l < l.matrix.end() && it_r < r.matrix.end()); it_l++, it_r++) {
         if (*it_l != *it_r) {
             return false;
         }
@@ -100,7 +100,7 @@ bool operator==(const Matrix &l, const Matrix &r) { //Matrix friend overload[] m
     return true;
 }
 
-//==============v test v==============\\
+/*==============v test v==============*/
 
 int check(bool value, const char *msg)
 {
