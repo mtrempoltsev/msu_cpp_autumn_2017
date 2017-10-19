@@ -11,10 +11,11 @@
 
 template<typename value_type>
 struct Vector : public std::vector<value_type> {
-  static const value_type EPS;
+  static const value_type EPS; // For accurate float comparation
 
   value_type
-  operator[](size_t i) const {
+  operator[](size_t i) const
+  {
     if (i < this->size()) {
       return std::vector<value_type>::operator[](i);
     } else {
@@ -23,7 +24,8 @@ struct Vector : public std::vector<value_type> {
   }
 
   value_type &
-  operator[](size_t i) {
+  operator[](size_t i)
+  {
     if (i < this->size()) {
       return std::vector<value_type>::operator[](i);
     } else {
@@ -55,7 +57,8 @@ struct Vector : public std::vector<value_type> {
   }
 
   static value_type
-  dot(const Vector &a, const Vector &b) {
+  dot(const Vector &a, const Vector &b) // Скалярное произведение Векторов
+  {
     if (a.size() != b.size()) {
       throw std::runtime_error("Mismatch vector length for dot product");
     } else {
@@ -68,7 +71,8 @@ struct Vector : public std::vector<value_type> {
   }
 
   static int
-  compare(const Vector &a, const Vector &b) {
+  compare(const Vector &a, const Vector &b) // Оператор сравнения Векторов
+  {
     for (size_t i = 0; i < a.size() && i < b.size(); ++ i) {
       if (a[i] - b[i] > Vector::EPS) {
         return 1;
@@ -141,7 +145,8 @@ struct Matrix : public std::vector<Vector<value_type>>
       this->push_back(elem);
     }
 
-    if (std::any_of(this->begin(), this->end(), [this](const Vector<value_type> &row){ return row.size() != this->cols; })) {
+    if (std::any_of(this->begin(), this->end(),
+                    [this](const Vector<value_type> &row){ return row.size() != this->cols; })) {
       throw std::runtime_error("Rows with wrong elem count");
     }
   }
@@ -161,7 +166,8 @@ struct Matrix : public std::vector<Vector<value_type>>
   operator=(Matrix<value_type> &&) = default; // Move operator
 
   const Vector<value_type> &
-  operator[](size_t i) const {
+  operator[](size_t i) const
+  {
     if (i < this->size()) {
       return std::vector<Vector<value_type>>::operator[](i);
     } else {
@@ -170,7 +176,8 @@ struct Matrix : public std::vector<Vector<value_type>>
   }
 
   Vector<value_type> &
-  operator[](size_t i) {
+  operator[](size_t i)
+  {
     if (i < this->size()) {
       return std::vector<Vector<value_type>>::operator[](i);
     } else {
@@ -179,7 +186,8 @@ struct Matrix : public std::vector<Vector<value_type>>
   }
 
   Matrix<value_type> &
-  operator*=(value_type b) {
+  operator*=(value_type b)
+  {
     for (auto &row : *this) {
       for (auto &e : row) {
         e *= b;
@@ -192,7 +200,7 @@ struct Matrix : public std::vector<Vector<value_type>>
 
 template<typename value_type>
 Vector<value_type>
-operator*(const Matrix<value_type> &A, const Vector<value_type> &b)
+operator*(const Matrix<value_type> &A, const Vector<value_type> &b) // <== Оператор умножения
 {
   auto result = Vector<value_type>();
 
@@ -205,7 +213,7 @@ operator*(const Matrix<value_type> &A, const Vector<value_type> &b)
 
 template<typename value_type>
 Matrix<value_type>
-operator*(const Matrix<value_type> &A, value_type b)
+operator*(const Matrix<value_type> &A, value_type b) // <== Еще один оператор умножения
 {
   Matrix<value_type> result = A;
   result = A;
@@ -228,7 +236,8 @@ void check(bool value)
 using Block = std::function<void ()>;
 
 void
-raises(const Block &block) {
+raises(const Block &block)
+{
   bool raises = false;
   try {
     block();
