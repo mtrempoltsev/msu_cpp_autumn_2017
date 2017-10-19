@@ -13,13 +13,13 @@ private:
     size_t m;
 public:
 
-    Matrix_Row(double * a, int cnt) {
+    Matrix_Row(double * a, size_t cnt) {
         row = a;
         m = cnt;
     }
 
     double& operator[](size_t i) {
-        if (i >= m || i < 0) {
+        if (i >= m) {
               assert(!"index out of range");
               exit(1);
         }
@@ -49,12 +49,12 @@ public:
         m = col;
     }
 
-    int columns()
+    size_t columns()
     {
         return m;
     }
 
-    int rows()
+    size_t rows()
     {
         return n;
     }
@@ -82,7 +82,7 @@ public:
 
     Matrix_Row operator[](size_t i)
     {
-        if (i >= n || i < 0) {
+        if (i >= n) {
               assert(!"index out of range");
               exit(1);
         }
@@ -154,7 +154,7 @@ public:
     void print(int with_size, char *format)
     {
         if (with_size) {
-            printf("%u %u\n", n, m);
+            printf("%lu %lu\n", n, m);
         }
         for (size_t i = 0; i < n; ++i) {
             for (size_t j = 0; j < m; ++j) {
@@ -167,7 +167,8 @@ public:
     //print version with standart format of each element outputing
     void print(int with_size)
     {
-        print(with_size, "%lf ");
+        char c[] = "%lf ";
+        print(with_size, c);
     }
 
     ~Matrix() {
