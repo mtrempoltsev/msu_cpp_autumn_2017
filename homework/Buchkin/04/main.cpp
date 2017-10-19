@@ -39,5 +39,9 @@ main()
 	if (m1 != m2) {
 		std::cout << "error2" << std::endl;
 	}
+	std::vector<double> d1 = {100, 500, -1000};
+	std::vector<double> d2 = {0.1, 1.5436, 5.6574};
+	(m1 *= d1) *= d2;
+	(m2 *= 0.4) *= -500;
 	return 0;
 }
