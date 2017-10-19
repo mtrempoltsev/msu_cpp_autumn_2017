@@ -17,6 +17,10 @@ void check(bool value)
 int main()
 {
     Matrix m1(2, 3);
+
+    check(m1.rows() == 2);
+    check(m1.cols() == 3);
+
     m1[0][0] = 1;
     m1[0][1] = 2;
     m1[0][2] = 3;
@@ -42,8 +46,6 @@ int main()
     m2[1][2] = -6;
     m2 *= -1;
 
-    // std::cout << m2[0][0] << '\n';
-
     check(m2[0][0] == 1);
     check(m2[0][1] == 2);
     check(m2[0][2] == 3);
@@ -61,6 +63,9 @@ int main()
     m3[1][0] = 2;
     m3[2][0] = 3;
 
+    check((10 * m3)[0][0] == 10);
+    check((m3 * 10)[0][0] == 10);
+
     vector<double> v1 = {11, 7, 5};
 
     m3 *= v1;
@@ -72,5 +77,6 @@ int main()
     check(m2 != m3);
 
 
+    std::cout << "tests ended" << '\n';
     return 0;
 }

@@ -10,9 +10,9 @@ Elem::Elem(double* pointer) {
 }
 
 double Elem::operator=(const double value) {
-        *_pointer = value;
-        return value;
-      }
+    *_pointer = value;
+    return value;
+}
 
 Elem::operator const double& () const {
         return *_pointer;
@@ -39,7 +39,7 @@ Matrix::Matrix(size_t rows, size_t cols) {
 }
 
 Matrix::~Matrix() {
-    delete this->_values;
+    delete[] this->_values;
     this->_values = NULL;
 }
 
@@ -52,6 +52,12 @@ size_t Matrix::cols() {
 }
 
 Matrix& Matrix::operator= (Matrix other) {
+    if (this == &other) {
+        return *this;
+
+    }
+    delete[] this->_values;
+
     this->_values = other._values;
     this->_cols = other._cols;
     this->_rows = other._rows;
