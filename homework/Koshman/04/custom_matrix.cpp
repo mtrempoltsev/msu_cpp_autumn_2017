@@ -88,7 +88,9 @@ custom_vector operator*(double x, custom_vector v) {
     return v * x;
 }
 
-
+/*
+ * matrix class -- indexing is by rows, then by columns
+ */
 struct Matrix {
 
     static double constexpr comparative_precision = 0.0000001;
