@@ -5,4 +5,4 @@ BINNAME=calc
 .PHONY: all
 
 all:
-	$(CC) $(CPPFLAGS) -o $(BINNAME) $(CPPSOURCES)
+	$(CC) $(CPPFLAGS) $(CPPSOURCES) -o $(BINNAME)
