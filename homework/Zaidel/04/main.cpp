@@ -40,7 +40,7 @@ void checkDoubleMult()
     m[1][1] = 1;
     m[1][2] = 1;
 
-    m = m * 4;
+    m *= 4;
 
     for (size_t i = 0; i < m.getWidth(); ++i) {
         for (size_t j = 0; j < m.getHeight(); ++j) {
@@ -48,6 +48,7 @@ void checkDoubleMult()
         }
     }
 }
+
 
 void checkVectorLeftMul()
 {
@@ -83,6 +84,28 @@ void checkVectorRightMul()
     check(res[0][1] == -1);
 }
 
+void checkMatrixEq()
+{
+    Matrix mat1 = Matrix::ones(2);
+    mat1[0][1] = -1;
+    mat1[1][0] = -1;
+
+    Matrix mat2 = Matrix::ones(2);
+
+    check(mat1!=mat2);
+
+    mat1 = mat2;
+
+    check(mat1[0][0] == 1);
+    check(mat1[0][1] == 0);
+    check(mat1[1][1] == 1);
+    check(mat1[1][0] == 0);
+
+    check(mat1 == mat2);
+
+}
+
+
 
 
 int main() {
@@ -91,6 +114,7 @@ int main() {
     checkDoubleMult();
     checkVectorLeftMul();
     checkVectorRightMul();
+    checkMatrixEq();
 
 //    Matrix mat = Matrix::ones(3);
 //    mat[0][0] = 2;

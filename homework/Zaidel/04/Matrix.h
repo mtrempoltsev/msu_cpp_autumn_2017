@@ -122,15 +122,6 @@ public:
     }
 
 
-    Matrix operator*=(double a)
-    {
-        for (size_t i = 0; i < W*H; ++i)
-        {
-            data[i] *= a;
-        }
-        return (*this);
-    }
-
     std::vector<double> to_vector()
     {
         return std::vector<double>(data, data + sizeof(data)/sizeof(double));
@@ -139,15 +130,85 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Matrix& m);
 
-    friend Matrix operator*=(Matrix& mat, const std::vector<double>& vec_rhs);
 
-    friend Matrix operator*=(Matrix& mat, double a);
+   // умножение матрицы на число
+    Matrix operator*(double a)
+    {
+        Matrix res (*this);
 
-    friend Matrix operator*(const Matrix& mat, double a);
-    friend Matrix operator*(const Matrix& mat, const std::vector<double>& vec_rhs);
+        for (size_t i = 0; i < res.W*res.H; ++i)
+        {
+            res.data[i] *= a;
+        }
+        return res;
+    }
+
+   // умножение матрицы на число и запись результаа ту же матрицу
+    Matrix& operator*=(double a)
+    {
+        for (size_t i = 0; i < W*H; ++i)
+        {
+            data[i] *= a;
+        }
+        return (*this);
+    }
+
+
+    // умножение матрицы на столбец, и запись результата в ту же матрицу
+    Matrix& operator*=(const std::vector<double>& vec_rhs) {
+
+        if (vec_rhs.size() != W) {
+            throw std::exception();
+        }
+
+        Matrix res(1, H);
+
+        for (size_t j = 0; j < H; ++j) {
+            res[0][j] = 0;
+            for (size_t i = 0; i < W; ++i) {
+
+                res[0][j] += vec_rhs[i] * (*this)[i][j];
+
+            }
+        }
+
+        delete this->data;
+
+        *this = res;
+
+        return (*this);
+    }
+
+
+    // умножение матрицы на столбец
+    Matrix operator*( const std::vector<double>& vec_rhs)  const
+    {
+        if (vec_rhs.size() != W) {
+            throw std::exception();
+        }
+
+        Matrix res(1, H);
+
+        for (size_t j = 0; j < H; ++j) {
+            res[0][j] = 0;
+            for (size_t i = 0; i < W; ++i) {
+
+                res[0][j] += vec_rhs[i] * (*this)[i][j];
+
+            }
+        }
+
+        return res;
+    }
+
+
+
+
+    // Умножение строки на матрицу
+    // не получится определить внутри класса так как тогда будет конфликт с умножением на столбец
     friend Matrix operator*(const std::vector<double>& vec_lhs, const Matrix& mat);
 
-    Matrix operator=(const Matrix& other)
+    Matrix& operator=(const Matrix& other)
     {
         this->W = other.W;
         this->H = other.H;
@@ -205,48 +266,9 @@ std::ostream& operator<<(std::ostream& os, const Matrix& m)
         os << std::endl;
     }
     os<<"-----------"<<std::endl;
-
     return os;
 }
 
-
-Matrix operator*(const Matrix& mat, double a)
-{
-    Matrix res (mat);
-
-    for (size_t i = 0; i < mat.W*mat.H; ++i)
-    {
-       res.data[i] *= a;
-    }
-    return res;
-}
-
-Matrix operator*=(Matrix& mat, double a)
-{
-    mat = mat * a;
-    return mat;
-}
-
-
-Matrix operator*(const Matrix& mat, const std::vector<double>& vec_rhs)
-{
-    if (vec_rhs.size() != mat.W) {
-        throw std::exception();
-    }
-
-    Matrix res(1, mat.H);
-
-    for (size_t j = 0; j < mat.H; ++j) {
-        res[0][j] = 0;
-        for (size_t i = 0; i < mat.W; ++i) {
-
-            res[0][j] += vec_rhs[i] * mat[i][j];
-
-        }
-    }
-
-    return res;
-}
 
 Matrix operator*(const std::vector<double>& vec_lhs, const Matrix& mat)
 {
@@ -266,26 +288,5 @@ Matrix operator*(const std::vector<double>& vec_lhs, const Matrix& mat)
 
     return res;
 }
-
-Matrix operator*=(Matrix& mat, const std::vector<double>& vec_rhs) {
-
-    mat = mat * vec_rhs;
-    return mat;
-}
-
-//Matrix operator=(const Matrix &other) {
-//    this->W = other.W;
-//    this->H = other.H;
-//
-//    delete[] this->data;
-//
-//    this->data = new double[W*H];
-//
-//    for (size_t i = 0; i < W * H; ++i) {
-//        data[i] = other.data[i];
-//    }
-//
-//    return *this;
-//}
 
 #endif //MATRIXCLASS_MATRIX_H
