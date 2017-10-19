@@ -1,2 +1,2 @@
 all:
-  g++ -O2 calc.cpp -o calc -std=c++11
+  g++ calc.cpp --std=c++11 -o calc
