@@ -173,7 +173,6 @@ int main() {
     t2 *= 5;
     check(t2 == t4); //Checking matrix-number multiplication
 
-
     cout << "If no errors above - every function works properly" << endl;
     return 0;
 }
