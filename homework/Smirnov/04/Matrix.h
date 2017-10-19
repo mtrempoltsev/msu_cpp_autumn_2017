@@ -27,7 +27,7 @@ public:
 	size_t get_n_cols();
 	Matrixrow operator[](size_t row);
 	vector<double> operator*(vector<double> v);
-	Matrix& operator*(double value);
+	Matrix operator*(double value);
 	bool operator==(Matrix& B);
 	bool operator!=(Matrix& B);
 

@@ -38,16 +38,17 @@ Matrixrow Matrix::operator[](size_t row)
 	return Matrixrow(A[row], n_cols);
 }
 
-Matrix& Matrix::operator*(double value)
+Matrix Matrix::operator*(double value)
 {	
+	Matrix C(n_rows, n_cols);
 	for(size_t i = 0; i < n_rows; i++)
 	{
 		for(size_t j = 0; j < n_cols; j++)
 		{
-			A[i][j]*=value;
+			C[i][j] = A[i][j] * value;
 		}
 	}
-	return *this;
+	return C;
 }
 
 bool Matrix::operator==(Matrix& B) 
