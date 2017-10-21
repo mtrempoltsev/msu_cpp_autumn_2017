@@ -4,7 +4,7 @@ MatrixRow::MatrixRow(double* ptr, size_t _cols)
                         : row(ptr), cols_num(_cols) {}
 
 double& MatrixRow::operator[](size_t j) {
-    if (j < 0 || j >= cols_num) {
+    if (j >= cols_num) {
         throw "Error: Index out of range";
     }
     return row[j];
@@ -56,7 +56,7 @@ size_t Matrix::get_cols_num() {
 }
 
 MatrixRow Matrix::operator[](size_t i) {
-    if (i < 0 || i >= rows_num) {
+    if (i >= rows_num) {
         throw "Error: Index out of range";
     }
     MatrixRow result = MatrixRow(values + i * cols_num, cols_num);

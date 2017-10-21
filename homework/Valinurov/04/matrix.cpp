@@ -18,7 +18,7 @@ private:
 
         double& operator[](size_t ind)
         {
-            if (ind < 0 || ind >= size_)
+            if (ind >= size_)
                 assert(!"index out of range");
             return *(row_begin_ + ind);
         }
@@ -45,7 +45,7 @@ public:
 
     Matrix_row operator[](size_t ind)
     {
-        if (ind < 0 || ind >= nrow_)
+        if (ind >= nrow_)
             assert(!"index out of range");
 
         return Matrix_row(matr_[ind].begin(), ncol_);

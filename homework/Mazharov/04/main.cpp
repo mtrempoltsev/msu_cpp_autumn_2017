@@ -1,5 +1,5 @@
 #include <iostream>
-#include "matrix.h"
+#include "Matrix.h"
 
 void check(bool value) {
     if (!value)

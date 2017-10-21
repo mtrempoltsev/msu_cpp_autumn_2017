@@ -47,27 +47,29 @@ void checkGetSet()
 	check(m[0][0] == 58, "m[0][0]==58");
 	check(m[1][0] == 134, "m[1][0]==134");
 	
-	try {
-		//Matrix(0, 0);	
-		Matrix m2(2, 2);
-		Matrix m3(3, 3);
-		std::vector<double> v1{ 1, 2, 3, 4 };
-		//m2[0][2];
-		//m2[2][0];	
-		//m2 == m3;	
-		//m2 != m3;
-		//m3 *= v1;
-		//Тут должен вызваться assert
-	}
-	catch (const char* msg) {
-		std::cout << msg;
-		return 1;
-	}
+	
+	//Matrix(0, 0);	
+	Matrix m2(2, 2);
+	Matrix m3(3, 3);
+	std::vector<double> v1{ 1, 2, 3, 4 };
+	//m2[0][2];
+	//m2[2][0];	
+	//m2 == m3;	
+	//m2 != m3;
+	//m3 *= v1;
+	
+	
 }
 
 int main() {
 	signal(SIGABRT, &sig);
-	checkGetSet();	
+	try{
+		checkGetSet();
+	}
+	catch (const char* msg) {
+		cout << msg << endl;
+		return 1;
+	}	
 	return 0;
 }
 

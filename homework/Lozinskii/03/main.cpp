@@ -7,8 +7,10 @@ using Striter = std::string::const_iterator;
 
 class Computer  
 {
+    // Коды ошибок:
+    // 1 - невалидное выражение
     public:
-        
+    int ErrorCode = 1;
     int compute(std::string str) {
             s = str.begin();
             end = str.end();
@@ -108,27 +110,27 @@ class Computer
             bool flag = false;                            
             int value;                                    
             int sign = 1;
+            if (*s == '-') {                              
+                s++;                                      
+                sign = -1;                                
+            }    
             if (*s == '(') {
                 s++;
                 bracket_count++;
-                return expr();
+                return expr() * sign;
             }
             if (*s == 'P') {
                 if (++s != end && *s == 'i'){
                     s++;
-                    return Pi;
+                    return Pi * sign;
                 } else {
                     throw std::invalid_argument("bad number");
                 }
             }
             if (*s == 'e') {
                 s++;
-                return e; 
-            }
-            if (*s == '-') {                              
-                s++;                                      
-                sign = -1;                                
-            }                                             
+                return e * sign; 
+            }                                         
             value = 0;                                    
             while (s != end && *s <= '9' && *s >= '0') {  
                 value *= 10;                              
@@ -203,7 +205,7 @@ main(int argc, char *argv[])
         std::cout << c.compute(str) << std::endl;
     } catch (std::invalid_argument &e) {
         std::cout << e.what() << std::endl;
-        return 134;
+        return c.ErrorCode;
     }
     return 0;
 }

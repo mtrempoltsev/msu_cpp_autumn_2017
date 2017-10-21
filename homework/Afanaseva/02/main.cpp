@@ -109,12 +109,19 @@ int term(const char*& text)
     int value = 0;
     const char* text_ptr = text;
     auto token = getToken(text, value);
+    int divisor = 0;
 
     while (token != Token::End)
     {
         switch (token) {
         case Token::Div:
-            answer /= prim(text);
+	    divisor = prim(text);
+	    if (divisor == 0)
+	    {
+		throw "Division by zero.";
+		break;
+	    }
+	    answer /= divisor;
             text_ptr = text;
             break;
         case Token::Mul:
@@ -160,9 +167,9 @@ void check(const char* text, int value, bool invalid = false)
     {
         auto result = token_sequence(text);
         if (result == value && !invalid)
-            std::cout << "Passed: " << text_ptr << '  =  ' << value << std::endl;
+	    std::cout << "Passed: " << text_ptr << "  =  " << value << std::endl;
         else
-            std::cout << "Failed: " << text_ptr << '  =  ' << result << " (" << value << " expected)" << std::endl;
+	    std::cout << "Failed: " << text_ptr << "  =  " << result << " (" << value << " expected)" << std::endl;
     }
     catch(char const* msg)
     {
