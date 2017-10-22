@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
 
 class Matrix {
 std::vector<double> matrix;
@@ -21,7 +20,7 @@ public:
 
         double &operator[](size_t i) { //[] overload for Proxy Matrix
             if (this->size <= i) {
-                assert(!"Index out of range");
+                std::cerr << "Index out of range. Doing nothing. Continue\n";
             }
             return m[row * size + i];
         }
@@ -54,9 +53,9 @@ public:
         return (*this);
     }
 
-    std::vector<double> operator*=(const std::vector<double> &v) { // Matrix * vector
+    std::vector<double> &operator*=(const std::vector<double> &v) { // Matrix * vector
         if (v.size() != this->cols) {
-            assert(!"Vector size does not match");
+            std::cerr << "Vector size does not match. Doing nothing. Continue\n";
         }
         std::vector<double> result_v;
         result_v.resize(this->rows);
@@ -65,7 +64,7 @@ public:
         auto vt = result_v.begin();
         
         for(;
-            it < matrix.end(), vt < result_v.end();
+            (it < matrix.end() && vt < result_v.end());
             vt++) {
 
             double new_value = 0;
@@ -75,12 +74,17 @@ public:
             (*vt) = new_value;
         }
 
-        return result_v;
+        this->matrix.resize(result_v.size());
+        this->matrix = result_v;
+
+        this->cols = 1;
+
+        return this->matrix;
     }
 
     ProxMatrix operator[](size_t i) { //[] overload for Matrix
         if (this->rows <= i) {
-            assert(!"Index out of range");
+            std::cerr << "Index out of range. Doing nothing. Continue\n";
         }
         return ProxMatrix(this->matrix, i, this->cols);
     }
@@ -92,7 +96,7 @@ bool operator==(const Matrix &l, const Matrix &r) { //Matrix friend overload[] m
     }
     auto it_l = l.matrix.begin();
     auto it_r = r.matrix.begin();
-    for(; it_l < l.matrix.end(), it_r < r.matrix.end(); it_l++, it_r++) {
+    for(; (it_l < l.matrix.end() && it_r < r.matrix.end()); it_l++, it_r++) {
         if (*it_l != *it_r) {
             return false;
         }
@@ -100,7 +104,7 @@ bool operator==(const Matrix &l, const Matrix &r) { //Matrix friend overload[] m
     return true;
 }
 
-//==============v test v==============\\
+/*==============v test v==============*/
 
 int check(bool value, const char *msg)
 {
@@ -158,9 +162,10 @@ int checkVectMult() {
     m[1][2] = 6;
 
     std::vector<double> v = {1, 2, 3};
-    std::vector<double> v1 = m *= v;
+    m *= v;
 
-    return check(v1 == std::vector<double>{14, 32}, "Vect mult");
+    return check(m[0][0] == 14, "Vect mult") +
+           check(m[1][0] == 32, "Vect mult");
 }
 
 int checkNumMult() {
@@ -222,12 +227,17 @@ int main() {
 
     int errors = 0;
 
-    errors +=
-        checkGetSizes() +
-        checkGetSet()   +
-        checkVectMult() +
-        checkNumMult()  +
-        chechEqualMatrices();
+    try {
+        errors +=
+            checkGetSizes() +
+            checkGetSet()   +
+            checkVectMult() +
+            checkNumMult()  +
+            chechEqualMatrices();
+    } catch (const char *exeption) {
+        std::cerr << exeption << std::endl;
+        return 1;
+    }
 
     std::cout << errors << " error(s) found\n";
 

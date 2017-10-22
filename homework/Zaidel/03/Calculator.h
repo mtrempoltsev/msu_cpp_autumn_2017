@@ -62,19 +62,64 @@ private:
                     { "e", 2.7 }
             };
 
-    Token checkConstant( bool isShiftedAfterOperation = true, bool isShiftedAfterNumberOrConstant = false) {
+    void skipSpaces()
+    {
+        // skip spaces
+        while (const auto c = *text) {
+            if(c != ' ')
+            {
+                break;
+            }
+            text++;
+        }
+    }
+
+    std::string getConstString(bool isShiftedAfterNumberOrConstant = false)
+    {
+        skipSpaces();
         const char *prev_text = text;
 
         std::string const_str = "";
 
-        for (auto c = *(text); c >= 'A' && c <= 'z';) {
 
+
+        for (auto c = *(text); c >= 'A' && c <= 'z';) {
             const_str+=c;
 
-            //skip digits
+//            //skip digits
             ++text;
             c = *text;
         }
+
+
+        if (!isShiftedAfterNumberOrConstant)
+            this->text = prev_text;
+
+        return  const_str;
+
+
+    }
+
+    Token checkConstant( bool isShiftedAfterOperation = true, bool isShiftedAfterNumberOrConstant = false) {
+//        const char *prev_text = text;
+//
+//        std::string const_str = "";
+//
+//        for (auto c = *(text); (c >= 'A' && c <= 'z') || c == ' ';) {
+//
+//            if( c == ' ')
+//            {
+//                continue;
+//            }
+//
+//            const_str+=c;
+//
+//            //skip digits
+//            ++text;
+//            c = *text;
+//        }
+
+        std::string const_str  = getConstString(isShiftedAfterNumberOrConstant);
 
 
         Token tokenConst = Token::Invalid;
@@ -92,24 +137,26 @@ private:
 //            }
 //        }
 
-        if (!isShiftedAfterNumberOrConstant)
-            this->text = prev_text;
+//        if (!isShiftedAfterNumberOrConstant)
+//            this->text = prev_text;
 
         return tokenConst;
     }
 
     double getConstant()
     {
-        std::string const_str = "";
+//        std::string const_str = "";
+//
+//        for (auto c = *(text); c >= 'A' && c <= 'z';) {
+//
+//            const_str+=c;
+//
+//            //skip digits
+//            ++text;
+//            c = *text;
+//        }
 
-        for (auto c = *(text); c >= 'A' && c <= 'z';) {
-
-            const_str+=c;
-
-            //skip digits
-            ++text;
-            c = *text;
-        }
+        std::string const_str = getConstString(true);
 
         if(constants.count(const_str) > 0)
         {
@@ -125,12 +172,14 @@ private:
 
     // получение текущего токена
     Token getToken( bool isShiftedAfterOperation = true, bool isShiftedAfterNumberOrConstant = false) {
+        skipSpaces();
         const char *prev_text = text;
 
         if(checkConstant(isShiftedAfterOperation, isShiftedAfterNumberOrConstant) == Token::Const)
         {
             return Token ::Const;
         }
+
 
 
 
@@ -241,6 +290,8 @@ private:
     {
 
         bool isNegative = isUnarMinus();
+
+
 
         Token tk = getToken(false, false);
         int res = 0;

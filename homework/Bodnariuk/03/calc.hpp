@@ -16,6 +16,7 @@ private:
     double expression(int start, bool last_plus);
     int skip_blanks(int start);
     double number(int start, int len);
+    double p_expr(int start, int len);
     double term(int start, int len, bool last_mult);
 
     void binary_operator_test();
@@ -23,6 +24,7 @@ private:
     char* _data;
     bool _binary_operator;
     int _expr_level;
+    int _end_pointer;
 
 public:
     double calculate(char* data);

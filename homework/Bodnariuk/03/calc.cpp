@@ -21,8 +21,13 @@ int digit(char c) {
 double Calc::calculate(char* data) {
     _data = data;
     _expr_level = 0;
+    _end_pointer = 0;
 
-    return expression(0, true);
+    auto result = expression(0, true);
+    if(_data[_end_pointer] != '\0') {
+        throw ERR_UNBALANCED_PAR;
+    }
+    return result;
 }
 
 int Calc::skip_blanks(int start) {
@@ -31,6 +36,18 @@ int Calc::skip_blanks(int start) {
     }
 
     return start;
+}
+
+double Calc::p_expr(int start, int len) {
+    start = skip_blanks(start);
+    while(_data[len - 1] == ' ' && len > 0) {
+        --len;
+    }
+    if(_data[start] == '(' && _data[len - 1] == ')') {
+        return expression(start + 1, true);
+    } else {
+        return number(start, len);
+    }
 }
 
 double Calc::number(int start, int len) {
@@ -80,22 +97,29 @@ double Calc::term(int start, int len, bool last_mult) {
     start = skip_blanks(start);
     int i = start;
 
+    int p_level = 0;
     while(i < len) {
         switch (_data[i]) {
+            case '(':
+                ++p_level;
+                break;
+            case ')':
+                --p_level;
+                break;
             case '*':
             case '/':
-                {
+                if(p_level == 0){
                     binary_operator_test();
                     double tail = term(i + 1, len, _data[i] == '*');
                     if((_data[i] == '/') == last_mult) {
-                        double result = number(start, i) / tail;
+                        double result = p_expr(start, i) / tail;
                         if(isinf(result)) {
                             throw ERR_ZERO_DIV;
                         }
                         return result;
                     }
                     else {
-                        return number(start, i) * tail;
+                        return p_expr(start, i) * tail;
                     }
                 }
         }
@@ -104,22 +128,25 @@ double Calc::term(int start, int len, bool last_mult) {
         _binary_operator = false;
     }
 
-    return number(start, len);
+    return p_expr(start, len);
 }
 
 double Calc::expression(int start, bool last_plus) {
     _binary_operator = true;
     start = skip_blanks(start);
     int i = start;
+    int p_level = 0;
+    bool looping;
+    bool close_par = false;
 
-    while(_data[i] != '\0') {
+    do {
         switch (_data[i]) {
             case '-':
                 if(_binary_operator) {
                     break;
                 }
             case '+':
-                {
+                if(p_level == 0){
                     binary_operator_test();
                     double tail = expression(i + 1, _data[i] == '+');
                     if((_data[i] == '-') == last_plus) {
@@ -132,12 +159,34 @@ double Calc::expression(int start, bool last_plus) {
             case '/':
                 binary_operator_test();
                 break;
+            case '(':
+                if(close_par) {
+                    throw ERR_BAD_STRUCTURE;
+                }
+                ++p_level;
+                break;
+            case ')':
+                --p_level;
+                break;
             default:
                 _binary_operator = false;
         }
 
-        ++i;
-        i = skip_blanks(i);
+        looping = (_data[i] != '\0') && !(_data[i] == ')' && p_level == -1);
+        if(looping) {
+            close_par = _data[i] == ')';
+            ++i;
+            i = skip_blanks(i);
+        }
+    } while(looping);
+
+
+    if(_data[i] == '\0' && p_level != 0) {
+        throw ERR_UNBALANCED_PAR;
+    }
+
+    if(i > _end_pointer) {
+        _end_pointer = i;
     }
 
     return term(start, i, true);

@@ -2,7 +2,7 @@
 // Created by Ivan on 15.10.2017.
 //
 
-#include "matrix.h"
+#include "Matrix.h"
 #include <assert.h>
 
 Matrix::Matrix(unsigned rows, unsigned cols) {

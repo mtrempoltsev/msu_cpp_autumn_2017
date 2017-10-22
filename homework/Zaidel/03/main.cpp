@@ -4,7 +4,7 @@
 int main(int argc, char* argv[]) {
     Calculator calc;
 
-    const char* text = "Ee";
+    const char* text = "(5 + 3 * (9 / Pi) * 4) + (1)";
 
 
     if (argc == 1)

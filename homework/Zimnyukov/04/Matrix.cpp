@@ -13,13 +13,13 @@ private:
     size_t m;
 public:
 
-    Matrix_Row(double * a, int cnt) {
+    Matrix_Row(double * a, size_t cnt) {
         row = a;
         m = cnt;
     }
 
     double& operator[](size_t i) {
-        if (i >= m || i < 0) {
+        if (i >= m) {
               assert(!"index out of range");
               exit(1);
         }
@@ -49,17 +49,17 @@ public:
         m = col;
     }
 
-    int columns()
+    size_t columns()
     {
         return m;
     }
 
-    int rows()
+    size_t rows()
     {
         return n;
     }
 
-    Matrix& operator=(Matrix mt)
+    Matrix& operator=(Matrix& mt)
     {
         int row = mt.n, col = mt.m;
         free(arr);
@@ -82,7 +82,7 @@ public:
 
     Matrix_Row operator[](size_t i)
     {
-        if (i >= n || i < 0) {
+        if (i >= n) {
               assert(!"index out of range");
               exit(1);
         }
@@ -102,7 +102,22 @@ public:
                 res[i][0] += arr[i][j] * v[j];
             }
         }
-        *this = res;
+
+        int row = res.n, col = res.m;
+        free(arr);
+        arr = (double **)malloc(row * sizeof(double*) + row * col * sizeof(double));
+        double *buf;
+        buf = (double*)(arr + row);
+        for (int i = 0; i < row; ++i) {
+            arr[i] = buf + i * col;
+        }
+        n = row;
+        m = col;
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < m; ++j) {
+                arr[i][j] = res.arr[i][j];
+            }
+        }
         return *this;
     }
 
@@ -116,20 +131,20 @@ public:
         return *this;
     }
 
-    int operator==(Matrix mt)
+    int operator==(Matrix& mt)
     {
-        if (n != mt.n || m != mt.m)
+        if (n != mt.rows() || m != mt.columns())
             return 0;
         int flag = 1;
         for (size_t i = 0; i < n && flag; ++i) {
             for (size_t j = 0; j < m && flag; ++j) {
-                flag = arr[i][j] == mt.arr[i][j];
+                flag = (arr[i][j] == mt[i][j]);
             }
         }
         return flag;
     }
 
-    int operator!=(Matrix mt)
+    int operator!=(Matrix& mt)
     {
         return !(*this == mt);
     }
@@ -139,7 +154,7 @@ public:
     void print(int with_size, char *format)
     {
         if (with_size) {
-            printf("%u %u\n", n, m);
+            printf("%lu %lu\n", n, m);
         }
         for (size_t i = 0; i < n; ++i) {
             for (size_t j = 0; j < m; ++j) {
@@ -152,7 +167,8 @@ public:
     //print version with standart format of each element outputing
     void print(int with_size)
     {
-        print(with_size, "%lf ");
+        char c[] = "%lf ";
+        print(with_size, c);
     }
 
     ~Matrix() {
@@ -161,3 +177,4 @@ public:
 
 
 };
+
