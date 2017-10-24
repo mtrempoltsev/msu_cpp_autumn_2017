@@ -43,7 +43,7 @@ Matrix::MatrixColumn::~MatrixColumn() {}
 
 double& Matrix::MatrixColumn::operator[](const size_t i) {
     if (i >= n_) {
-        assert(!"index out of range");
+        cout << "index out of range" << endl;
     }
     return *(data_ + i);
 }
@@ -67,7 +67,7 @@ size_t Matrix::getCols() const {
 
 vector<double> Matrix::operator*(const vector<double> vec) const {
     if (vec.size() != col_) {
-        assert(!"vector size is incorrect!");
+        cout << "vector size is incorrect!" << endl;
     }
     
     vector<double> res(row_);
@@ -91,7 +91,7 @@ Matrix& Matrix::operator*=(const double factor) {
 
 Matrix::MatrixColumn& Matrix::operator[](const size_t i) {
     if (i >= row_) {
-        assert(!"index out of range");
+        cout << "index out of range" << endl;
     }
     
     return *(new Matrix::MatrixColumn(col_, data_.begin() + i*col_));
