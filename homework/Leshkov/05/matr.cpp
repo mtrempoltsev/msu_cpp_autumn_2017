@@ -7,6 +7,11 @@ using namespace std;
 template <class T>
 class Vect{
 public:
+
+	~Vect(){
+		free(v);
+	}
+
 	Vect(int s, T init=0){
 		if (s<=0) throw 'V';
 		v= (T*)malloc(sizeof(T)*s);
@@ -15,7 +20,7 @@ public:
 			v[i]=init;
 	}
 
-	Vect(const Vect<T>& copy){
+	Vect<T>(const Vect<T>& copy){
 		size=copy.size;
 		v=(T*)malloc(sizeof(T)*copy.size);
 		for(int i=0; i<size; i++){
@@ -24,15 +29,17 @@ public:
 	}
 
 
-	T* v;
+	double* v;
 	int size;
+
+
 
 
 	int get_Vsize();
 	Vect<T>& operator*=(T x);
 	T& operator[](int x);
-	bool operator==(const Vect<T>& x) const;
-	bool operator!=(const Vect<T>& x) const;
+	bool operator==(const Vect& x) const;
+	bool operator!=(const Vect& x) const;
 		
 	friend ostream& operator<<(ostream& out, Vect<T>& vect){
 	    	for (int i=0; i<vect.size; i++){
@@ -52,7 +59,7 @@ template <class T>
 class Matr{
 public:
 	
-	Matr(int n, int m, double elems=0){ //N x M
+	Matr(int n, int m, T elems=0){ //N x M
 		if((n<=0)||(m<=0)) throw 'M';
 
 		matr= (Vect<T>*)malloc(sizeof(Vect<T>)*n);
@@ -60,10 +67,9 @@ public:
 
 
 		for (int i=0; i<n; i++){
-			matr[i]= Vect<T>(m,elems);
+			matr[i]=Vect<T>(m,elems);
 		}
 	}
-
 	Matr(const Matr<T>& copy){
 		AmountOfVect=copy.AmountOfVect;
 		matr=(Vect<T>*)malloc(AmountOfVect*(sizeof(Vect<T>)));
@@ -71,7 +77,6 @@ public:
 			matr[i]=copy.matr[i];
 		}
 	}
-
 
 	~Matr(){
 		free(matr);
@@ -110,7 +115,6 @@ void checkGetMethods();
 void checkVectMul();
 void checkMul();
 void checkEqNeq();
-
 void checkCopy();
 
 
@@ -127,9 +131,9 @@ void checkCopy();
 
 int main(){
 
+	//Matr(int n, int m, double defvalue)
 	try{
 		checkGetSet();//Проверка работы конструктора и оператора[][]
-
 		checkGetMethods();//Проверка Get-методов
 		checkVectMul();//Проверка умножения на вектор
 		checkMul();//Проверка умножения на число
@@ -148,6 +152,7 @@ int main(){
 //*************************************************
 //Check functions
 //*************************************************
+
 void checkCopy(){
 	Matr<double> m(2, 3);
     m[0][0] = 1;
@@ -171,7 +176,6 @@ void check(bool value)
 void checkGetSet(){
 
     Matr<double> m(2, 3);
-
     m[0][0] = 1;
     m[0][1] = 2;
     m[0][2] = 3;
@@ -192,7 +196,7 @@ void checkGetSet(){
 
 
 void checkGetMethods(){
-	Matr<double> m(2,3);
+	Matr <double> m(2,3);
 	check(m.get_str_count()==2);
 	check(m.get_column_count()==3);
 }
@@ -284,6 +288,7 @@ template <class T>
 int Vect<T>::get_Vsize(){
 	return size;
 }
+
 template <class T>
 Vect<T>& Vect<T>::operator*=(T x){
 	for (int i=0; i<this->size; i++){
@@ -291,6 +296,7 @@ Vect<T>& Vect<T>::operator*=(T x){
 	}
 	return *this;
 }
+
 template <class T>
 T& Vect<T>::operator[](int x){
 		if ((x> this->size)||(x<0)){
@@ -299,6 +305,7 @@ T& Vect<T>::operator[](int x){
 		}
 		return this->v[x];
 }
+
 template <class T>
 bool Vect<T>::operator==(const Vect<T>& x) const{
 	if(x.size!=this->size){
@@ -311,6 +318,7 @@ bool Vect<T>::operator==(const Vect<T>& x) const{
 	}
 	return true;
 }
+
 template <class T>
 bool Vect<T>::operator!=(const Vect<T>& x) const{
 	return !(x==*this);
@@ -333,20 +341,24 @@ Vect<T>& Matr<T>::operator[](int x){
 	return this->matr[x];
 
 }
+
 template <class T>
 int Matr<T>::get_str_count(){
 	return AmountOfVect;
 }
+
 template <class T>
 int Matr<T>::get_column_count(){
 	return this->matr[0].get_Vsize();
 }
+
 template <class T>
 Matr<T>& Matr<T>::operator*=(T x){
 	for (int i=0; i<this->AmountOfVect; i++)
 		this->matr[i]*=x;
 	return *this;
 }
+
 template <class T>
 Matr<T>& Matr<T>::operator*=( Vect<T>& x){
 	//1x5 ** 5x10= 1x10
@@ -356,7 +368,7 @@ Matr<T>& Matr<T>::operator*=( Vect<T>& x){
 	}
 
 	int cols=this->get_column_count();
-	Matr<T> tmp(1,cols,0);
+	Matr tmp(1,cols,0);
 	int i,j;
 
 	for (i=0; i<cols; i++){
@@ -368,9 +380,9 @@ Matr<T>& Matr<T>::operator*=( Vect<T>& x){
 		this->matr[0][i]=tmp[0][i];
 	}	
 	this->AmountOfVect=1;
-
 	return *this;
 }
+
 
 template <class T>
 bool Matr<T>::operator==(const Matr<T>& x) const{
@@ -384,6 +396,7 @@ bool Matr<T>::operator==(const Matr<T>& x) const{
 	}
 	return true;
 }
+
 template <class T>
 bool Matr<T>::operator!=(const Matr<T>& x) const{
 	return !(*this==x);
