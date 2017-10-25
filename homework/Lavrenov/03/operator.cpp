@@ -76,14 +76,14 @@ void Operator::init(std::string s){
     }
     leftOperand = NULL;
     rightOperand = NULL;
-    if(s.find("Pi") >= 0 && s.find("Pi") < s.length()){
+    if(s.find("Pi") < s.length()){
         if(umin != -1)
             token = - Operator::Pi;
         else
             token = Operator::Pi;
         return;
     }
-    if(s.find("E") >= 0 && s.find("E") < s.length()){
+    if(s.find("E") < s.length()){
         if(umin != -1)
             token = - Operator::E;
         else

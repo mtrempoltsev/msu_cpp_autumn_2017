@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void checkOperatorBrackets(Matrix& m){
+void checkOperatorBrackets(Matrix<double>& m){
     int i = m[0][0];
     m[0][0] = i + 10;
     if(m[0][0] != i + 10){
@@ -11,8 +11,8 @@ void checkOperatorBrackets(Matrix& m){
     }
 }
 
-void checkOperatorMultiply(Matrix& m){
-    Matrix matr = m;
+void checkOperatorMultiply(Matrix<double>& m){
+    Matrix<double> matr = m;
     matr *= 10;
     for(int i = 0; i < m.getColumnsNum(); ++i){
         for(int j = 0; j < m.getRowsNum(); ++j){
@@ -24,8 +24,8 @@ void checkOperatorMultiply(Matrix& m){
     }
 }
 
-void checkOperatorEqualence(Matrix& m){
-    Matrix matr = m;
+void checkOperatorEqualence(Matrix<double>& m){
+    Matrix<double> matr = m;
     if(matr == m){
 
     } else{
@@ -39,7 +39,7 @@ void checkOperatorEqualence(Matrix& m){
 
 void checkOperatorMultiplyOnVec(){
     vector<double> myvec;
-    Matrix m(2, 2);
+    Matrix<double> m(2, 2);
     m[0][0] = 1;
     m[1][0] = 2;
     m[0][1] = 3;
@@ -58,7 +58,7 @@ void checkOperatorMultiplyOnVec(){
 
 int main()
 {
-    Matrix* m = new Matrix(3,2);
+    Matrix<double>* m = new Matrix<double>(3,2);
 
     //Matrix m(2, 2);
     //vector<double> v(2);

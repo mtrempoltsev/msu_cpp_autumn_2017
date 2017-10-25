@@ -1,2 +1,2 @@
-res:
-	g++ -o matrix -std=c++11 main.cpp matrix.cpp
+all:
+	g++ main.cpp matrix.cpp -o matrix -std=c++11

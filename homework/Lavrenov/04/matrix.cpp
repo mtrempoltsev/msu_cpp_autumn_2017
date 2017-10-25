@@ -33,6 +33,24 @@ Matrix::vec::vec(){
     values = NULL;
 }
 
+Matrix::vec::vec(const Matrix::vec& v){
+    this->rows = v.rows;
+    for(int i = 0; i < this->rows; ++i){
+        values[i] = v[i];
+    }
+}
+
+Matrix::vec& Matrix::vec::operator=(const Matrix::vec& v){
+    this->rows = v.rows;
+    if(values != NULL)
+        delete[] values;
+    values = new double[rows];
+    for(int i = 0; i < this->rows; ++i){
+        values[i] = v[i];
+    }
+    return *this;
+}
+
 Matrix::~Matrix()
 {
     delete[] values;
@@ -97,7 +115,7 @@ bool Matrix::operator!=(const Matrix& m) const{
     return !(*this == m);
 }
 
-Matrix& Matrix::operator*(int k) const{
+Matrix Matrix::operator*(double k) const{
     Matrix res = *this;
     for(unsigned int i = 0; i < columns; ++i){
         for(unsigned int j = 0; j < rows; ++j){
@@ -107,7 +125,7 @@ Matrix& Matrix::operator*(int k) const{
     return res;
 }
 
-std::vector<double>& Matrix::operator*(const std::vector<double>& v) const{
+std::vector<double> Matrix::operator*(const std::vector<double>& v) const{
 
     if(v.size() != columns){
         throw std::exception();
@@ -123,7 +141,7 @@ std::vector<double>& Matrix::operator*(const std::vector<double>& v) const{
     return res;
 }
 
-Matrix& Matrix::operator*=(int k){
+Matrix& Matrix::operator*=(double k){
     for(unsigned int i = 0; i < columns; ++i){
         for(unsigned int j = 0; j < rows; ++j){
             (*this)[i][j] *= k;
