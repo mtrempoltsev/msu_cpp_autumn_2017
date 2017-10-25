@@ -120,7 +120,7 @@ public:
 			assert(!"vector length != number of columns");
 
 		//Result of multiplication
-		Matrix res(1, n_rows);
+		Matrix<T> res(1, n_rows);
 		
 		//Computing the result
 		for(int j = 0; j < n_rows; j++){
