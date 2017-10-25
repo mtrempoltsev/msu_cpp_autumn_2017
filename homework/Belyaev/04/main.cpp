@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <cassert>
@@ -9,7 +10,7 @@ class row{
 public:
     row(size_t elem, double* ptr):
             elem(elem),v(ptr){}
-    ~row();
+    ~row(){}
     double& operator[](const size_t pos){
         if(pos >= elem){
             assert(!"index out of range");;
@@ -45,11 +46,10 @@ public:
         return this->cols;
     }
 
-    row& operator[](const size_t val){
+    row operator[](const size_t val){
         if(val >= (*this).rows)
             assert(!"index out of range");
-        row* v = new row(cols, a+val*cols);
-        return *v;
+        return row(cols, a + val * cols);
     }
 
     matrix& operator*=(const int rval){
@@ -71,31 +71,37 @@ public:
         return *res;
     }
 
-    vector<double>& operator*=(const vector<double> &rval){
+    matrix& operator*=(const vector<double> &rval){
         if(cols != rval.size()){
             assert(!"index out of range");
         }
-        vector<double>* res = new vector<double>(rows);
+        matrix* res = new matrix(rows, 1);
         for(size_t i = 0; i < rows; i++){
+            (*res)[i][0] = 0;
             for(size_t j = 0; j < cols; j++){
-                (*res)[i] += (*this)[i][j] * rval[j];
+                (*res)[i][0] += (*this)[i][j] * rval[j];
             }
         }
-        delete(this);
-        return *res;
+	    delete[] this->a;
+        this->a = res->a;
+        this->cols = res->cols;
+        this->rows = res->rows;
+        res->a = nullptr;
+        delete res;
+        return *this;
     }
 
-    vector<double>& operator*(const vector<double> &rval){
+    vector<double> operator*(const vector<double> &rval){
         if(cols != rval.size()){
             assert(!"index out of range");
         }
-        vector<double>* res = new vector<double>(rows);
+        vector<double> res(rows);
         for(size_t i = 0; i < rows; i++){
             for(size_t j = 0; j < cols; j++){
-                (*res)[i] += (*this)[i][j] * rval[j];
+                res[i] += (*this)[i][j] * rval[j];
             }
         }
-        return *res;
+        return res;
     }
 
 
@@ -163,15 +169,19 @@ int main() {
     check(t5.getColumns() == 10); //Checking columns acquisition
 
     vector<double> vec1 = {-1, 1};
-    vector<double> vec2(2);
+    matrix vec2(2,1);
+    vec2[0][0] = 1;
+    vec2[1][0] = 1;
     vector<double> vec3 = {1, 1};
+    vector<double> vec4(2);
 
-    vec2=t1 * vec1;
-    check(vec2 == vec3); //Checking matrix-std::vector multiplication
+    vec4 = t1 * vec1;
+    check(vec4 == vec3); //Checking matrix-std::vector multiplication
+    t1 *= vec1;
+    check(t1 == vec2);// Checking *=
     t2 *= 5;
     check(t2 == t4); //Checking matrix-number multiplication
 
     cout << "If no errors above - every function works properly" << endl;
     return 0;
 }
-
