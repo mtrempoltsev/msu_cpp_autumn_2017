@@ -17,11 +17,11 @@ public:
     bool operator==(Matrix &right);
     bool operator!=(Matrix &right);
     
-    Matrix(const Matrix& M);
-    Matrix& operator=(const Matrix& M);
+    Matrix(const Matrix& M); //конструктор копирования
+    Matrix& operator=(const Matrix& M); //оператор копирования
     
-    Matrix(Matrix&& M);
-    Matrix& operator=(Matrix&& M);
+    Matrix(Matrix&& M); //конструктор перемещения
+    Matrix& operator=(Matrix&& M); //оператор перемещения
     
 private:
     vector<vector<T>> elem;
@@ -96,14 +96,14 @@ bool Matrix<T>::operator==(Matrix<T> &right)
 
 
 template <typename T>
-Matrix<T>::Matrix(const Matrix& M) //конструктор копирования
+Matrix<T>::Matrix(const Matrix& M)
 {
     number_of_cols = M.number_of_cols;
     number_of_rows = M.number_of_rows;
     elem = M.elem;
 }
 
-template <typename T> //оператор копирования
+template <typename T> 
 Matrix<T>& Matrix<T>:: operator=(const Matrix& M)
 {
     if (this == &M)
@@ -117,7 +117,7 @@ Matrix<T>& Matrix<T>:: operator=(const Matrix& M)
 
 
 template <typename T>
-Matrix<T>::Matrix(Matrix&& M) //конструктор перемещения
+Matrix<T>::Matrix(Matrix&& M) 
 {
     number_of_cols = M.number_of_cols;
     number_of_rows = M.number_of_rows;
@@ -130,7 +130,7 @@ Matrix<T>::Matrix(Matrix&& M) //конструктор перемещения
 
 
 template <typename T>
-Matrix<T>& Matrix<T>:: operator=(Matrix&& M) //оператор перемещения
+Matrix<T>& Matrix<T>:: operator=(Matrix&& M) 
 {
     if (this == &M) {
         return *this;
