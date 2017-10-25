@@ -114,18 +114,24 @@ public:
         return res;
     }
 
-    vector<T> operator*=(const vector<T> &rval){
+    matrix<T>& operator*=(const vector<T> &rval){
         if(cols != rval.size()){
             assert(!"index out of range");
         }
-        vector<T> res(rows);
+        matrix<T>* res = new matrix<T>(rows,1);
         for(size_t i = 0; i < rows; i++){
+			(*res)[i][0] = 0;
             for(size_t j = 0; j < cols; j++){
-                res[i] += (*this)[i][j] * rval[j];
+                (*res)[i][0] += (*this)[i][j] * rval[j];
             }
         }
-        delete(this);
-        return res;
+        delete[] this->a;
+        this->a = res->a;
+        this->cols = res->cols;
+        this->rows = res->rows;
+        res->a = nullptr;
+        delete res;
+        return *this;
     }
 
     vector<T> operator*(vector<T> &rval) const{
@@ -209,9 +215,14 @@ int main() {
     vector<double> vec1 = {-1, 1};
     vector<double> vec2(2);
     vector<double> vec3 = {1, 1};
+    matrix<double> vec4(2,1);
+    vec4[0][0] = 1;
+    vec4[1][0] = 1;
 
-    vec2=t1 * vec1;
+    vec2 = t1 * vec1;
     check(vec2 == vec3); //Checking matrix<T>-std::vector multiplication
+    t1 *= vec1;
+    check(t1 == vec4); //Checking *=
     t2 *= 5;
     check(t2 == t4); //Checking matrix<T>-number multiplication
 
