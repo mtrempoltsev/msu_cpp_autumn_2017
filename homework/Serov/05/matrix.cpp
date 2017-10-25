@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <signal.h>
 
 using namespace std;
 
@@ -179,6 +180,13 @@ void check(bool value)
 	}
 }
 
+void error_signal(int signum)
+{
+	cerr<<"Index out of range"<<endl;
+	signal(signum, SIG_DFL);
+	exit(1);
+}
+
 void checkGetSet()
 {
 	Matrix<int> m(2, 3);
@@ -281,6 +289,7 @@ void checkGetSet()
 }
 
 int main(){
+	signal(SIGABRT,error_signal);
 	checkGetSet();
 	return 0;
 }
