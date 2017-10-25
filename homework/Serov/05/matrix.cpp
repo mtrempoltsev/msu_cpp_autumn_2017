@@ -40,7 +40,6 @@ public:
 	bool operator==(Matrix& M_compare);
 	bool operator!=(Matrix& M_compare);
 private:
-friend std::ostream & operator<<(std::ostream &os, const Matrix& p);
 	size_t number_of_rows;
 	size_t number_of_columns;
 	vector <Row<T>> M;
