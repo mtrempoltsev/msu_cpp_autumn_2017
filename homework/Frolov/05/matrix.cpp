@@ -100,6 +100,7 @@ public:
 	Matrix<T>& operator= (Matrix<T>& matrix_buf){
 		columns = matrix_buf.columns;
 		rows = matrix_buf.rows;
+		delete [] matrix;
 		matrix = new T[rows*columns];
 		for (size_t i = 0; i < columns*rows; i++){
 			matrix[i] = matrix_buf.matrix[i];
