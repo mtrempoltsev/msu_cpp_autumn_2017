@@ -11,10 +11,6 @@ public:
 		vec = buf;
 		len = len_buf;
 	}
-	void set(double* buf, int len_buf){
-		vec = buf;
-		len = len_buf;
-	}
 	double& operator[](int j){
 		assert(!((j >= len)||(j<0)) && "Index of matrix row out of range");
 		return vec[j];
