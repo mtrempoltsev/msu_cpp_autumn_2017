@@ -43,6 +43,7 @@ public:
 	Matrix(const Matrix& matrix_buf){
 		columns = matrix_buf.columns;
 		rows = matrix_buf.rows;
+		matrix = new double[columns*rows];
 		for (size_t i = 0; i < columns*rows; i++){
 			matrix[i] = matrix_buf.matrix[i];
 		}
