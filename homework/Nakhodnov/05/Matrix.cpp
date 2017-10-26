@@ -178,6 +178,7 @@ public:
         CheckMultOnVec();
         CheckMultOnVal();
         CheckCmp();
+        CheckCopy();
         if (!error_flag) {
             cout << typeid(Matrix<T>(0, 0)).name() << " passed all tests\n";
         }
@@ -297,14 +298,14 @@ private:
 
     void CheckCopy() {
         Matrix<T> m1(2, 2), m2(4, 6);
-        for (int i = 0; i < m1.get_n_row; ++i) {
-            for (int j = 0; j < m1.get_n_col; ++i) {
+        for (size_t i = 0; i < m1.get_n_row(); ++i) {
+            for (size_t j = 0; j < m1.get_n_col(); ++j) {
                 m1[i][j] = dist(mers_tw);
             }
         }
 
-        for (int i = 0; i < m2.get_n_row; ++i) {
-            for (int j = 0; j < m2.get_n_col; ++i) {
+        for (size_t i = 0; i < m2.get_n_row(); ++i) {
+            for (size_t j = 0; j < m2.get_n_col(); ++j) {
                 m2[i][j] = dist(mers_tw);
             }
         }
