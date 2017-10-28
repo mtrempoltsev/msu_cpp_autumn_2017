@@ -1,6 +1,7 @@
-#include <iostream>
 #include <assert.h>
+#include <iostream>
 #include <math.h>
+#include <stdexcept> 
 #include <vector>
 
 using namespace std;

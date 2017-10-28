@@ -178,6 +178,7 @@ public:
         CheckMultOnVec();
         CheckMultOnVal();
         CheckCmp();
+        CheckCopy();
         if (!error_flag) {
             cout << typeid(Matrix<T>(0, 0)).name() << " passed all tests\n";
         }
@@ -297,14 +298,14 @@ private:
 
     void CheckCopy() {
         Matrix<T> m1(2, 2), m2(4, 6);
-        for (int i = 0; i < m1.get_n_row; ++i) {
-            for (int j = 0; j < m1.get_n_col; ++i) {
+        for (size_t i = 0; i < m1.get_n_row(); ++i) {
+            for (size_t j = 0; j < m1.get_n_col(); ++j) {
                 m1[i][j] = dist(mers_tw);
             }
         }
 
-        for (int i = 0; i < m2.get_n_row; ++i) {
-            for (int j = 0; j < m2.get_n_col; ++i) {
+        for (size_t i = 0; i < m2.get_n_row(); ++i) {
+            for (size_t j = 0; j < m2.get_n_col(); ++j) {
                 m2[i][j] = dist(mers_tw);
             }
         }
@@ -321,59 +322,59 @@ private:
 
 };
 
-class Test_Mart_Pair {
+class Test_Matr_Pair {
 public:
-    Test_Mart_Pair(int a1, int b1) : a(a1), b(b1) {  }
-    Test_Mart_Pair(int c = 0) : a(c), b(c) {  }
-    Test_Mart_Pair operator+(const Test_Mart_Pair& P) {
-        return Test_Mart_Pair(a + P.a, b + P.b);
+    Test_Matr_Pair(int a1, int b1) : a(a1), b(b1) {  }
+    Test_Matr_Pair(int c = 0) : a(c), b(c) {  }
+    Test_Matr_Pair operator+(const Test_Matr_Pair& P) {
+        return Test_Matr_Pair(a + P.a, b + P.b);
     }
 
-    Test_Mart_Pair operator*(const Test_Mart_Pair& P) {
-        return Test_Mart_Pair(a * P.a, b * P.b);
+    Test_Matr_Pair operator*(const Test_Matr_Pair& P) {
+        return Test_Matr_Pair(a * P.a, b * P.b);
     }
 
-    bool operator<(const Test_Mart_Pair& P) {
+    bool operator<(const Test_Matr_Pair& P) {
         return (a < P.a) && (b < P.b);
     }
 
-    bool operator>(const Test_Mart_Pair& P) {
+    bool operator>(const Test_Matr_Pair& P) {
         return (a > P.a) && (b > P.b);
     }
 
-    bool operator==(const Test_Mart_Pair& P) {
+    bool operator==(const Test_Matr_Pair& P) {
         return (a == P.a) && (b == P.b);
     }
 
-    bool operator!=(const Test_Mart_Pair& P) {
+    bool operator!=(const Test_Matr_Pair& P) {
         return (a != P.a) && (b != P.b);
     }
 
-    Test_Mart_Pair& operator=(int c) {
+    Test_Matr_Pair& operator=(int c) {
         a = c;
         b = c;
         return *this;
     }
 
-    Test_Mart_Pair& operator+=(int c) {
+    Test_Matr_Pair& operator+=(int c) {
         a += c;
         b += c;
         return *this;
     }
 
-    Test_Mart_Pair& operator+=(const Test_Mart_Pair& P) {
+    Test_Matr_Pair& operator+=(const Test_Matr_Pair& P) {
         a += P.a;
         b += P.b;
         return *this;
     }
 
-    Test_Mart_Pair& operator*=(int c) {
+    Test_Matr_Pair& operator*=(int c) {
         a *= c;
         b *= c;
         return *this;
     }
 
-    Test_Mart_Pair& operator*=(const Test_Mart_Pair& P) {
+    Test_Matr_Pair& operator*=(const Test_Matr_Pair& P) {
         a *= P.a;
         b *= P.b;
         return *this;
@@ -388,7 +389,7 @@ int main()
 {
     Matrix_Checker<double> mch_d;
     Matrix_Checker<int> mch_i;
-    Matrix_Checker<Test_Mart_Pair> mch_comp;
+    Matrix_Checker<Test_Matr_Pair> mch_comp;
     mch_d.prepare_tests();
     mch_i.prepare_tests();
     mch_comp.prepare_tests();

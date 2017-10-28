@@ -24,7 +24,7 @@ Row::Row(double* start, size_t row_size) {
 }
 
 Elem Row::operator[](size_t i) {
-    if(i >= 0 && i < _row_size) {
+    if(i < _row_size) {
         return Elem(_start + i);
     } else {
         throw ERR_ROW_OUT_OF_RANGE;
@@ -121,7 +121,7 @@ bool Matrix::operator!=(Matrix& other) {
 }
 
 Row Matrix::operator[](size_t i) {
-    if(i >= 0 && i < _rows) {
+    if(i < _rows) {
         return Row(_values + i * _cols, _cols);
     } else {
         throw ERR_ROW_OUT_OF_RANGE;
