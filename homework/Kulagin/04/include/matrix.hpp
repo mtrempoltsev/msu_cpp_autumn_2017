@@ -40,14 +40,14 @@ public:
 
 	MatrixRow& operator[](int _nrow);
 
-	Matrix operator+=(const double k);
+	Matrix& operator+=(const double k);
 
-	Matrix operator-=(const double k);
+	Matrix& operator-=(const double k);
 
-	Matrix operator*=(const double k);
+	Matrix& operator*=(const double k);
 	Matrix& operator*=(const std::vector<double>);
 
-	Matrix operator/=(const double k);
+	Matrix& operator/=(const double k);
 	// OPERATORS ENDS
 
 	void print() const;

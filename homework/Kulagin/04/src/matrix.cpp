@@ -44,7 +44,7 @@ MatrixRow& Matrix::operator[](const int _nrow) {
 	return data[_nrow];
 }
 
-Matrix Matrix::operator+=(const double k) {
+Matrix& Matrix::operator+=(const double k) {
 	for (int i = 0; i < nrows; i++) {
 		for (int j = 0; j < ncols; j++) {
 			data[i][j] += k;
@@ -54,7 +54,7 @@ Matrix Matrix::operator+=(const double k) {
 	return (*this);
 }
 
-Matrix Matrix::operator-=(const double k) {
+Matrix& Matrix::operator-=(const double k) {
 	for (int i = 0; i < nrows; i++) {
 		for (int j = 0; j < ncols; j++) {
 			data[i][j] -= k;
@@ -64,7 +64,7 @@ Matrix Matrix::operator-=(const double k) {
 	return (*this);
 }
 
-Matrix Matrix::operator*=(const double k) {
+Matrix& Matrix::operator*=(const double k) {
 	for (int i = 0; i < nrows; i++) {
 		for (int j = 0; j < ncols; j++) {
 			data[i][j] *= k;
@@ -74,7 +74,7 @@ Matrix Matrix::operator*=(const double k) {
 	return (*this);
 }
 
-Matrix Matrix::operator/=(const double k) {
+Matrix& Matrix::operator/=(const double k) {
 	if (k == 0) {
 		cout << "Error: division by zero" << endl;
 
