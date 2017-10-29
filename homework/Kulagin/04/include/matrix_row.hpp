@@ -22,14 +22,15 @@ public:
 	// CONSTRUCTOR ENDS
 
 	// OPERATORS BEGINS
-	// <---------------------
-	double& operator[](int _ncol);
-	const double& operator[](int _ncol) const;
-	// >---------------------
+	double& operator[](const int _ncol);
+
+	const double& operator[](const int _ncol) const;
 	// OPERATORS ENDS
 
 	// DESTRUCTOR BEGINS
-	~MatrixRow() {};
+	~MatrixRow() {
+		data.clear();
+	};
 	// DESTRUCTOR ENDS
 
 private:

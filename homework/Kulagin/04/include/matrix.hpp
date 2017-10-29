@@ -35,19 +35,27 @@ public:
 	// GETTERS ENDS
 
 	// OPERATORS BEGINS
-	// <---------------------
-	bool operator==(Matrix) const;
-	bool operator!=(Matrix) const;
+	bool operator==(Matrix&) const;
+	bool operator!=(Matrix&) const;
 
 	MatrixRow& operator[](int _nrow);
 
-	Matrix operator*=(double);
-	Matrix operator*=(std::vector<double>);
-	// >---------------------
+	Matrix operator+=(const double k);
+
+	Matrix operator-=(const double k);
+
+	Matrix operator*=(const double k);
+	Matrix& operator*=(const std::vector<double>);
+
+	Matrix operator/=(const double k);
 	// OPERATORS ENDS
 
+	void print() const;
+
 	// DESTRUCTOR BEGINS
-	~Matrix() {};
+	~Matrix() {
+		data.clear();
+	};
 	// DESTRUCTOR ENDS
 
 private:
