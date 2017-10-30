@@ -216,7 +216,7 @@ void checkMoving()
     check_values_equal(m2[1][0], 1);
     check_values_equal(m2[1][1], 1);
     check_values_equal(m2[1][2], 1);
-    \
+    
     m1 = std::move(m2);
 
     check_invalid([&m2](){m2.is_not_moved();});
