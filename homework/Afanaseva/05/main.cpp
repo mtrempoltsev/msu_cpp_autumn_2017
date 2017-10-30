@@ -35,7 +35,7 @@ void check_values_equal(double result, int value)
     }
     catch(char const* msg)
     {
-        std::cout << "Failed: " << result << " Exception message: " << msg << " (" << value << " expected)" <<std::endl;
+        std::cout << "Failed: " << result << " Exception message: " << msg << " (" << value << " expected)" << std::endl;
     }
 }
 
@@ -50,7 +50,7 @@ void check_invalid(std::function <void ()> func)
         std::cout << "Passed: exception message " << msg << std::endl;
         return;
     }
-    std::cout << "Failed: exception message expected." <<std::endl;
+    std::cout << "Failed: exception message expected." << std::endl;
 }
 
 //--------------------------------------------
