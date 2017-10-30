@@ -27,20 +27,21 @@ bool unar(string& str, int position) {
 
 tuple<int, double> num(string& str, int end) {
     double number = 0;
-    int len = 0;
-    while(str[end] >= '0' && str[end] <= '9' && end) {
-        end--;
-        len++;
+    int pos = end;
+    int cur_len = 0;
+    while(isdigit(str[pos]) && pos >= 0) {
+        pos--;
+        cur_len++;
     }
-    for(int i = 0; i < len; i++) {
+    for(int i = 0; i < cur_len; i++) {
         number *= 10;
-        number += str[end + i + 1] - '0';
+        number += str[pos + i + 1] - '0';
     }
-    return make_tuple(end, number);
+    return make_tuple(pos, number);
 }
 
 tuple<int, double> prim(string& str, int end) {
-    if(str[end] >= '0' && str[end] <= '9') {
+    if(isdigit(str[end])) {
         tuple<int, double> tmp = num(str, end);
         if(str[get<0>(tmp)] != '-') {
             return make_tuple(get<0>(tmp), get<1>(tmp));
@@ -50,8 +51,10 @@ tuple<int, double> prim(string& str, int end) {
         } else {
             return make_tuple(get<0>(tmp), get<1>(tmp));
         }
-    return make_tuple(get<0>(tmp), get<1>(tmp));
+    } else {
+        throw string("Error position: " + to_string(end) + " next char: " + str[end]);
     }
+    return make_tuple(0, 0);
 }
 
 tuple<int, double> term(string& str, int end) {
@@ -59,23 +62,24 @@ tuple<int, double> term(string& str, int end) {
     if(get<0>(tmp) == -1) {
         return make_tuple(get<0>(tmp), get<1>(tmp));
     }
-    double left = get<1>(tmp);
     int before = get<0>(tmp);
+    double buf = get<1>(tmp);
     if(str[get<0>(tmp)] == '*') {
-        tie(before, left) = term(str, get<0>(tmp) - 1);
-        left *= get<1>(tmp);
-    } else {
-        if(str[get<0>(tmp)] == '/') {
-            tie(before, left) = term(str, get<0>(tmp) - 1);
-            left /= get<1>(tmp);
+        tie(before, buf) = term(str, get<0>(tmp) - 1);
+        buf *= get<1>(tmp);
+    } else if(str[get<0>(tmp)] == '/') {
+        tie(before, buf) = term(str, get<0>(tmp) - 1);
+        if(get<1>(tmp) == 0) {
+            throw string("Division by 0");
         }
+        buf /= get<1>(tmp);
     }
-    return make_tuple(before, left);
+    return make_tuple(before, buf);
 }
 
 double expr(string& str, int end) {
-    int len = str.size();
-    if(len == end) {
+    int str_len = str.size();
+    if(str_len == end) {
         return 0;
     }
     tuple<int, double> tmp = term(str, end);
@@ -84,10 +88,10 @@ double expr(string& str, int end) {
     }
     if(str[get<0>(tmp)] == '+') {
         return expr(str, get<0>(tmp) - 1) + get<1>(tmp);
+    } else if(str[get<0>(tmp)] == '-') {
+        return expr(str, get<0>(tmp) - 1) - get<1>(tmp);
     } else {
-        if(str[get<0>(tmp)] == '-') {
-            return expr(str, get<0>(tmp) - 1) - get<1>(tmp);
-        }
+        throw string("Error position: " + to_string(end) + " next char: " + str[get<0>(tmp)]);
     }
 }
 
@@ -96,13 +100,18 @@ int main(int argc, char *argv[]) {
         cout << "no arguments" << endl;
         return -1;
     }
-    string str = "0";
+    string str = "";
     int len = strlen(argv[1]);
     for(int i = 0; i < len; i++) {
         if(!isspace(argv[1][i])) {
             str += argv[1][i];
         }
     }
-    cout << setprecision(6) << expr(str, str.size() - 1) << endl;
+    try {
+        cout << setprecision(6) << expr(str, str.size() - 1) << endl;
+    } catch(string& s) {
+        cerr << s << endl;
+        return 1;
+    }
     return 0;
 }
