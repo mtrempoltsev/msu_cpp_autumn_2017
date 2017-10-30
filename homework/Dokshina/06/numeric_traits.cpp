@@ -22,6 +22,6 @@ struct NumericTraits<long>
 template <>
 struct NumericTraits<double>
 {
-    static constexpr double min = std::numeric_limits<double>::min();
+    static constexpr double min = std::numeric_limits<double>::lowest();
     static constexpr double max = std::numeric_limits<double>::max();
 };

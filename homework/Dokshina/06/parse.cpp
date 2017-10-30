@@ -51,7 +51,7 @@ public:
             number *= 10;
             number += *curr - '0';
 
-            if (number > NumericTraits<double>::max) {
+            if (number * sign > NumericTraits<double>::max || number * sign < NumericTraits<double>::min) {
                 throw "Error: Invalid size of number1";
             }
         }
@@ -60,13 +60,14 @@ public:
              double frac = 0.1;
              curr++;
 
-             double tail = 0;
-             for ( ; curr < expr_end && isdigit(*curr); curr++) {
-                 tail += (*curr - '0') * frac;
-                 frac *= 0.1;
 
+             for ( ; curr < expr_end && isdigit(*curr); curr++) {
+                 number += (*curr - '0') * frac;
+                 frac *= 0.1;
+                 if (number * sign > NumericTraits<double>::max || number * sign < NumericTraits<double>::min) {
+                     throw "Error: Invalid size of number1";
+                 }
              }
-             number += tail;
         }
         return double(number * sign);
     }

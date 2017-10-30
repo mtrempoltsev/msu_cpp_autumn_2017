@@ -16,7 +16,6 @@ bool is_equal(T x, T y) {
 
 template<>
 bool is_equal(double x, double y) {
-    //std::cout << std::fabs(x - y) << ' ' << std::numeric_limits<double>::epsilon() << std::endl;
     return std::fabs(x - y) < std::numeric_limits<double>::epsilon();
 }
 
@@ -48,6 +47,7 @@ int main(int argc, char const *argv[])
 {
     int num_of_errors = 0;
     std::cout << "Tests with good input:" << std::endl;
+
     // Calcuator int
     int ans1 = 42;
     num_of_errors += test<int>(std::string("(5 + 3 * (9 / Pi) * 4) + (1)"), ans1);
@@ -64,7 +64,7 @@ int main(int argc, char const *argv[])
     // Error input
     std::cout << std::endl;
     std::cout << "Tests with bad input:" << std::endl;
-    num_of_errors += 1 - test<int>(std::string("19 * (2 + ( 4)"));
+    num_of_errors += 1 - test<int>(std::string("19 - 2 + ( 4"));
     num_of_errors += 1 - test<double>(std::string("12.6 + +3"));
     num_of_errors += 1 - test<double>(std::string("12.6 + 6 7"));
     num_of_errors += 1 - test<double>(std::string("111.11 c 10"));
