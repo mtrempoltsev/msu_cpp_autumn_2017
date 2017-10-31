@@ -90,9 +90,15 @@ public:
      *      для получения элемента
      *      размера матрицы */
 
-    double& get_element(size_t i, size_t j) const
+    const double get_element(size_t i, size_t j) const
     {
-        return (*this)[i][j]; // i - номер столбца, j - номер строки
+	return (*this)[i][j]; // i - номер столбца, j - номер строки
+    }
+
+    double set_element(size_t i, size_t j, double value)
+    {
+	(*this)[i][j] = value;
+	return (*this)[i][j]; // i - номер столбца, j - номер строки
     }
 
     size_t get_rows_size() const
@@ -111,7 +117,7 @@ public:
             присваивания
             */
 
-    MatrixColumn operator[](size_t i) const // i - номер столбца
+    const MatrixColumn operator[](size_t i) const // i - номер столбца
     {
         if(i >= cols_)
             throw "Matrix error: column index out of range";
@@ -119,6 +125,16 @@ public:
         double* column_i = data_ + i * rows_;
         return MatrixColumn(rows_, column_i);
     }
+
+    MatrixColumn operator[](size_t i) // i - номер столбца
+    {
+	if(i >= cols_)
+	    throw "Matrix error: column index out of range";
+
+	double* column_i = data_ + i * rows_;
+	return MatrixColumn(rows_, column_i);
+    }
+
 
     bool operator==(const Matrix& other) const
     {

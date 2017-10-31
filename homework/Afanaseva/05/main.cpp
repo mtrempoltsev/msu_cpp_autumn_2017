@@ -126,7 +126,7 @@ void checkGetSet()
 {
     Matrix<double>  m = Matrix<double> (3, 2, 1);
 
-    m.get_element(1, 1) = 10;
+    m.set_element(1, 1, 10);
     check_values_equal(m.get_element(1, 1), 10);
 
     m[1][2] = 100;

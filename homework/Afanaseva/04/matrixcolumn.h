@@ -1,8 +1,6 @@
 #ifndef MATRIXCOLUMN_H
 #define MATRIXCOLUMN_H
 
-#include <cstdio>
-
 class MatrixColumn
 {
 public:
@@ -11,12 +9,20 @@ public:
         , data_(data)
     {}
 
-    double& operator[](size_t j) const
+    const double operator[](size_t j) const
     {
         if(j >= rows_)
             throw "Column error: index out of range";
 
         return data_[j];
+    }
+
+    double& operator[](size_t j)
+    {
+	if(j >= rows_)
+	    throw "Column error: index out of range";
+
+	return data_[j];
     }
 
 private:

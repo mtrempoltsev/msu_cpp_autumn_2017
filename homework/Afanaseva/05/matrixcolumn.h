@@ -12,12 +12,20 @@ public:
         , data_(data)
     {}
 
-    T& operator[](size_t j) const
+    const T operator[](size_t j) const
     {
-        if(j >= rows_)
-            throw "Column error: index out of range";
+	if(j >= rows_)
+	    throw "Column error: index out of range";
 
-        return data_[j];
+	return data_[j];
+    }
+
+    T& operator[](size_t j)
+    {
+	if(j >= rows_)
+	    throw "Column error: index out of range";
+
+	return data_[j];
     }
 
 private:

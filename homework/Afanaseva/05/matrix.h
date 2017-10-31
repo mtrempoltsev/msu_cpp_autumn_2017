@@ -158,7 +158,14 @@ public:
      *      для получения элемента
      *      размера матрицы */
 
-    T& get_element(size_t i, size_t j) const
+
+    T set_element(size_t i, size_t j, T value)
+    {
+	(*this)[i][j] = value;
+	return (*this)[i][j]; // i - номер столбца, j - номер строки
+    }
+
+    const T get_element(size_t i, size_t j) const
     {
         return (*this)[i][j]; // i - номер столбца, j - номер строки
     }
