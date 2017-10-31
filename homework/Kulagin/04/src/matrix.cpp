@@ -91,7 +91,7 @@ Matrix& Matrix::operator/=(const double k) {
 }
 
 Matrix& Matrix::operator*=(const vector<double> v) {
-	if (ncols != v.size()) {
+	if (ncols != (int)v.size()) {
 		cout << "Error: cannot multiply matrix by vector (size mismatch)" << endl;
 
 		exit(1);

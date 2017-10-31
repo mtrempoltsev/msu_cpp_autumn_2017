@@ -1,2 +1,5 @@
 all:
-	g++ main.cpp -std=c++11
+	g++ main.cpp -Wall -std=c++11
+
+vg:
+	valgrind --leak-check=full ./a.out
