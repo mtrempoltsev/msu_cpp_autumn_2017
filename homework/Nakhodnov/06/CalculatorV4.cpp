@@ -15,6 +15,7 @@ void printError(string msg) {
 }
 
 
+// Класс выполняющий выделение числа заданного типа из строки
 template <class T>
 class NumericParser {};
 
