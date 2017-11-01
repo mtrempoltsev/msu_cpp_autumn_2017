@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 void check(bool value) {
 	if (!value) {
 		cout << "error" << endl;
