@@ -27,16 +27,16 @@ void Expression::validateSyntax(std::string& s){
             continue;
         }
 
-        if(Operator::isNumber(s[i]) || s[i] == 'P' || s[i] == 'E'){
+        if(Operator::isNumber(s[i]) || s[i] == 'P' || s[i] == 'e'){
             //error();
             if(prevSymbol == ')')
                 error();
-            if(s[i] == 'P' || s[i] == 'E'){
-                if(Operator::isNumber(prevSymbol) || prevSymbol == 'P' || prevSymbol == 'E')
+            if(s[i] == 'P' || s[i] == 'e'){
+                if(Operator::isNumber(prevSymbol) || prevSymbol == 'P' || prevSymbol == 'e')
                     error();
             }
             if(Operator::isNumber(s[i])){
-                if(prevSymbol == 'P' || prevSymbol == 'E')
+                if(prevSymbol == 'P' || prevSymbol == 'e')
                     error();
                 if(Operator::isNumber(prevSymbol) && isSpace(s[i - 1])){
                     error();
@@ -54,7 +54,7 @@ void Expression::validateSyntax(std::string& s){
         }
 
         if(s[i] == '('){
-            if(!(Operator::isOperator(prevSymbol) || prevSymbol == 'U' || prevSymbol == '(')){
+            if(!(Operator::isOperator(prevSymbol) || prevSymbol == 'U' || prevSymbol == '(' || prevSymbol == '\0')){
                 error();
             }
             ++brackets;

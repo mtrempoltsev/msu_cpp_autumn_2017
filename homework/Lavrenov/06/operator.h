@@ -1,19 +1,58 @@
-#include "operator.h"
+#ifndef OPERATOR_H
+#define OPERATOR_H
+#include <string>
+#include <iostream>
+#include "tableofvariables.h"
 
-//- ((4 * 6) - 9)
-//4 * ((4 * 6) - 9)
-Operator::Operator(std::string s)
+enum operandType{
+    Plus,
+    Minus,
+    Multiply,
+    Divide
+};
+
+template<class T, class Parser>
+class Operator
 {
+public:
+    Operator(std::string, TableOfVariables<T>& );
+    ~Operator();
+    TableOfVariables<T>& table;
+    Operator* rightOperand;
+    Operator* leftOperand;
+    operandType op;
+    Parser parser;
+    T token;
+    T execute();
+    static constexpr double Pi = 3.14;
+    static constexpr double E = 2.7;
+    static bool isSpace(char);
+    static bool isArephmeticSymbol(char);
+    static bool isOperator(char);
+    static bool isNumber(char);
+private:
+    void init(std::string);
+    int getoperatorPriority(char);
+    operandType getOperandType(char);
+};
+
+template<class T, class Parser>
+Operator<T, Parser>::Operator(std::string s, TableOfVariables<T>& t)
+    :parser(), table(t)
+{
+    //table = t;
     init(s);
 }
 
-void Operator::init(std::string s){
+template<class T, class Parser>
+void Operator<T, Parser>::init(std::string s){
     int lpOperator = -1, hpOperator = -1, umin = -1, bracket = 0;
     char prevSymbol = '\0';
     for(int i = 0; i < s.length(); ++i){
         if(s[i] == ')'){
             prevSymbol = s[i];
             --bracket;
+            continue;
         }
         if(s[i] == '('){
             ++bracket;
@@ -30,25 +69,28 @@ void Operator::init(std::string s){
                 umin = i;
                 continue;
             }
+            prevSymbol = s[i];
             lpOperator = i;
             break;
         }
         if(isOperator(s[i]) && getoperatorPriority(s[i]) == 2){
             hpOperator = i;
-        }
-        if(isArephmeticSymbol(s[i])){
             prevSymbol = s[i];
+            continue;
+        }
+        if(!isSpace(s[i])){
+            prevSymbol = 'T';
         }
     }
     if(lpOperator != -1){
-        leftOperand = new Operator(s.substr(0 , lpOperator - 1));
-        rightOperand = new Operator(s.substr(lpOperator + 1));
+        leftOperand = new Operator(s.substr(0 , lpOperator - 1), table);
+        rightOperand = new Operator(s.substr(lpOperator + 1), table);
         op = getOperandType(s[lpOperator]);
         return;
     }
     if(hpOperator != -1){
-        leftOperand = new Operator(s.substr(0 , hpOperator - 1));
-        rightOperand = new Operator(s.substr(hpOperator + 1));
+        leftOperand = new Operator(s.substr(0 , hpOperator - 1), table);
+        rightOperand = new Operator(s.substr(hpOperator + 1), table);
         op = getOperandType(s[hpOperator]);
         return;
     }
@@ -66,8 +108,8 @@ void Operator::init(std::string s){
             }
         }
         if(umin != -1){
-            leftOperand = new Operator("-1");
-            rightOperand = new Operator(s.substr(umin + 1));
+            leftOperand = new Operator("-1", table);
+            rightOperand = new Operator(s.substr(umin + 1), table);
             op = operandType::Multiply;
             return;
         }
@@ -76,14 +118,14 @@ void Operator::init(std::string s){
     }
     leftOperand = NULL;
     rightOperand = NULL;
-    if(s.find("Pi") < s.length()){
+    if(s.find("Pi") >= 0 && s.find("Pi") < s.length()){
         if(umin != -1)
             token = - Operator::Pi;
         else
             token = Operator::Pi;
         return;
     }
-    if(s.find("e") < s.length()){
+    if(s.find("E") >= 0 && s.find("E") < s.length()){
         if(umin != -1)
             token = - Operator::E;
         else
@@ -91,13 +133,15 @@ void Operator::init(std::string s){
         return;
     }
     if(umin != -1){
-        token = -1 * atoi(s.substr(umin + 1).c_str());
+        token = -1 * parser.parse(s.substr(umin + 1));
+        atoi(s.substr(umin + 1).c_str());
     }else{
-        token = atoi(s.c_str());
+        token = parser.parse(s);
     }
 }
 
-int Operator::getoperatorPriority(char s){
+template<class T, class Parser>
+int Operator<T, Parser>::getoperatorPriority(char s){
     switch(s){
     case '+':
         return 1;
@@ -117,7 +161,8 @@ int Operator::getoperatorPriority(char s){
     }
 }
 
-bool Operator::isArephmeticSymbol(char s){
+template<class T, class Parser>
+bool Operator<T, Parser>::isArephmeticSymbol(char s){
     if(isOperator(s)){
         return true;
     }
@@ -173,7 +218,26 @@ bool Operator::isArephmeticSymbol(char s){
     }
 }
 
-bool Operator::isNumber(char s){
+template<class T, class Parser>
+bool Operator<T, Parser>::isSpace(char s){
+    switch(s){
+    case ' ':
+        return true;
+        break;
+    case '\0':
+        return true;
+        break;
+    case '\n':
+        return true;
+        break;
+    default:
+        return false;
+        break;
+    }
+}
+
+template<class T, class Parser>
+bool Operator<T, Parser>::isNumber(char s){
     switch(s){
     case '0':
         return true;
@@ -210,7 +274,8 @@ bool Operator::isNumber(char s){
     }
 }
 
-bool Operator::isOperator(char s){
+template<class T, class Parser>
+bool Operator<T, Parser>::isOperator(char s){
     switch(s){
     case '+':
         return true;
@@ -230,7 +295,8 @@ bool Operator::isOperator(char s){
     }
 }
 
-int Operator::execute(){
+template<class T, class Parser>
+T Operator<T, Parser>::execute(){
     if(leftOperand == NULL && rightOperand == NULL){
         return token;
     }
@@ -254,7 +320,8 @@ int Operator::execute(){
     }
 }
 
-operandType Operator::getOperandType(char c){
+template<class T, class Parser>
+operandType Operator<T, Parser>::getOperandType(char c){
     switch(c){
     case '+':
         return operandType::Plus;
@@ -274,8 +341,11 @@ operandType Operator::getOperandType(char c){
     }
 }
 
-Operator::~Operator()
+template<class T, class Parser>
+Operator<T, Parser>::~Operator()
 {
     delete leftOperand;
     delete rightOperand;
 }
+
+#endif // OPERATOR_H
