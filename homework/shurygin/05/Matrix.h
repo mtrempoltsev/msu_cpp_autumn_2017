@@ -6,7 +6,7 @@
 template <class T>
 class Matrix
 {
-public:	
+public:
 	Matrix(std::size_t rows, std::size_t cols) : rows_(rows), cols_(cols)
 	{
 		for (std::size_t i = 0; i < rows_; ++i)
@@ -46,7 +46,7 @@ public:
 		rows_ = std::move(m.rows_);
 		cols_ = std::move(m.cols_);
 		for (size_t i = 0; i < m.matrix_.size(); ++i)
-		{			
+		{
 			Row<T> r = std::move(m.matrix_[i]);
 			matrix_.push_back(r);
 		}
