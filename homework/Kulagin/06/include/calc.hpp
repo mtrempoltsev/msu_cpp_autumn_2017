@@ -9,7 +9,12 @@
 using namespace std;
 
 template <typename T>
-struct NumericTraits {
+struct NumericTraits {};
+
+template <>
+struct NumericTraits<double> {
+	static constexpr double min = std::numeric_limits<double>::min();
+	static constexpr double max = std::numeric_limits<double>::max();
 };
 
 template <>
@@ -24,13 +29,8 @@ struct NumericTraits<long> {
 	static constexpr long max = std::numeric_limits<long>::max();
 };
 
-template <>
-struct NumericTraits<double> {
-	static constexpr double min = std::numeric_limits<double>::min();
-	static constexpr double max = std::numeric_limits<double>::max();;
-};
 
-
+template <class T>
 class Calculator {
 
 public:
@@ -40,9 +40,9 @@ public:
 
 	~Calculator() {}
 
-	int eval(char* expr);	// calculate the value of input expression
+	T eval(char* expr);	// calculate the value of input expression
 
-	static std::unordered_map<std::string, double> constants;
+	static std::unordered_map<std::string, T> constants;
 
 private:
 
@@ -65,14 +65,16 @@ private:
 		}
 	}
 
-	// [GET_PRIM]: parsing [+-]?(?:Pi|e|\d+) - perl style
-	int get_prim(char*& expr);
+	// [GET_PRIM]: parsing [+-]?(?:Pi|e|\d+)
+	T get_prim(char*& expr);
+	// int get_prim(char*& expr);
+	// double get_prim(char*& expr);
 
 	// [GET_TERM]: parsing 'prim | term * prim | term / prim'
-	int get_term(char*& expr);
+	T get_term(char*& expr);
 
 	// [GET_EXPR]: parsing 'expr = term | expr + term | expr - term'
-	int get_expr(char*& expr);
+	T get_expr(char*& expr);
 
 	// IF '(' THEN opened_brackets_cnt += 1
 	// ELSE IF ')' THEN opened_brackets_cnt -= 1
