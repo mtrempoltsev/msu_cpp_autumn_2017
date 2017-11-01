@@ -107,8 +107,10 @@ public:
     }
 };
 
+// Double parse
 class DoubleParser {
 public:
+    // Return the next position in string, and the result of parsing
     static std::pair<int, double> parse(std::string &s, int start_pos) {
         long double result = 0;
         bool was_dot = false;
@@ -171,8 +173,13 @@ public:
 template <class T>
 class Expression {
 public:
+    // Empty constructor
     Expression() {}
+
+    // Constructor by std::string - expression for eval
     Expression(std::string &s): expr(s), cur_pos(0), len(int(s.size())) {}
+    
+    // Calculate the expression, store the answer in result variable
     void eval() {
         deleteSpaces();
         checkBalance();
@@ -183,14 +190,18 @@ public:
         }
         result = exprValue();
     }
+
+    // Getter for get answer
     T getValue() const {
         return result;
     }
+
 private:
     std::string expr;
     T result;
     int cur_pos;
     int len;
+
     // delete space symbols from expr
     void deleteSpaces() {
         std::string res;
@@ -203,9 +214,12 @@ private:
         expr = res;
     }
 
+    // throw error by std::string
     void throwError(std::string s) {
         throw s;
     }
+    
+    // Get error message about unexpected symbol
     std::string UnexpectedSymbol (char unexpected, std::string expected) {
         std::string unexp;
         unexp += unexpected;
@@ -213,6 +227,7 @@ private:
         return unexp;
     }
 
+    // check the brackets balance of expression
     void checkBalance() {
         int balance = 0;
         for (int i = 0; i < expr.size(); i++) {
@@ -222,6 +237,7 @@ private:
         }
     }
 
+    // Get expr value (look at grammar)
     T exprValue() {
         T sign = 1;
         if (expr[cur_pos] == '-') {
@@ -234,6 +250,8 @@ private:
         cur_pos++;
         return sum_value * sign;
     }
+
+    // Get sum value (look at grammar)
     T sumValue() {
         T value = T();
         T cur_value;
@@ -351,6 +369,7 @@ private:
         }
         return 0;
     }
+
     static std::string EndOfLine;
     static std::map<std::string, double> consts;
 };
