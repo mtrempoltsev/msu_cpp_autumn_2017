@@ -151,6 +151,7 @@ void check_calc() {
 	is<T>("2..+* 2", 0, false);
 }
 
+
 int main(int argc, char** argv) {
 	if (argc < 3) {
 		cout << "Testing for 'int' type:" << endl << endl;
