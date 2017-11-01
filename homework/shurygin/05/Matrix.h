@@ -113,6 +113,7 @@ public:
 		return !((*this) == m);
 	}
 	~Matrix() {};
+
 private:
 	std::size_t rows_;
 	std::size_t cols_;
