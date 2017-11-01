@@ -8,6 +8,7 @@ using namespace std;
 
 const double precision = 1e-15;
 
+
 template<typename T>
 void is(std::string text, T value, bool positive = true) {
 	const char* text_ptr = text.c_str();
