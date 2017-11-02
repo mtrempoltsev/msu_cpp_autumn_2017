@@ -244,7 +244,7 @@ public:
                     break;
                 }
                 case Token::Div:{
-                    int divisor = prim(text);
+                    T divisor = prim(text);
                     if (divisor == 0) throw 0;
                     left /= divisor;
                     break;
