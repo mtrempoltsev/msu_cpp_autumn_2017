@@ -83,7 +83,7 @@ void Operator::init(std::string s){
             token = Operator::Pi;
         return;
     }
-    if(s.find("E") < s.length()){
+    if(s.find("e") < s.length()){
         if(umin != -1)
             token = - Operator::E;
         else

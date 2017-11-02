@@ -100,9 +100,15 @@ Matrix<T>& Matrix<T>::operator=(const Matrix& other) {
     if (this == &other) return *this;
 
     delete[] ptr_;
-    ptr_ = new T[columns_ * rows_];
     rows_ = other.rows_;
     columns_ = other.columns_;
+    ptr_ = new T[other.columns_ * other.rows_];
+    for (size_t i = 0; i < rows_; i++) {
+        for (size_t j = 0; j < columns_; j++) {
+            ptr_[i * columns_ + j] = other.ptr_[i * columns_ + j];
+        }
+    }
+
     for (size_t i = 0; i < rows_; i++) {
         for (size_t j = 0; j < columns_; j++) {
             ptr_[i * columns_ + j] = other.ptr_[i * columns_ + j];
@@ -126,10 +132,10 @@ Matrix<T>::Matrix(Matrix&& other) {
 template <typename T>
 Matrix<T>& Matrix<T>::operator=(Matrix&& other) {
     if (this == &other) return *this;
-    delete[] ptr_;
-    ptr_ = other.ptr_;
     rows_ = other.rows_;
     columns_ = other.columns_;
+    delete[] ptr_;
+    ptr_ = other.ptr_;
     other.ptr_ = nullptr;
     return *this;
 }

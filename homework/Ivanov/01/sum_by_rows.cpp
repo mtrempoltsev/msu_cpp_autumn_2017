@@ -45,5 +45,6 @@ int main(int argc, char const *argv[])
             sum += arr[i][j];
         }
     }
+    timer.~Timer();
     return 0;
 }
