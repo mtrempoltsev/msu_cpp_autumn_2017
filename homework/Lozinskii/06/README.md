@@ -13,10 +13,7 @@ make
 
     ./calculator "<expr>" f
 
-Где f равен
-"i" для int
-"l" для long
-"d" для double
+Где f равен "i" для int, "l" для long, "d" для double
 
 ### Пример использования
 
@@ -36,5 +33,5 @@ make
     <expr> ::= <term>|<expr> + <term>|<expr> - <term>
     <term> ::= <prim>|<term> * <prim>|<term> / <prim>
     <prim> ::= <number>|-<number>
-    <number> ::= <digit>|<number><digit>|(<expr>)|Pi|e
+    <number> ::= <digit>.<digit>|<digit>|<number><digit>|(<expr>)|Pi|e
     <digit> ::= 0|1|2|3|4|5|6|7|8|9
