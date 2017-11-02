@@ -6,6 +6,43 @@
 #include<limits>
 #include<cmath>
 using Striter = std::string::const_iterator;
+
+template <class T>
+struct NumberTrait
+{
+    bool isCorrectValue(T value);
+};
+
+template <>
+struct NumberTrait<int>
+{
+    long long value;
+    bool isCorrectValue()
+    {
+        return value >= std::numeric_limits<int>().min() &&
+        value <= std::numeric_limits<int>().max();
+    }
+};
+template <>
+struct NumberTrait<long>
+{
+    long long value;
+    bool isCorrectValue()
+    {
+        return value >= std::numeric_limits<long>().min() &&
+        value <= std::numeric_limits<long>().max();
+    }
+};
+template <>
+struct NumberTrait<double>
+{
+    double value;
+    bool isCorrectValue()
+    {
+        return !std::isnan(value) && !std::isinf(value);
+    }
+};
+
 template<typename T>
 class Computer
 {
@@ -89,14 +126,7 @@ class Computer
             }
             return a / b;  
         }
-        
-        bool
-        check(long long &a, T &b)
-        {
-            return a >= std::numeric_limits<T>().min() &&
-            a <= std::numeric_limits<T>().max();
-        }
-                
+                      
         void 
         skip_trash()
         {                                        
@@ -113,9 +143,9 @@ class Computer
                 throw std::invalid_argument("no number"); 
             }
             bool flag = false;                            
-            long long value; 
+            NumberTrait<T> nt = NumberTrait<T>();
+            double value1 = 0;
             int sign = 1;
-            T tst = 1;
             if (*s == '-') {                              
                 s++;                                      
                 sign = -1;                                
@@ -137,17 +167,18 @@ class Computer
                 s++;
                 return e * sign; 
             }
-            value = 0;
+            nt.value = 0;
             while (s != end && *s <= '9' && *s >= '0') {  
-                value *= 10;                              
-                value += *s - '0';                        
+                nt.value *= 10;                              
+                nt.value += *s - '0';                        
                 flag = true;                              
                 s++;                                      
             }
-                
             if (*s == '.' || *s == ',') {
                 s++;
                 while (s != end && *s <= '9' && *s >= '0') {  
+                    value1 += *s - '0';                        
+                    value1 /= 10;                              
                     flag = true;                              
                     s++;                                      
                 }   
@@ -155,14 +186,16 @@ class Computer
             if (!flag) {                                  
                 throw std::invalid_argument("bad number");
             }                                             
-            value *= sign;
-            if (check(value, tst)) {
-                return value;                                 
+            nt.value *= sign;
+            nt.value += value1;
+            if (nt.isCorrectValue()) {
+                return nt.value;                                 
             } else {
                 throw std::invalid_argument("number is out of range");
             }
             return 0;
-        } 
+        }
+        
 
         Lexem
         next_elem(Operation &op)
@@ -207,76 +240,6 @@ class Computer
             return res;
         }
 };
-
-// Bad c++! Why I need to do so...
-template<>
-bool
-Computer<double>::check(long long &a, double &b) {
-    return !std::isnan(b) && !std::isinf(b);
-}
-                               
-template<>                     
-double                         
-Computer<double>::get_number() 
-{                           
-    skip_trash();                           
-    if (s == end) {                               
-        throw std::invalid_argument("no number"); 
-    }
-    bool flag = false;                            
-    double value; 
-    long long a;
-    double value1 = 0;
-    int sign = 1;
-    if (*s == '-') {                              
-        s++;                                      
-        sign = -1;                                
-    }    
-    if (*s == '(') {
-        s++;
-        bracket_count++;
-        return expr() * sign;
-    }
-    if (*s == 'P') {
-        if (++s != end && *s == 'i'){
-            s++;
-            return Pi * sign;
-        } else {
-            throw std::invalid_argument("bad number");
-        }
-    }
-    if (*s == 'e') {
-        s++;
-        return e * sign; 
-    }
-    value = 0;
-    while (s != end && *s <= '9' && *s >= '0') {  
-        value *= 10;                              
-        value += *s - '0';                        
-        flag = true;                              
-        s++;                                      
-    }
-    if (*s == '.' || *s == ',') {
-        s++;
-        while (s != end && *s <= '9' && *s >= '0') {  
-            value1 += *s - '0';                        
-            value1 /= 10;                              
-            flag = true;                              
-            s++;                                      
-        }   
-    }
-    if (!flag) {                                  
-        throw std::invalid_argument("bad number");
-    }                                             
-    value *= sign;
-    value += value1;
-    if (check(a, value)) {
-        return value;                                 
-    } else {
-        throw std::invalid_argument("number is out of range");
-    }
-    return 0;
-}                              
 
 
 template <typename T>
