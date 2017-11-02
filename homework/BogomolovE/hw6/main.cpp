@@ -147,8 +147,8 @@ public:
                 case '(': token = Token::LBracket; return;
                 case ')': token = Token::RBracket; return;
             }
-            if (c >= '0' && c <= '9'){
-                for (auto c = *text; c >= '0' && c <= '9';){ //skip digits
+            if (c >= '0' && c <= '9' || c == '.'){
+                for (auto c = *text; c >= '0' && c <= '9' || c == '.';){ //skip digits
                     text++;
                     c = *text;
                 }
