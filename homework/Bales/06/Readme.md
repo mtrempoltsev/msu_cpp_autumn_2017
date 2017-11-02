@@ -17,33 +17,19 @@
 ```sh
 $ make
 ```
-Запускаем калькулятор с типом **int**:
+Запускаем калькулятор + автоматически запускаем тесты:
 ```sh
-$ ./calc "(5 + 3 * (8 / Pi) * 4) + (1)"
+$ ./calc
 ```
-
-Результат:
+Результат работы, как и ожидалось:
 ```sh
+CheckIntParses is ended.
+CheckLongParses is ended.
+CheckDoubleParses is ended.
 Warning: Incorrect type conversion!
 Error: look exit code
-```
-
-Запускаем калькулятор с типом **double**:
-```sh
-$ ./calc "(5 + 3 * (8 / Pi) * 4) + (1)"
-```
-
-Результат:
-```sh
-36.5732
-```
-
-Но калькулятор может неявно приводить к типу **int**, если это не повлияет на значение выражения:
-```sh
-$ ./calc "5.0 + 3.0 - 4.0"
-```
-
-Результат:
-```sh
-4
+FailedIntParserForDouble is ended.
+Warning: Value out of range!
+Error: look exit code
+FailedIntParserForLong is ended.
 ```

@@ -7,14 +7,47 @@
     и выражение "2.5" преобразует к типу int => "2"
 */
 
+void check(bool pred) {
+    if (!pred) {
+        std::cerr << "Was happened error!" << std::endl;
+    }
+}
+
+void CheckIntParses() {
+    const char* expr = "5.0 + 3 - 4.0";
+    check(TCalculator<int>::IsValidExpr(expr));
+    std::cout << "CheckIntParses is ended." << std::endl;
+}
+
+void CheckDoubleParses() {
+    const char* expr = "5.2 + 3 / Pi - 4.2 * e";
+    check(TCalculator<double>::IsValidExpr(expr));
+    std::cout << "CheckDoubleParses is ended." << std::endl;
+}
+
+void CheckLongParses() {
+    const char* expr = "2147483650 + 3";
+    check(TCalculator<long>::IsValidExpr(expr));
+    std::cout << "CheckLongParses is ended." << std::endl;
+}
+
+void FailedIntParserForLong() {
+    const char* expr = "2147483650 + 3";
+    check(!TCalculator<int>::IsValidExpr(expr));    
+    std::cout << "FailedIntParserForLong is ended." << std::endl;
+}
+
+void FailedIntParserForDouble() {
+    const char* expr = "4.5 + 3.1";
+    check(!TCalculator<int>::IsValidExpr(expr));    
+    std::cout << "FailedIntParserForDouble is ended." << std::endl;
+}
+
 int main(int argc, char* argv[]) {
-    if (argc != 2)
-        return static_cast<int>(TExitCode::INCORRECT_PARAMS);
-    if (TCalculator<double>::IsValidExpr(argv[1])) {
-        std::cout << TCalculator<double>::ToCalculate(argv[1]) << std::endl;
-    }
-    else {
-        return static_cast<int>(TExitCode::INCORRECT_INPUT);
-    }
+    CheckIntParses();
+    CheckLongParses();
+    CheckDoubleParses();
+    FailedIntParserForDouble();
+    FailedIntParserForLong();
     return 0;
 }
