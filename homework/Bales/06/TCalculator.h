@@ -52,7 +52,7 @@ bool TCalculator<T, Parser>::IsValidExpr(const char* expr) {
             try {
                 Parser::Parse(str);
             }
-            catch (ExitCodeException ex) {
+            catch (const ExitCodeException& ex) {
                 std::cerr << ex.what() << std::endl;
                 return false;
             }
