@@ -255,7 +255,7 @@ int main(int argc, const char* argv[])
 
 		std::cout << result << std::endl;
 	}
-	catch (const char* error_message){
+	catch (const char* error_message){ // в сообщении об ошибке первый символ - номер ошибки
 		const int error_code = *error_message;
 		std::cout << ++error_message << std:: endl;
 		return error_code;
