@@ -284,6 +284,7 @@ void check_double() {
 int main(int argc, char *argv[]) {
     char *text;
 
+
     //проверка числа аргументов
     if (argc < 2) {
         std::cout << "Error: input expression expected" << std::endl;

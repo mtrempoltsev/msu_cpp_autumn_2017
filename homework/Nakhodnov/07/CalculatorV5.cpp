@@ -80,7 +80,7 @@ public:
 
 
 
-// Класс для хранения лексем разбираемой строки
+// РљР»Р°СЃСЃ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ Р»РµРєСЃРµРј СЂР°Р·Р±РёСЂР°РµРјРѕР№ СЃС‚СЂРѕРєРё
 template <class T>
 class Token {
 public:
@@ -113,12 +113,12 @@ public:
 };
 
 
-// Класс, разбивабщий строку на лексемы
+// РљР»Р°СЃСЃ, СЂР°Р·Р±РёРІР°Р±С‰РёР№ СЃС‚СЂРѕРєСѓ РЅР° Р»РµРєСЃРµРјС‹
 template <class T>
 class Tokenizer {
 public:
     Tokenizer(char *s, unordered_map<string, T> mp) : S(s), constants(mp) {}
-    // Получаем первый токен из строки S
+    // РџРѕР»СѓС‡Р°РµРј РїРµСЂРІС‹Р№ С‚РѕРєРµРЅ РёР· СЃС‚СЂРѕРєРё S
     Token<T> getToken() {
         while (*S && isspace(*S)) {
             ++S;
@@ -144,7 +144,8 @@ public:
             ++S;
             return Token<T>(Token<T>::OP_BREAK);
         case ')':
-            if (!balance)
+            --balance;
+            if (balance < 0 || (balance && !*(S + 1)))
                 throw(std::invalid_argument("The expression contains an incorrect sequence of brackets"));
             ++S;
             return Token<T>(Token<T>::CL_BREAK);
@@ -152,12 +153,16 @@ public:
             char *S_temp = S;
             Token<T> token = getNumber();
             if (S_temp == S)
-                throw(std::invalid_argument(string("The expression contains an incorrect symbol: \'") +*S + string("\'")));
+                throw(std::invalid_argument(string("The expression contains an incorrect symbol: \'") + *S + string("\'")));
+            if (balance && !*S)
+                throw(std::invalid_argument("The expression contains an incorrect sequence of brackets"));
             return token;
         }
     }
     void pushOpBack() {
         --S;
+        if (*S == '(') --balance;
+        if (*S == ')') ++balance;
     }
 private:
     char *S;
@@ -165,7 +170,7 @@ private:
     NumericParser<T> parser;
     int balance = 0;
     /*
-    Выделяем из строки число <number>:
+    Р’С‹РґРµР»СЏРµРј РёР· СЃС‚СЂРѕРєРё С‡РёСЃР»Рѕ <number>:
     <number> ::= <digit>|<number><digit>|<const>
     <digit> ::= 0|1|2|3|4|5|6|7|8|9
     <const> ::= Pi|e
@@ -206,7 +211,7 @@ private:
     Tokenizer<T> Tkz;
 
     /*
-    Вычисляем значение лексической единицы <prim>:
+    Р’С‹С‡РёСЃР»СЏРµРј Р·РЅР°С‡РµРЅРёРµ Р»РµРєСЃРёС‡РµСЃРєРѕР№ РµРґРёРЅРёС†С‹ <prim>:
     <prim> ::= <number>|-<number>
     */
     T getPrim() {
@@ -226,9 +231,9 @@ private:
     }
 
     /*
-    Вычисляем значение лексической единицы <term>:
+    Р’С‹С‡РёСЃР»СЏРµРј Р·РЅР°С‡РµРЅРёРµ Р»РµРєСЃРёС‡РµСЃРєРѕР№ РµРґРёРЅРёС†С‹ <term>:
     <term> ::= <prim>|<term> * <prim>|<term> / <prim>
-    Т.е. выполняем обработку операций деления и вычитания
+    Рў.Рµ. РІС‹РїРѕР»РЅСЏРµРј РѕР±СЂР°Р±РѕС‚РєСѓ РѕРїРµСЂР°С†РёР№ РґРµР»РµРЅРёСЏ Рё РІС‹С‡РёС‚Р°РЅРёСЏ
     */
     T getTerm() {
         T left, tmp;
@@ -250,6 +255,7 @@ private:
                 throw(std::invalid_argument("The expression contains an incorrect sequence of tokens"));
             case Token<T>::END:
                 return left;
+            case Token<T>::CL_BREAK:
             default:
                 Tkz.pushOpBack();
                 return left;
@@ -259,9 +265,9 @@ private:
     }
 
     /*
-    Вычисляем значение лексической единицы <expr>:
+    Р’С‹С‡РёСЃР»СЏРµРј Р·РЅР°С‡РµРЅРёРµ Р»РµРєСЃРёС‡РµСЃРєРѕР№ РµРґРёРЅРёС†С‹ <expr>:
     <expr> ::= <term>|<expr> + <term>|<expr> - <term>|'('<expr>')'
-    Т.е. выполняем обработку операций сложения и вычинания
+    Рў.Рµ. РІС‹РїРѕР»РЅСЏРµРј РѕР±СЂР°Р±РѕС‚РєСѓ РѕРїРµСЂР°С†РёР№ СЃР»РѕР¶РµРЅРёСЏ Рё РІС‹С‡РёРЅР°РЅРёСЏ
     */
     T getExpr() {
         Token<T> token;
@@ -278,6 +284,7 @@ private:
             case Token<T>::NUMBER:
                 throw(std::invalid_argument("The expression contains an incorrect sequence of tokens"));
             case Token<T>::END:
+                return left;
             case Token<T>::CL_BREAK:
                 return left;
             default:
@@ -346,7 +353,7 @@ int main(int argc, char *argv[])
         { "e", 2.7 }
     };
     Calculator<double> calc_double(argv[1], mp_double);
-    cout.precision(10);
+    cout.precision(15);
     prepare_computation(calc_double);
     return 0;
 #endif

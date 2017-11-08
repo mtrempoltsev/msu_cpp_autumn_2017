@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <unordered_map>
 #include <string>
 #include <limits>
@@ -7,15 +7,6 @@
 using namespace std;
 
 
-
-// В случае возникновения ошибки выводим сообщение msg и завершаем работу с кодом 1
-void printError(string msg) {
-    cerr << msg << endl;
-    exit(1);
-}
-
-
-// Класс выполняющий выделение числа заданного типа из строки
 template <class T>
 class NumericParser {};
 
@@ -35,7 +26,7 @@ public:
         if (min <= ans && ans <= max) {
             return (int)ans;
         }
-        throw(std::out_of_range("Out of range"));
+        throw(std::invalid_argument("Number in the expression cant`t be represented as int"));
     }
 };
 
@@ -55,19 +46,19 @@ public:
         if (min <= ans && ans <= max) {
             return (long)ans;
         }
-        throw(std::out_of_range("Out of range"));
+        throw(std::invalid_argument("Number in the expression cant`t be represented as long"));
     }
 };
 
 template <>
 class NumericParser<double> {
 private:
-    static constexpr double min = numeric_limits<double>::min();
+    static constexpr double min = numeric_limits<double>::lowest();
     static constexpr double max = numeric_limits<double>::max();
 public:
     NumericParser() {};
     double get_number(char* &S) {
-        double before_dot = 0, after_dot = 0, ans;
+        long double before_dot = 0, after_dot = 0, ans;
         int order = 0;
         while (*S && *S != '.' && isdigit(*S)) {
             before_dot *= 10;
@@ -83,7 +74,7 @@ public:
         if (min <= ans && ans <= max) {
             return ans;
         }
-        throw(std::out_of_range("Out of range"));
+        throw(std::invalid_argument("Number in the expression cant`t be represented as double"));
     }
 };
 
@@ -153,22 +144,25 @@ public:
             ++S;
             return Token<T>(Token<T>::OP_BREAK);
         case ')':
-            if (!balance) {
-                printError(string("Incorrect sequence of breaks"));
-            }
+            --balance;
+            if (balance < 0 || (balance && !*(S + 1)))
+                throw(std::invalid_argument("The expression contains an incorrect sequence of brackets"));
             ++S;
             return Token<T>(Token<T>::CL_BREAK);
         default:
             char *S_temp = S;
             Token<T> token = getNumber();
-            if (S_temp == S) {
-                printError(string("Incorrect symbol: \'") + *S + string("\'"));
-            }
+            if (S_temp == S)
+                throw(std::invalid_argument(string("The expression contains an incorrect symbol: \'") + *S + string("\'")));
+            if (balance && !*S)
+                throw(std::invalid_argument("The expression contains an incorrect sequence of brackets"));
             return token;
         }
     }
     void pushOpBack() {
         --S;
+        if (*S == '(') --balance;
+        if (*S == ')') ++balance;
     }
 private:
     char *S;
@@ -199,13 +193,8 @@ private:
             if (buff.length()) {
                 return token;
             }
-            try {
-                token.value = parser.get_number(S);
-                return token;
-            }
-            catch (const std::out_of_range& exp) {
-                printError(exp.what());
-            }
+            token.value = parser.get_number(S);
+            return token;
         }
     }
 };
@@ -232,10 +221,12 @@ private:
         }
         if (token.type == Token<T>::MINUS) {
             token = Tkz.getToken();
-            if (token.type != Token<T>::NUMBER) printError(string("Invalid sequence of tokens"));
+            if (token.type != Token<T>::NUMBER)
+                throw(std::invalid_argument("The expression contains an incorrect sequence of tokens"));
             return token.value * -1;
         }
-        else if (token.type != Token<T>::NUMBER) printError(string("Invalid sequence of tokens"));
+        else if (token.type != Token<T>::NUMBER)
+            throw(std::invalid_argument("The expression contains an incorrect sequence of tokens"));
         return token.value;
     }
 
@@ -256,13 +247,15 @@ private:
                 break;
             case Token<T>::DIV:
                 tmp = getPrim();
-                if (!tmp) printError(string("Dividion by zero"));
+                if (!tmp)
+                    throw(std::runtime_error("Division by zero"));
                 left /= tmp;
                 break;
             case Token<T>::NUMBER:
-                printError(string("Invalid sequence of tokens"));
+                throw(std::invalid_argument("The expression contains an incorrect sequence of tokens"));
             case Token<T>::END:
                 return left;
+            case Token<T>::CL_BREAK:
             default:
                 Tkz.pushOpBack();
                 return left;
@@ -289,8 +282,9 @@ private:
                 left -= getTerm();
                 break;
             case Token<T>::NUMBER:
-                printError(string("Invalid sequence of tokens"));
+                throw(std::invalid_argument("The expression contains an incorrect sequence of tokens"));
             case Token<T>::END:
+                return left;
             case Token<T>::CL_BREAK:
                 return left;
             default:
@@ -306,19 +300,40 @@ private:
 };
 
 
+template <class T>
+void prepare_computation(Calculator<T>& calc) {
+    try
+    {
+        cout << calc.getValue() << endl;
+    }
+    catch (const std::invalid_argument& exp)
+    {
+        cerr << "invalid_argument exception\n" << exp.what() << endl;
+    }
+    catch (const std::runtime_error& exp)
+    {
+        cerr << "runtime_error exception\n" << exp.what() << endl;
+    }
+    catch (const std::exception& exp)
+    {
+        cerr << "Unknown exception\n" << exp.what() << endl;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     if (argc != 2) {
         cerr << "Invalid number of arguments" << endl;
-        return 1;
+        return 0;
     }
+
 #ifdef INT
     unordered_map<string, int> mp_int = {
         { "Pi", 3 },
         { "e", 2 }
     };
     Calculator<int> calc_int(argv[1], mp_int);
-    cout << calc_int.getValue() << endl;
+    prepare_computation(calc_int);
     return 0;
 #endif
 
@@ -328,7 +343,7 @@ int main(int argc, char *argv[])
         { "e", 2 }
     };
     Calculator<long> calc_long(argv[1], mp_long);
-    cout << calc_long.getValue() << endl;
+    prepare_computation(calc_long);
     return 0;
 #endif
 
@@ -338,8 +353,8 @@ int main(int argc, char *argv[])
         { "e", 2.7 }
     };
     Calculator<double> calc_double(argv[1], mp_double);
-    cout.precision(10);
-    cout << calc_double.getValue() << endl;
+    cout.precision(15);
+    prepare_computation(calc_double);
     return 0;
 #endif
 
