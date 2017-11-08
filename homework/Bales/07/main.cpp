@@ -50,6 +50,11 @@ int main(int argc, char* argv[]) {
     FailedIntParserForDouble();
     FailedIntParserForLong();
     const char* expr = "- ( - ( ( 5.2 + 3 ) / Pi - 4.2 ) * e )";
-    std::cout << TCalculator<double>::ToCalculate(expr) << std::endl;
+    try {
+        std::cout << TCalculator<int>::ToCalculate(expr) << std::endl;
+    }
+    catch (const DivideByZeroException& ex) {
+        std::cerr << ex.what() << std::endl;
+    }    
     return 0;
 }

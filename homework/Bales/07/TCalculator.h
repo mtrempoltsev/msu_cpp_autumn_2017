@@ -10,9 +10,9 @@ public:
     static TItem ToCalculate(const char* expr);
     static bool IsValidExpr(const char* expr);
 private:
-    static TItem _Expr(const std::unique_ptr<TTokenizer>& tokenizer) noexcept;
-    static TItem _Term(const std::unique_ptr<TTokenizer>& tokenizer, size_t cntEnter = 0) noexcept;
-    static TItem _Prim(const std::unique_ptr<TTokenizer>& tokenizer) noexcept;
+    static TItem _Expr(const std::unique_ptr<TTokenizer>& tokenizer) ;
+    static TItem _Term(const std::unique_ptr<TTokenizer>& tokenizer, size_t cntEnter = 0) ;
+    static TItem _Prim(const std::unique_ptr<TTokenizer>& tokenizer) ;
 };
 
 template<typename TItem, typename Parser>
@@ -39,25 +39,19 @@ bool TCalculator<TItem, Parser>::IsValidExpr(const char* expr) {
         if (token.second == Token::Invalid) {
             return false;
         }
-        else if (token.second == Token::Number 
-                || token.second == Token::DefConstant) {
+        if (token.second == Token::Number 
+            || token.second == Token::DefConstant) {
             auto str = token.second == Token::Number
                         ? token.first
                         : std::to_string(Constants.at(token.first));
-            try {
-                Parser::Parse(str);
-            }
-            catch (const std::runtime_error& ex) {
-                std::cerr << ex.what() << std::endl;
-                return false;
-            }
+            Parser::Parse(str);
         }
     }
     return true;
 }
 
 template<typename TItem, typename Parser>
-TItem TCalculator<TItem, Parser>::_Expr(const std::unique_ptr<TTokenizer>& tokenizer) noexcept {
+TItem TCalculator<TItem, Parser>::_Expr(const std::unique_ptr<TTokenizer>& tokenizer)  {
     TItem leftOperand = _Term(tokenizer);
     const auto token = tokenizer->GetToken();
     if (Token::End != token.second && Token::CloseBracket != token.second) {
@@ -69,7 +63,7 @@ TItem TCalculator<TItem, Parser>::_Expr(const std::unique_ptr<TTokenizer>& token
 }
 
 template<typename TItem, typename Parser>
-TItem TCalculator<TItem, Parser>::_Term(const std::unique_ptr<TTokenizer>& tokenizer, size_t cntEnter) noexcept {
+TItem TCalculator<TItem, Parser>::_Term(const std::unique_ptr<TTokenizer>& tokenizer, size_t cntEnter)  {
     TItem leftOperand = _Prim(tokenizer);
     const auto token = tokenizer->GetToken();
     if (Token::Mul == token.second || Token::Div == token.second) {
@@ -80,14 +74,30 @@ TItem TCalculator<TItem, Parser>::_Term(const std::unique_ptr<TTokenizer>& token
          * Т.е. все знаки ('*' или '/'), которые внутри '/' будут инвертироваться
          */
         if ((cntEnter & 1) == 0) { // Проверка на нечётность
-            return Token::Mul != token.second 
-                ? leftOperand / _Term(tokenizer, cntEnter + 1) 
-                : leftOperand * _Term(tokenizer, cntEnter);
+            if (Token::Mul != token.second) {
+                auto term = _Term(tokenizer, cntEnter + 1);
+                if (abs(term) <= Constants.at("eps")) {
+                    throw DivideByZeroException("Zero division!");
+                }
+                return leftOperand / term;
+            }
+            else {
+                auto term = _Term(tokenizer, cntEnter);
+                return leftOperand * term;
+            }
         }
         else {
-            return Token::Mul != token.second 
-                ? leftOperand * _Term(tokenizer, cntEnter) 
-                : leftOperand / _Term(tokenizer, cntEnter + 1);
+            if (Token::Mul != token.second) {
+                auto term = _Term(tokenizer, cntEnter);
+                return leftOperand * term;
+            }
+            else {
+                auto term = _Term(tokenizer, cntEnter + 1);
+                if (abs(term) <= Constants.at("eps")) {
+                    throw DivideByZeroException("Zero division!");
+                }
+                return leftOperand / term;                
+            }
         }
     }
     else {
@@ -101,7 +111,7 @@ TItem TCalculator<TItem, Parser>::_Term(const std::unique_ptr<TTokenizer>& token
 }
 
 template<typename TItem, typename Parser>
-TItem TCalculator<TItem, Parser>::_Prim(const std::unique_ptr<TTokenizer>& tokenizer) noexcept {
+TItem TCalculator<TItem, Parser>::_Prim(const std::unique_ptr<TTokenizer>& tokenizer)  {
     const auto token = tokenizer->GetToken();
     if (Token::Number == token.second) {
         return Parser::Parse(token.first);
