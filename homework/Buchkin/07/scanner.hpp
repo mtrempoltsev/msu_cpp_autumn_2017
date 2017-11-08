@@ -4,7 +4,6 @@
 #include <sstream>
 #include <unordered_map>
 #include <limits>
-#include <cassert>
 #include "lex.hpp"
 
 template <class T = int>
@@ -12,7 +11,7 @@ T parse(const std::string& str)
 {
 	std::string maxStr = std::to_string(std::numeric_limits<T>::max());
 	if (maxStr.length() < str.length() || (maxStr.length() == str.length() && maxStr < str)) {
-		assert(!"Constant is out of limits");
+		throw "Constant is out of limits";
 	}
 	std::stringstream ss(str);
 	T result;
@@ -45,7 +44,7 @@ public:
 	Scanner(const char *str_): str(str_), i(0)
 	{
 		if (str == nullptr) {
-			assert(!"Empty input");
+			throw "Empty input";
 		}
 		gc();
 	}
@@ -104,7 +103,7 @@ Scanner<T>::gl()
 			} else {
 				auto it = constants.find(buf);
 				if (it == constants.end()) {
-					assert(!"Unknown constant");
+					throw "Unknown constant";
 				}
 				return Lex<T>(LEX_NUMBER, it->second);
 			}

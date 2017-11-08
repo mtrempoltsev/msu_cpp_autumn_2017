@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scanner.hpp"
-#include <cassert>
+#include <vector>
 
 template <class T = int>
 class Parser
@@ -23,7 +23,7 @@ public:
 		gl();
 		T value = expr();
 		if (lex.type != LEX_FIN) {
-			assert(!"Incorrect ending");
+			throw "Incorrect ending";
 		}
 		
 		return value;
@@ -58,7 +58,7 @@ Parser<T>::term()
 		} else {
 			T divider = prim();
 			if (divider == T()) {
-				assert(!"Zero division");
+				throw "Zero division";
 			}
 			value /= divider;
 		}
@@ -90,12 +90,12 @@ Parser<T>::number()
 		gl();
 		T value = expr();
 		if (lex.type != LEX_RPAREN) {
-			assert(!"no right parenthesis");
+			throw "no right parenthesis";
 		}
 		gl();
 		return value;
 	} else {
-		assert(!"wrong lexeme");
+		throw "wrong lexeme";
 	}
 	
 	return T();
