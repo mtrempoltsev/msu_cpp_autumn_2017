@@ -4,6 +4,7 @@
 #include <limits>
 #include <cmath>
 #include <cfloat> 
+#include <memory>
 
 class Tokenizer {
 public:
@@ -189,14 +190,9 @@ public:
     T calculate(char *&text){
     	expression = text;
     	T result = expr(expression);
-        std::cout << result << std::endl;
         return result;
     }
 
-    /*void setExpr(std::string expr){
-    	//this->expression = expr;
-    	strcpy(this->expression, expr.c_str());
-    }*/
 
 private:
     T prim(const char *&text) {
@@ -224,7 +220,6 @@ private:
                 ++text;
             }
             std::string var;
-            //auto* var = new std::string();
             var.assign(text-length, length);
             return constants.at(var) * (2 * isPositive - 1);
         }
@@ -331,23 +326,13 @@ bool isEqual(const double &left, const double &right){
 
 int main(int argc, char* argv[]) {
 
-    /*if(argc<2){
-        throw std::runtime_error("No input expression");
-    }
-	const char* expression = argv[1];
-    calculator<int,Parser<int>>(expression).calculate();
-    *///  I do without args/uncomment and use if needed
-    if(argc>1){
-    	//const char* expression = argv[1];
-    	//calculator<int,Parser<int>>(expression).calculate();
-    }
     
     char* Expr1 = new char[255];
     std::strcpy(Expr1, std::string("3+3").c_str());
     char* Expr2 = new char[255];
     std::strcpy(Expr2, std::string("9/2*2").c_str());
     char* Expr3 = new char[255];
-    std::strcpy(Expr3, std::string("Pi*-e").c_str());
+    std::strcpy(Expr3, std::string("Pi*-e").c_str()); 
     char* Expr4 = new char[255];
     std::strcpy(Expr4, std::string("8*Pi").c_str());
 
@@ -377,7 +362,8 @@ int main(int argc, char* argv[]) {
     delete [] Expr2;
     delete [] Expr3;
     delete [] Expr4;
-
+    
+    std::cout<< "If no errors above - it works right" << std::endl;
 
 
     return 0;
