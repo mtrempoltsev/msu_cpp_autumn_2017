@@ -24,15 +24,13 @@ enum class Token
 //     | -number
 // number = [0-9]+
 
-Token next(const char*& input, int& number)
-{
+Token next(const char*& input, int& n) {
 
-    while(auto c = *input++)
-    {
+    while(auto c = *input++) {
 
-    	switch(c)
-    	{
-			case ' ': continue;
+    	switch(c) {
+			
+		case ' ': continue;
         	case '-': return Token::Minus;
         	case '+': return Token::Plus;
         	case '*': return Token::Multiply;
@@ -41,34 +39,33 @@ Token next(const char*& input, int& number)
        
         if (c >= '0' && c <= '9') {
 
-			number = 0;
-
-			while (c >= '0' && c <= '9')
-			{
-				// Многозначное число
-				number = 10 * number + (c - '0');
-				c = *input++;
-			}
+		n = 0;
+		
+		while (c >= '0' && c <= '9') {
 			
-			--input;
+			// Multidigit number
+			n = 10 * n + (c - '0');
+			c = *input++;
+		}
+			
+		--input;
             
-			return Token::Number;
+		return Token::Number;
         }
         
         else {
         	
-			cerr << "Invalid input expression (tokens)" << endl;
+		cerr << "Invalid input expression (tokens)" << endl;
 
-			exit(3);
-		}
+		exit(3);
+	}
     }
     
     return Token::End;
 }
 
-// Множители
-int number(const char*& input)
-{
+int number(const char*& input) {
+	
 	int result = 0;
 	Token token = next(input, result);
 	
@@ -78,23 +75,22 @@ int number(const char*& input)
 	else if (token == Token::Minus)
 		return -number(input); 
 	
-	else
-	{
+	else {
+		
 		cerr << "Invalid input expression (number)" << endl;
 		
 		exit(3);
 	}	
 }
 
-// Слагаемые
-int term(Token& last_token, const char*& input)
-{
+int term(Token& last_token, const char*& input) {
+	
 	int new_number;
 	int result = number(input);
 	last_token = next(input, new_number); 
 
-	while (last_token == Token::Multiply || last_token == Token::Divide || last_token == Token::Number)
-	{
+	while (last_token == Token::Multiply || last_token == Token::Divide || last_token == Token::Number) {
+		
 		if (last_token == Token::Multiply)
 			result *= number(input);
 		
@@ -102,12 +98,13 @@ int term(Token& last_token, const char*& input)
 			
 			size_t n = number(input);
 			
-			if (n == 0)
-			{
+			if (n == 0) {
+				
 				cerr << "ZeroDivisionError" << endl;
 				
 				exit(3);
 			}
+			
 			else
 				result /= n;
 		}
@@ -122,33 +119,30 @@ int term(Token& last_token, const char*& input)
 		last_token = next(input, new_number);
 	}
 
-	return result;
+    return result;
 }
 
-// Выражение
-int expr(const char*& input)
-{
+int expr(const char*& input) {
 	
 	Token last_token;
 	int result = term(last_token, input);
 
-	while (last_token != Token::End)
-	{
+	while (last_token != Token::End) {
+		
 		if (last_token == Token::Plus)
 			result += term(last_token, input);
 		
 		else if (last_token == Token::Minus)
 			result -= term(last_token, input);
 		
-		else
-		{
+		else {
 			cerr << "Invalid input expression (expr)" << endl;
 			
 			exit(3);
 		}
 	}
 
-	return result;
+    return result;
 }
 
 int main(int argc, char* argv[])
@@ -161,7 +155,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-    const char* input = argv[1];
+	const char* input = argv[1];
 
 	auto result = expr(input);
 
