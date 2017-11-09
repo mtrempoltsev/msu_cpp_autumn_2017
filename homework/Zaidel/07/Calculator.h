@@ -110,23 +110,6 @@ private:
     }
 
     Token checkConstant( bool isShiftedAfterOperation = true, bool isShiftedAfterNumberOrConstant = false) {
-//        const char *prev_text = text;
-//
-//        std::string const_str = "";
-//
-//        for (auto c = *(text); (c >= 'A' && c <= 'z') || c == ' ';) {
-//
-//            if( c == ' ')
-//            {
-//                continue;
-//            }
-//
-//            const_str+=c;
-//
-//            //skip digits
-//            ++text;
-//            c = *text;
-//        }
 
         std::string const_str  = getConstString(isShiftedAfterNumberOrConstant);
 
@@ -138,32 +121,11 @@ private:
         }
 
 
-//        for(size_t i = 0; i< const_str.size(); ++i)
-//        {
-//            if(constants.count(const_str.substr(0,i)) > 0)
-//            {
-//                tokenConst =  Token ::Const;
-//            }
-//        }
-
-//        if (!isShiftedAfterNumberOrConstant)
-//            this->text = prev_text;
-
         return tokenConst;
     }
 
     T getConstant()
     {
-//        std::string const_str = "";
-//
-//        for (auto c = *(text); c >= 'A' && c <= 'z';) {
-//
-//            const_str+=c;
-//
-//            //skip digits
-//            ++text;
-//            c = *text;
-//        }
 
         std::string const_str = getConstString(true);
 
@@ -229,18 +191,6 @@ private:
             }
 
 
-//            if (c >= '0' && c <= '9') {
-//                for (auto c = *(text); c >= '0' && c <= '9';) {
-//                    //skip digits
-//                    ++text;
-//                    c = *text;
-//                }
-//
-//                if (!isShiftedAfterNumberOrConstant)
-//                    text = prev_text;
-//
-//                return Token::Number;
-//            }
 
             if (!isShiftedAfterNumberOrConstant)
                 text = prev_text;
@@ -283,22 +233,9 @@ private:
         }
 
 
-//        for(;(*text >= '0' && *text <= '9') || *text == ' ' ; ++text)
-//        {
-//            if(*text == ' ')
-//                continue;
-//
-//            res = res * 10 + (*text - '0');
-//            isNumber = true;
-//        }
 
         skipSpaces();
 
-//
-//        for (; (*text >= '0' && *text <= '9'); ++text) {
-//            res = res * 10 + (*text - '0');
-//            isNumber = true;
-//        }
 
         isNumber = Parser::parse(text, res, true);
 

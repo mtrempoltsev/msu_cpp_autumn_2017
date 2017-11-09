@@ -65,13 +65,6 @@ struct Parser<int>
     static bool parse(const char*& text, int& value, bool skip) {
         const char *prev_text = text;
 
-//        long long res = 0;
-//        bool isNumber = false;
-//        for (; (*text >= '0' && *text <= '9'); ++text) {
-//            res = res * 10 + (*text - '0');
-//            isNumber = true;
-//        }
-
         long long res = 0;
         long long prev_res = 0;
 
