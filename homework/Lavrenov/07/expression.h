@@ -1,6 +1,7 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 #include "operator.h"
+#include <stdexcept>
 
 template<class T, class Parser>
 class Expression
@@ -14,7 +15,7 @@ private:
     Parser parser;
     void error();
     void validateSyntax(std::string& s);
-    Operator<T, Parser>* root;
+    std::shared_ptr<Operator<T, Parser> > root;
 };
 
 template<class T, class Parser>
@@ -22,7 +23,7 @@ Expression<T, Parser>::Expression(std::string s)
     : parser(), table()
 {
     validateSyntax(s);
-    root = new Operator<T, Parser>(s, table);
+    root = std::make_shared<Operator<T, Parser> >(Operator<T, Parser>(s, table));
 }
 
 template<class T, class Parser>
@@ -32,8 +33,7 @@ T Expression<T, Parser>::execute(){
 
 template<class T, class Parser>
 void Expression<T, Parser>::error(){
-    std::cerr <<"syntax error\n";
-    exit(-2);
+    throw std::invalid_argument("");
 }
 
 template<class T, class Parser>
@@ -66,35 +66,10 @@ void Expression<T, Parser>::validateSyntax(std::string& s){
             if(!table.exist(token)){
                 parser.parse(token);
             }
-			i += length - 1;
+            i += length - 1;
             prevSymbol = 'T';
             continue;
         }
-        /*if(Operator::isNumber(s[i]) || s[i] == 'P' || s[i] == 'E'){
-            //error();
-            if(prevSymbol == ')')
-                error();
-            if(s[i] == 'P' || s[i] == 'E'){
-                if(Operator::isNumber(prevSymbol) || prevSymbol == 'P' || prevSymbol == 'E')
-                    error();
-            }
-            if(Operator::isNumber(s[i])){
-                if(prevSymbol == 'P' || prevSymbol == 'E')
-                    error();
-                if(Operator::isNumber(prevSymbol) && Operator::isSpace(s[i - 1])){
-                    error();
-                }
-            }
-            if(s[i] == 'P' && i + 1 < s.length()){
-                if(s[i + 1] != 'i'){
-                    error();
-                }else{
-                    ++i;
-                    prevSymbol = 'P';
-                    continue;
-                }
-            }
-        }*/
 
         if(s[i] == '('){
             if(!(Operator<T, Parser>::isOperator(prevSymbol) || prevSymbol == 'U' || prevSymbol == '(' || prevSymbol == '\0')){
@@ -119,14 +94,12 @@ void Expression<T, Parser>::validateSyntax(std::string& s){
         if(!Operator<T, Parser>::isSpace(s[i])){
             prevSymbol = s[i];
         }
-
     }
 }
 
 template<class T, class Parser>
 Expression<T, Parser>::~Expression()
 {
-    delete root;
 }
 
 
