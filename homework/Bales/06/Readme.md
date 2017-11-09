@@ -1,5 +1,5 @@
 # Work_06
-Необходимо модернизировать [Work_03](https://github.com/mtrempoltsev/msu_cpp_autumn_2017/tree/master/homework/Bales/02):
+Необходимо модернизировать [Work_03](https://github.com/mtrempoltsev/msu_cpp_autumn_2017/tree/master/homework/Bales/03):
 
 * Добавить шаблоны
 * Добавить парсер, который будет проверять на корректность типы в выражении

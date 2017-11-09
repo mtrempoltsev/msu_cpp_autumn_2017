@@ -29,9 +29,10 @@ unordered_map < std::string, double > contants =
 class calc{
     public:
     Token current;
+    bool flag = true;
     calc(const char*& str){
         if (validator(str)==true){
-            std::cout << expr(str, current) << std::endl;
+            std::cout << expr(str, current, flag) << std::endl;
             exit (0);
         }
         else{
@@ -42,7 +43,7 @@ class calc{
     private:
     //Текущее состояние
     int number;
-    char* string_constant = new char[2];
+    string string_constant;
 
 
 
@@ -64,15 +65,14 @@ class calc{
                  return Token::Number;
             }
             if (isalpha(c)) {
-                string_constant[0] = c;
-                *text++;
-                while (auto c = *text++) {
-                    if (isalnum(c))
-                    string_constant[1] = c;
-                    
-
+                string_constant = c;
+                //*text++;
+                auto c = *text;
+                if (isalpha(c))
+                {
+                    string_constant.push_back(c);
+                    *text++;
                 }
-
                 //text.putback(c);
                 return current=Token::Constant;
             } 
@@ -84,7 +84,7 @@ class calc{
 
 
     //Извлекаем число с нужным знаком
-    int prim(const char*& text, Token& current_token){
+    double prim(const char*& text, Token& current_token){
         //Создаем копию указателя на строку, чтобы потом
         //можно было легко получить число
         auto old_text = text;
@@ -106,12 +106,17 @@ class calc{
                 throw std::invalid_argument("Operation at the end of file");
             }
             case Token::Left_bracket:{
-                 cout << text <<endl;
-                 double result = expr(text, current);
+                 bool flag = true;
+                 double result = expr(text, current, flag);
 	        if (current != Token::Right_bracket){
                     throw std::invalid_argument("No right bracket are available");
                 }
                 return result;
+            }
+            case Token::Constant: {
+                        double& result = contants[string_constant];
+                        current = getToken(text);
+                    return result;
             }
             default:
                 throw std::invalid_argument("Invalid syntax");
@@ -120,9 +125,9 @@ class calc{
     }
 
     //Умножение и перемножение структур поменьше, которые состоят из числа, либо числа со знаком минус
-    double term(const char*& text, Token& current_token){
+    double term(const char*& text, Token& current_token, bool& Flag){
         double left = prim(text, current_token);
-        while (1){
+        while (Flag){
             switch (current_token){
                 case Token::Mul:{
                     left *= prim(text, current_token);
@@ -136,6 +141,10 @@ class calc{
                     left /= right;
                     break;
                 }
+                case Token::Right_bracket:{
+                    return left;
+                    Flag=false;
+                }
                 default:
                     return left;
             }
@@ -143,16 +152,16 @@ class calc{
     }
     
     //Старт обработки строки... Сложение и вычитаение самых крупных структур, состоящих из      перемноженных или деленных друг на друга чисел 
-    double expr(const char*& text, Token& current_token){
-        double left = term(text, current_token);
-        while (1){
+    double expr(const char*& text, Token& current_token, bool& Flag){
+        double left = term(text, current_token, Flag);
+        while (Flag){
             switch (current_token){
                 case Token::Plus:{
-                    left += term(text, current_token);
+                    left += term(text, current_token, Flag);
                     break;
                 }
                 case Token::Minus:{
-                    left -= term(text, current_token);
+                    left -= term(text, current_token, Flag);
                     break;
                 }
                 case Token::End:{
@@ -162,14 +171,12 @@ class calc{
                      return left;
                 }
                 default:{
-
-
-
                     throw std::invalid_argument("Don't have this symbols");
 		
 	        }
             }
         }
+        return left;
     }
 
 
@@ -201,8 +208,8 @@ class calc{
                     return false;
                     }
                 else if (x =='P' && str[i+1]=='i'){
-                   i++;
-                   
+                   i+=2;
+                   x = str[i];
                    continue;
                 }
                 else {

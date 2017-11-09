@@ -32,6 +32,6 @@ make
 
     <expr> ::= <term>|<expr> + <term>|<expr> - <term>
     <term> ::= <prim>|<term> * <prim>|<term> / <prim>
-    <prim> ::= <number>|-<number>
-    <number> ::= <digit>.<digit>|<digit>|<number><digit>|(<expr>)|Pi|e
+    <prim> ::= <number>|-<number>|<number>.<number>|(<expr>)|Pi|e
+    <number> ::= <digit>|<number><digit>
     <digit> ::= 0|1|2|3|4|5|6|7|8|9
