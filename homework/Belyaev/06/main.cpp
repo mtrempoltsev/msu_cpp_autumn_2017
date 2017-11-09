@@ -351,6 +351,7 @@ int main(int argc, char* argv[]) {
     char* Expr4 = new char[255];
     std::strcpy(Expr4, std::string("8*Pi").c_str());
 
+
     //DOUBLE
 
     checkErrors(isEqual(calculator<double,Parser<double>>().calculate(Expr1),(double)6));
@@ -372,7 +373,10 @@ int main(int argc, char* argv[]) {
     checkErrors(calculator<long,Parser<long>>().calculate(Expr3)==-6);
     checkErrors(calculator<long,Parser<long>>().calculate(Expr4)==24);
 
-
+    delete [] Expr1;
+    delete [] Expr2;
+    delete [] Expr3;
+    delete [] Expr4;
 
 
 
