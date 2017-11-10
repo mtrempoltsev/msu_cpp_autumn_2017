@@ -2,7 +2,7 @@
 #include <string>
 
 
-#include "Calculator.cpp"
+#include "Calculator.h"
 using namespace std;
 void check_expression(const char* test) {
 		Calculator<double> double_calc(test);

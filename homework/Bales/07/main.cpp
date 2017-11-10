@@ -31,25 +31,35 @@ void CheckLongParses() {
     std::cout << "CheckLongParses is ended." << std::endl;
 }
 
-void FailedIntParserForLong() {
+void IntParserForLong() {
     const char* expr = "2147483650 + 3";
-    check(!TCalculator<int>::IsValidExpr(expr));    
-    std::cout << "FailedIntParserForLong is ended." << std::endl;
+    check(TCalculator<int>::IsValidExpr(expr));    
+    std::cout << "IntParserForLong is ended." << std::endl;
 }
 
-void FailedIntParserForDouble() {
+void IntParserForDouble() {
     const char* expr = "4.5 + 3.1";
-    check(!TCalculator<int>::IsValidExpr(expr));    
-    std::cout << "FailedIntParserForDouble is ended." << std::endl;
+    check(TCalculator<int>::IsValidExpr(expr));    
+    std::cout << "IntParserForDouble is ended." << std::endl;
 }
 
 int main(int argc, char* argv[]) {
     CheckIntParses();
     CheckLongParses();
     CheckDoubleParses();
-    FailedIntParserForDouble();
-    FailedIntParserForLong();
-    const char* expr = "- ( - ( ( 5.2 + 3 ) / Pi - 4.2 ) * e )";
-    std::cout << TCalculator<double>::ToCalculate(expr) << std::endl;
+    IntParserForDouble();
+    IntParserForLong();
+    const char* expr = "-( -((5.2 + 3)/Pi - 4.2) * e)";
+    try {
+        std::cout << TCalculator<double>::ToCalculate(expr) << std::endl;
+    }
+    catch (const DivideByZeroException& ex) {
+        std::cerr << ex.what() << std::endl;
+        return 1;
+    }
+    catch (const std::runtime_error& ex) {
+        std::cerr << ex.what() << std::endl;
+        return 2;        
+    }    
     return 0;
 }

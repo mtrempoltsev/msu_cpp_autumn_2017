@@ -6,7 +6,7 @@
 
 ## Пример выражения:
 ```
-- ( - ( ( 5.2 + 3 ) / Pi - 4.2 ) * e )
+-( -((5.2 + 3)/Pi - 4.2) * e)
 ```
 
 ## How run
@@ -23,11 +23,10 @@ $ ./calc
 CheckIntParses is ended.
 CheckLongParses is ended.
 CheckDoubleParses is ended.
-Warning: Incorrect type conversion!
-Error: look exit code
-FailedIntParserForDouble is ended.
-Warning: Value out of range!
-Error: look exit code
-FailedIntParserForLong is ended.
+Warning: Incorrect type conversion '3.1' from real to integer.
+Warning: Incorrect type conversion '4.5' from real to integer.
+IntParserForDouble is ended.
+Warning: Incorrect type conversion '2147483650' out of domain range.
+IntParserForLong is ended.
 -4.28904
 ```

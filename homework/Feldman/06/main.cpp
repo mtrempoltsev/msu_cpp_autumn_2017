@@ -3,7 +3,7 @@
 #include<cctype>
 #include<algorithm>
 #include <map>
-#include "Calculator.cpp"
+#include "Calculator.h"
 using namespace std;
 
 
