@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <initializer_list>
+#include <exception>
 
 #include "iterator.cpp"
 
@@ -18,15 +19,17 @@ public:
     explicit Vector(size_t size = 0)
                     : size_(size)
                     , capacity_(size) {
-        data_ = std::make_unique<T[]>(size_);
-        //std::cout << "Vector(size_t)" << std::endl;
+        if (size != 0) {
+            data_ = std::make_unique<T[]>(size_);
+        } else {
+            data_ = nullptr;
+        }
     }
 
 
     Vector(size_t size, const T& default_value)
                     : size_(size)
                     , capacity_(size) {
-        //std::cout << "Vector(size_t, const T&)" << std::endl;
         data_ = std::make_unique<T[]>(size_);
         for (size_t i = 0; i < size_; i++) {
             data_[i] = default_value;
@@ -37,9 +40,13 @@ public:
     Vector(std::initializer_list<T> store)
                     : size_(store.size())
                     , capacity_(store.size()) {
-        //std::cout << "std::initializer_list<T>" << std::endl;
-        data_ = std::make_unique<T[]>(size_);
-        std::copy(store.begin(), store.end(), data_.get());
+        if (store.size() != 0) {
+            data_ = std::make_unique<T[]>(size_);
+            std::copy(store.begin(), store.end(), data_.get());
+        } else {
+            data_ = nullptr;
+        }
+
     }
 
 
@@ -47,68 +54,88 @@ public:
                     : size_(other.size_)
                     , capacity_(other.capacity_) {
         data_ = std::make_unique<T[]>(size_);
-        std::copy(data_.get(), data_.get() + size_, other.data_.get());
+        std::copy(other.data_.get(), other.data_.get() + size_, data_.get());
     }
 
 
-    Vector(Vector&& other)
+    explicit Vector(Vector&& other)
                     : size_(other.size_)
                     , capacity_(other.capacity_) {
         data_ = std::move(other.data_);
     }
 
 
-    size_t size() const {
+    Vector& operator=(const Vector& other) {
+        size_ = (other.size_);
+        capacity_ = (other.capacity_);
+        data_ = std::make_unique<T[]>(size_);
+        std::copy(other.data_.get(), other.data_.get() + size_, data_.get());
+        return *this;
+    }
+
+
+    Vector& operator=(Vector&& movied) {
+        size_ = (movied.size_);
+        capacity_ = (movied.capacity_);
+        data_ = std::move(movied.data_);
+        return *this;
+    }
+
+
+    size_t size() const noexcept {
         return size_;
     }
 
 
-    size_t capacity() const {
+    size_t capacity() const noexcept {
         return capacity_;
     }
 
 
-    iterator begin() {
+    iterator begin() noexcept {
         return iterator(data_.get());
     }
 
 
-    const_iterator begin() const {
+    const_iterator begin() const noexcept {
         return const_iterator(data_.get());
     }
 
 
-    iterator end() {
+    iterator end() noexcept {
         return iterator(data_.get() + size_);
     }
 
 
-    const_iterator end() const {
+    const_iterator end() const noexcept {
         return const_iterator(data_.get() + size_);
     }
 
 
-    reverse_iterator rbegin() {
+    reverse_iterator rbegin() noexcept {
         return reverse_iterator(data_.get() + size_ - 1);
     }
 
 
-    const_reverse_iterator rbegin() const {
+    const_reverse_iterator rbegin() const noexcept {
         return const_reverse_iterator(data_.get() + size_ - 1);
     }
 
 
-    reverse_iterator rend() {
+    reverse_iterator rend() noexcept {
         return reverse_iterator(data_.get() - 1);
     }
 
 
-    const_reverse_iterator rend() const {
+    const_reverse_iterator rend() const noexcept {
         return const_reverse_iterator(data_.get() - 1);
     }
 
 
     T& operator[](size_t i) {
+        if (i >= size_) {
+            throw std::out_of_range("Index is out of range");
+        }
         return data_[i];
     }
 
@@ -119,19 +146,25 @@ public:
         }
 
         if (new_size < size_) {
-            // capacity don't change
-            auto tmp = std::make_unique<T[]>(capacity_);
-            std::copy(data_.get(), data_.get() + new_size, tmp.get());
-
-            data_ = std::move(tmp);
+            // capacity doesn't changes
+            for (auto it = this->begin() + new_size; it != this->end(); it++) {
+                (*it).~T();
+            }
             size_ = new_size;
-        } else {
+        } else if (capacity_ < new_size) {
+            // capacity changes to new_size
             auto tmp = std::make_unique<T[]>(new_size);
             std::copy(data_.get(), data_.get() + size_, tmp.get());
             data_ = std::move(tmp);
 
             size_ = new_size;
             capacity_ = new_size;
+        } else {
+            // capacity doesn't changes
+            for (auto it = this->begin() + size_; it != this->begin() + new_size; it++) {
+                *it = T();
+            }
+            size_ = new_size;
         }
     }
 
@@ -142,7 +175,7 @@ public:
 
         // fill by default value
         if (new_size > old_size) {
-            for (auto it = this->begin() + old_size; it != this->end(); ++it) {
+            for (auto it = this->begin() + old_size; it != this->end(); it++) {
                 *it = default_value;
             }
         }
@@ -168,6 +201,11 @@ public:
 
 
     void pop_back() {
+        if (size_ == 0) {
+            throw std::out_of_range("Pop of empty array");
+        }
+
+        (*this->rbegin()).~T();
         size_--;
     }
 
@@ -177,14 +215,15 @@ public:
     }
 
 
-    void clear() {
+    void clear() noexcept {
+        for (auto it = this->begin(); it != this->end(); it++) {
+            (*it).~T();
+        }
         size_ = 0;
     }
 
 
-    ~Vector() {
-        //std::cout << "~Vector()" << std::endl;
-    }
+    ~Vector() {}
 
 private:
     size_t size_;
@@ -192,6 +231,7 @@ private:
     std::unique_ptr<T[]> data_;
 };
 
+// some useful functions
 template <typename T>
 bool operator==(Vector<T> vect1, Vector<T> vect2) {
     if (vect1.size() != vect2.size()) {

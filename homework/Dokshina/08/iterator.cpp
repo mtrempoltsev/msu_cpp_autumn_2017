@@ -28,7 +28,7 @@ public:
     }
 
 
-    Iterator& operator++(int) {
+    Iterator operator++(int) {
         Iterator tmp(ptr_);
         ptr_++;
         return tmp;
@@ -41,7 +41,7 @@ public:
     }
 
 
-    Iterator& operator--(int) {
+    Iterator operator--(int) {
         Iterator tmp(ptr_);
         ptr_--;
         return tmp;
