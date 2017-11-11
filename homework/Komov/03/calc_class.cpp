@@ -5,8 +5,7 @@ using namespace std;
 
 map <string, double> constants = { { "e", 2.73 }, { "Pi", 3.14 } };
 
-enum class Token
-{
+enum class Token {
 
 	Minus,
 	Plus,
