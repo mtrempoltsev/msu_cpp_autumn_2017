@@ -44,26 +44,22 @@ class Calculator {
 		const char* input;
 };
 
-// переменнная input - идентификатор позиции
-// token - показывает что находится на этой позиции
-
 Calculator::Calculator() {
 
-	input = nullptr;
 	token = Token::Null;
+	input = nullptr;
 
 	bracket_count = 0;
 }
 
-Calculator::Calculator(const char*& inp) {
+Calculator::Calculator(const char*& input_) {
   
 	token = Token::Null;
-	input = inp;
+	input = input_;
 
 	bracket_count = 0;
 }
 
-// считывает токен, меняет позицию прочитанного текста и записывает число в глобальную переменную
 Token Calculator::nextToken() {
 	
 	while (auto c = *input++) {
@@ -100,7 +96,7 @@ Token Calculator::nextToken() {
 		return Token::Invalid;
 	}
   
-  return Token::End;
+	return Token::End;
 }
 
 int Calculator::expression() {
@@ -130,7 +126,7 @@ int Calculator::expression() {
 		}
 	}
   
-  return result;
+	return result;
 }
 
 // Summands
@@ -186,7 +182,7 @@ int Calculator::term() {
 		}
 	}
   
-  return result;
+	return result;
 }
 
 int Calculator::primary() {
@@ -230,7 +226,7 @@ int Calculator::primary() {
 			return n;
 		}
 
-		// If we get left bracket then it starts to count the value of expression 
+		// If the character is a left bracket then it starts to count the value of expression.
 		case Token::Left_bracket: {
 			
 			bracket_count++;
