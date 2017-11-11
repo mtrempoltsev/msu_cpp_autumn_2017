@@ -3,9 +3,7 @@
 
 using namespace std;
 
-map <string, double> constants =
-
-	{ { "e", 2.73 }, { "Pi", 3.14 } };
+map <string, double> constants = { { "e", 2.73 }, { "Pi", 3.14 } };
 
 enum class Token
 {
@@ -37,6 +35,7 @@ class Calculator {
 	private:
 	  
 		Token nextToken();
+	
 		int primary();
 		int term();
 		
@@ -263,6 +262,14 @@ int Calculator::primary() {
 
 int main(int argc, char* argv[])
 {
+	
+	if (argc != 2) {
+		
+		cerr << "Invalid input expression (argc)" << endl;
+		
+		return 1;
+	}	
+	
 	try {
 
 		const char* input = argv[1];
@@ -273,7 +280,8 @@ int main(int argc, char* argv[])
 
 		if (calc.bracket_count != 0) {
 
-			cout << "Uncorrect number of brackets" << endl;
+			cerr << "Uncorrect number of brackets" << endl;
+			
 			return 1;
 		}
 
