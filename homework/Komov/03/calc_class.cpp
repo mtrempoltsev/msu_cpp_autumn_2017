@@ -280,7 +280,7 @@ int main(int argc, char* argv[])
 
 		if (calc.bracket_count != 0) {
 
-			cerr << "Uncorrect number of brackets" << endl;
+			cerr << "Incorrect number of brackets" << endl;
 			
 			return 1;
 		}
