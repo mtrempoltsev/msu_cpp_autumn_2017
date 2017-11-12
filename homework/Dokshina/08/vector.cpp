@@ -32,7 +32,7 @@ public:
                     , capacity_(size) {
         data_ = std::make_unique<T[]>(size_);
         for (size_t i = 0; i < size_; i++) {
-            data_[i] = default_value;
+            data_[i] = T(default_value);
         }
     }
 
@@ -147,7 +147,7 @@ public:
 
         if (new_size < size_) {
             // capacity doesn't changes
-            for (auto it = this->begin() + new_size; it != this->end(); it++) {
+            for (auto it = this->begin() + new_size; it < this->end(); it++) {
                 (*it).~T();
             }
             size_ = new_size;
@@ -161,7 +161,7 @@ public:
             capacity_ = new_size;
         } else {
             // capacity doesn't changes
-            for (auto it = this->begin() + size_; it != this->begin() + new_size; it++) {
+            for (auto it = this->begin() + size_; it < this->begin() + new_size; it++) {
                 *it = T();
             }
             size_ = new_size;
@@ -175,8 +175,8 @@ public:
 
         // fill by default value
         if (new_size > old_size) {
-            for (auto it = this->begin() + old_size; it != this->end(); it++) {
-                *it = default_value;
+            for (auto it = this->begin() + old_size; it < this->end(); it++) {
+                *it = T(default_value);
             }
         }
 
@@ -216,7 +216,7 @@ public:
 
 
     void clear() noexcept {
-        for (auto it = this->begin(); it != this->end(); it++) {
+        for (auto it = this->begin(); it < this->end(); it++) {
             (*it).~T();
         }
         size_ = 0;
@@ -230,6 +230,7 @@ private:
     size_t capacity_;
     std::unique_ptr<T[]> data_;
 };
+
 
 // some useful functions
 template <typename T>

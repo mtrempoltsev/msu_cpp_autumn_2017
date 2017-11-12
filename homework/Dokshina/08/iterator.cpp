@@ -22,6 +22,16 @@ public:
     }
 
 
+    bool operator<(const Iterator& other) const {
+        return ptr_ < other.ptr_;
+    }
+
+
+    bool operator>(const Iterator& other) const {
+        return ptr_ > other.ptr_;
+    }
+
+
     Iterator& operator++() {
         ptr_++;
         return *this;
@@ -85,6 +95,16 @@ public:
 
     bool operator!=(const ReverseIterator& other) const {
         return !(*this == other);
+    }
+
+
+    bool operator<(const ReverseIterator& other) const {
+        return ptr_ > other.ptr_;
+    }
+
+
+    bool operator>(const ReverseIterator& other) const {
+        return ptr_ < other.ptr_;
     }
 
 
