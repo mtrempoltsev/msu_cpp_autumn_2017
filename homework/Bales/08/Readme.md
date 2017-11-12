@@ -18,19 +18,16 @@
 ```sh
 $ make
 ```
-Запускаем калькулятор + автоматически запускаем тесты:
+Запускаем набор тестов для проверки работоспособности методов **Vector**'а
 ```sh
 $ ./vector
 ```
-Результат работы, как и ожидалось:
+Если между строками "... is started!" и "... is ended!" не отображается ошибок => методы работают корректно:
 ```sh
-CheckIntParses is ended.
-CheckLongParses is ended.
-CheckDoubleParses is ended.
-Warning: Incorrect type conversion '3.1' from real to integer.
-Warning: Incorrect type conversion '4.5' from real to integer.
-IntParserForDouble is ended.
-Warning: Incorrect type conversion '2147483650' out of domain range.
-IntParserForLong is ended.
--4.28904
+CheckInit is started!
+CheckInit is ended!
+CheckPushAndPopBack is started!
+CheckPushAndPopBack is ended!
+CheckIterators is started!
+CheckIterators is ended!
 ```
