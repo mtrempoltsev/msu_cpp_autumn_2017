@@ -14,6 +14,7 @@ int check(bool value) {
 void test_vector() {
     int num_of_errors = 0;
 
+
     // Vector<int> tests
     // constructor and operator[]
     Vector<int> vect = {1, 2, 3, 4};

@@ -206,6 +206,7 @@ public:
         }
 
         (*this->rbegin()).~T();
+        *this->rbegin() = T();
         size_--;
     }
 
@@ -218,6 +219,7 @@ public:
     void clear() noexcept {
         for (auto it = this->begin(); it < this->end(); it++) {
             (*it).~T();
+            *it = T();
         }
         size_ = 0;
     }
