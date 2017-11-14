@@ -28,19 +28,22 @@ struct NumericTraits{
 };
 
 template<>
-struct NumericTraits<double>{
+struct NumericTraits<double>
+{
     static constexpr double min = std::numeric_limits<double>::min();
     static constexpr double max = std::numeric_limits<double>::max();
 };
 
 template<>
-struct NumericTraits<int>{
+struct NumericTraits<int>
+{
     static constexpr int min = std::numeric_limits<int>::min();
     static constexpr int max = std::numeric_limits<int>::max();
 };
 
 template<>
-struct NumericTraits<long>{
+struct NumericTraits<long>
+{
     static constexpr long min = std::numeric_limits<long>::min();
     static constexpr long max = std::numeric_limits<long>::max();
 };
@@ -55,46 +58,70 @@ struct Parser {
 };
 
 template<>
-struct Parser<double> {
-    bool parse(const std::string& text, double& value) {
-        long double tmp = atof(text.c_str());
-
-        if (tmp < NumericTraits<double>::min || tmp > NumericTraits<double>::max) {
-            cerr << "Double value out of range" << endl;
-            value = (double) tmp;
-            return false;
+struct Parser<double>
+{
+    bool parse(const std::string& text, double& value)
+    {
+        string tmp_value = "";
+        tmp_value += text[0];
+        
+        for (int i = 1; i < text.length(); i++) {
+            double curr_value = atof(tmp_value.c_str());
+            double max = NumericTraits<double>::max;
+            if (curr_value > max / 10) {
+                cerr << "Out of double range" << endl;
+                exit(1);
+            } else {
+                tmp_value += text[i];
+            }
         }
-        value = (double) tmp;
+        value = atof(tmp_value.c_str());
         return true;
     }
 };
 
 template<>
-struct Parser<long> {
-    bool parse(const std::string& text, long& value) {
-        long long tmp = atoll(text.c_str());
-
-        if (tmp < NumericTraits<long>::min || tmp > NumericTraits<long>::max) {
-            cerr << "Long value out of range" << endl;
-            value = (long)tmp;
-            return false;
+struct Parser<long>
+{
+    bool parse(const std::string& text, long& value)
+    {
+        string tmp_value = "";
+        tmp_value += text[0];
+        
+        for (int i = 1; i < text.length(); i++) {
+            long curr_value = atol(tmp_value.c_str());
+            long max = NumericTraits<long>::max;
+            if (curr_value > max / 10) {
+                cerr << "Out of long range" << endl;
+                exit(1);
+            } else {
+                tmp_value += text[i];
+            }
         }
-        value = (long)tmp;
+        value = atol(tmp_value.c_str());
         return true;
     }
 };
 
 template<>
-struct Parser<int> {
+struct Parser<int>
+{
     bool parse(const std::string& text, int& value) {
-        long long int tmp = atoll(text.c_str());
-
-        if (tmp < NumericTraits<int>::min || tmp > NumericTraits<int>::max) {
-            cerr << "Int value out of range" << endl;
-            value = (int) tmp;
-            return false;
+        
+        string tmp_value = "";
+        tmp_value += text[0];
+        
+        for (int i = 1; i < text.length(); i++) {
+            double curr_value = atoi(tmp_value.c_str());
+            double max = NumericTraits<int>::max;
+            if (curr_value > max / 10) {
+                cerr << "Out of int range" << endl;
+                exit(1);
+            } else {
+                tmp_value += text[i];
+            }
         }
-        value = (int) tmp;
+        value = atoi(tmp_value.c_str());
         return true;
     }
 };
@@ -109,7 +136,8 @@ unordered_map<string, double> constants =
 };
 
 //перечисление значений элементов
-enum Token {
+enum Token
+{
     Invalid,
     Minus = '-',
     Plus = '+',
@@ -125,7 +153,8 @@ enum Token {
 
 //лексема состоит из двух частей: значения, определяющего вид лексемы tok, и (если необходимо)  значения лексемы - number_value.
 template <class T>
-struct symbol {
+struct symbol
+{
     Token tok;
     T number_value;
 };
@@ -133,14 +162,16 @@ struct symbol {
 
 //шаблонный класс Calculator
 template <class T, class Parser>
-class Calculator {
+class Calculator
+{
 private:
     symbol<T> curr_symbol;
     int num_opened;
     const char* text;
 public:
     
-    Calculator(const char*   expression) {
+    Calculator(const char* expression)
+    {
         text = expression;
         symbol<T> s;
         curr_symbol = s;
@@ -156,7 +187,8 @@ public:
 
 //обрабатывает сложение и вычитание, состоит из одного цикла, в котором распознанные термы складываются или вычитаются
 template <class T, class Parser>
-T Calculator<T, Parser>:: expr() {
+T Calculator<T, Parser>:: expr()
+{
     getToken();
     T left = term();
     while (1) {
@@ -177,7 +209,8 @@ T Calculator<T, Parser>:: expr() {
 
 //обрабатывает умножение и деление, состоит из одного цикла, в котором распознанные термы умножаются или делятся
 template <class T, class Parser>
-T Calculator<T, Parser>::term() {
+T Calculator<T, Parser>::term()
+{
     T left = prim();
     T d;
     while(1) {
@@ -212,7 +245,8 @@ T Calculator<T, Parser>::term() {
 
 //функция обрабатывает первичные элементы
 template <class T, class Parser>
-T Calculator<T, Parser>::prim() {
+T Calculator<T, Parser>::prim()
+{
     T e;
     switch (this->curr_symbol.tok) {
         case Token::Number:
@@ -234,16 +268,30 @@ T Calculator<T, Parser>::prim() {
             return e;
             
         default:
-            cout << "Original needed" << endl;
+            cerr << "Original needed" << endl;
             exit(1);
             break;
     }
     return 1;
 }
 
+
+//проверяем, лежит ли целая часть в диапазоне double
+bool check_range(string tmp, char next)
+{
+    double curr_value = atof(tmp.c_str());
+    double max = NumericTraits<double>::max;
+    if (curr_value > max / 10) {
+        cerr << "Out of double range" << endl;
+        exit(1);
+    }
+    return true;
+}
+
 //функция получения очереного токена (операнда, операции или конца выражения)
 template <class T, class Parser>
-void Calculator<T, Parser>:: getToken() {
+void Calculator<T, Parser>:: getToken()
+{
     while (const auto c = *(this->text)++) {
         switch (c) {
             case ' ': continue;
@@ -256,10 +304,15 @@ void Calculator<T, Parser>:: getToken() {
                 this->curr_symbol.tok = Token(c);
                 return;
         }
+        
+        //на этапе считывания символов числа будем проверять, попадает ли число в допустимый диапазон int/double/ long
+        
         if (c >= '0' && c <= '9') {
             string tmp = "";
             tmp += c;
+            
             while (isdigit(*text)) {
+                //check_range(tmp, *text);
                 tmp += *text;
                 text++;
             }
@@ -271,20 +324,21 @@ void Calculator<T, Parser>:: getToken() {
                     tmp += *text;
                     text++;
                 }
-
             }
+//            else if (atof(tmp.c_str()) > NumericTraits<int>::max) { //если целое число вышло за пределы
+//                cerr << "Out of range" << endl;
+//                exit(1);
+//            }
             
             T value;
-            //cout << text << endl;
-            if (!Parser().parse(tmp, value)) {
-                cerr << "error" << endl;
-            }
-            this->curr_symbol.number_value = value;
+            //проверим на то что число находится в допустимом диапазоне, заданном в свойствах типов
+            Parser().parse(tmp, value);
             
+            this->curr_symbol.number_value = value;
             this->curr_symbol.tok = Token::Number;
             return;
-            
         }
+        
         if (isalpha(c)) {
             string name = "";
             name += c;
@@ -308,7 +362,8 @@ void Calculator<T, Parser>:: getToken() {
 }
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     
     char* text; // выражение считанное из командной строки
     
@@ -326,7 +381,7 @@ int main(int argc, char* argv[]) {
                 cout << "All tests completed" << endl;
             } else {
                 text = argv[1];
-                Calculator<int, Parser<int> > calc = Calculator<int, Parser<int> >(text);
+                Calculator<double, Parser<double> > calc = Calculator<double, Parser<double> >(text);
                 cout << calc.expr() << endl;
             }
             break;
@@ -341,12 +396,15 @@ int main(int argc, char* argv[]) {
 
 /////////////////////////////////////// Тесты /////////////////////////////////////////
 
-void check(bool value) {
-    if (!value)
+void check(bool value)
+{
+    if (!value) {
         std::cout << "error" << std::endl;
+    }
 }
 
-void test_double() {
+void test_double()
+{
     cout << "testing double" << endl;
     vector<const char*> texts = {"5.7 - 0.7 -- 10 / 2.5 - 20",
                                  "15 / 3.0 + (-2.1 * 10) / 7 --0.11",
@@ -361,7 +419,8 @@ void test_double() {
     
 }
 
-void test_long() {
+void test_long()
+{
     cout << "testing long" << endl;
     vector<const char*> texts = {"9 - 2 + 6 / 3",
                                  "(8 - (2 * 10) + 100 / 5)",
@@ -378,7 +437,8 @@ void test_long() {
 
 
 
-void test_int() {
+void test_int()
+{
     cout << "testing int" << endl;
     vector<const char*> texts = {"(8 - 4) / (2 * -2)",
                                  "(((2 + 2)) * 2)",
