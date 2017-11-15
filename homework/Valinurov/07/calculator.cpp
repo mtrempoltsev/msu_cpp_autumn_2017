@@ -49,12 +49,12 @@ template<class T>
 struct Parser{
     static bool Number_Token(const char c)
     {
-        throw "don't work with this type\n";
+        throw std::invalid_argument("don't work with this type\n");
     }
 
     static long Get_Number(const char*& in)
     {
-        throw "don't work with this type\n";
+        throw std::invalid_argument("don't work with this type\n");
     }
 };
 
@@ -78,7 +78,7 @@ struct Parser<long>
         buffer >> res;
 
         if ((number_string.length() > NumericTraits<long>::max_length10) || (res > NumericTraits<long>::max) || (res < NumericTraits<long>::min))
-            throw "long overflow detected\n";
+            throw std::invalid_argument("long overflow detected\n");
 
         return res;
     }
@@ -104,7 +104,7 @@ struct Parser<int>
         buffer >> res;
 
         if ((number_string.length() > NumericTraits<int>::max_length10) || (res > NumericTraits<int>::max) || (res < NumericTraits<int>::min))
-            throw "int overflow detected\n";
+            throw std::invalid_argument("int overflow detected\n");
 
         return res;
     }
@@ -138,7 +138,7 @@ struct Parser<double>
         buffer >> res;
 
         if ((number_string.length() > NumericTraits<double>::max_length10) || (res > NumericTraits<double>::max) || (res < NumericTraits<double>::min))
-            throw "double overflow detected\n";
+            throw std::invalid_argument("double overflow detected\n");
 
         return res;
     }
@@ -176,7 +176,7 @@ public:
                     number = constants["Pi"];
                     return Token::Number;
                 } else
-                    throw "Invalid Token\n";
+                    throw std::invalid_argument("Invalid Token\n");
             }
 
             if (Parser<T>::Number_Token(c))
@@ -186,7 +186,7 @@ public:
             }
 
             if (!isspace(c)) // если символ не среди разрешённых и не пробельный бросаем исключение
-                throw "Invalid Token\n";
+                throw std::invalid_argument("Invalid Token\n");
         }
         return Token::End;
     }
@@ -232,10 +232,10 @@ public:
             else if (last_token == Token::Br_Close)
             {
                 if (brace_balance == 0)
-                    throw "Unpaired braces\n";
+                    throw std::invalid_argument("Unpaired braces\n");
                 break;
             } else
-                throw "Invalid Expression\n";
+                throw std::invalid_argument("Invalid Expression\n");
         }
 
         return result;
@@ -255,11 +255,11 @@ private:
             brace_balance++;
             T result = Expr();
             if (last_token != Token::Br_Close)
-                throw "Unpaired braces\n";
+                throw std::invalid_argument("Unpaired braces\n");
             brace_balance--;
             return result;
         } else
-            throw "Invalid Number\n";
+            throw std::invalid_argument("Invalid Number\n");
     }
 
     //Вычисляет */
@@ -276,10 +276,10 @@ private:
             {
                 T divisor = Prim();
                 if (fabs(divisor) < 1e-12) // проверка на равенство 0 делителя
-                    throw "Division by 0\n";
+                    throw std::invalid_argument("Division by 0\n");
                 result /= divisor;
             } else
-                throw "Invalid Term\n";
+                throw std::invalid_argument("Invalid Term\n");
             last_token = tokenizer->getToken();
         }
 

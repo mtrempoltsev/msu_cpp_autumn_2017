@@ -9,8 +9,8 @@ void check(const char* test, T answer)
     try
     {
         calculated = calc.Expr();
-    } catch (const char *ms){
-        std::cout << "On test " << test << " get exception " << ms << std::endl;
+    } catch (std::invalid_argument e){
+        std::cout << "On test " << test << " get exception " << e.what() << std::endl;
         assert(0);
     }
 
@@ -28,7 +28,7 @@ void check_exceptions(const char* test)
     try
     {
         calc.Expr();
-    } catch (const char *ms){
+    } catch (std::invalid_argument){
         return;
     }
 

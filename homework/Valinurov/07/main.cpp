@@ -15,8 +15,8 @@ int main(int argc, char* argv[])
         double result = calc.Expr();
         std::cout << result << std::endl;
     }
-    catch (const char* ms){
-        std::cout << ms << std::endl;
+    catch (std::invalid_argument e){
+        std::cout << e.what() << std::endl;
         return 1;
     }
 
