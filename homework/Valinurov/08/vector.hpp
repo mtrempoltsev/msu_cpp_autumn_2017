@@ -193,6 +193,9 @@ public:
 
     void pop_back()
     {
+        if (size_ == 0)
+            throw std::invalid_argument("cannot pop element from empty vector");
+
         size_--;
         (array_ + size_)->~T();
     }
