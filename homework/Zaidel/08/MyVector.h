@@ -17,7 +17,7 @@ public:
     using value_type = T;
 
 
-    class iterator
+    class iterator : public std::iterator<std::random_access_iterator_tag, T>
     {
     public:
         using self_type = iterator;
@@ -48,7 +48,7 @@ public:
         T* _ptr;
     };
 
-    class const_iterator
+    class const_iterator : public std::iterator<std::random_access_iterator_tag, T>
     {
     public:
         using self_type = const_iterator;
@@ -78,7 +78,7 @@ public:
         T* _ptr;
     };
 
-    class reverse_iterator
+    class reverse_iterator : public std::iterator<std::random_access_iterator_tag, T>
     {
     public:
         using self_type = reverse_iterator;
@@ -109,7 +109,7 @@ public:
         T* _ptr;
     };
 
-    class const_reverse_iterator
+    class const_reverse_iterator : public std::iterator<std::random_access_iterator_tag, T>
     {
     public:
         using self_type = const_reverse_iterator;
@@ -142,14 +142,12 @@ public:
 
 
 
-    MyVector()
-    {
-        _capacity = 0;
-        _size = 0;
-    }
+    MyVector() : _capacity(0),  _size(0)
+    {}
 
     explicit MyVector(size_type count)
     {
+
         _capacity = 0;
         _size = 0;
         resize(count);
@@ -164,21 +162,21 @@ public:
 
     iterator begin() noexcept
     {
-        return iterator(_data);
+        return iterator(_data.get());
     }
     const_iterator begin() const noexcept
     {
-        return const_iterator(_data);
+        return const_iterator(_data.get());
     }
 
     iterator end() noexcept
     {
-        return iterator(_data + _size);
+        return iterator(_data.get() + _size);
     }
 
     const_iterator end() const noexcept
     {
-        return const_iterator(_data + _size);
+        return const_iterator(_data.get() + _size);
     }
 
 
@@ -186,21 +184,21 @@ public:
 
     reverse_iterator rbegin() noexcept
     {
-        return reverse_iterator(_data + _size-1);
+        return reverse_iterator(_data.get() + _size-1);
     }
 
     const_reverse_iterator rbegin() const noexcept
     {
-        return const_reverse_iterator(_data + _size-1);
+        return const_reverse_iterator(_data.get() + _size-1);
     }
 
     reverse_iterator rend() noexcept
     {
-        return reverse_iterator(_data-1);
+        return reverse_iterator(_data.get()-1);
     }
     const_reverse_iterator rend() const noexcept
     {
-        return const_reverse_iterator(_data-1);
+        return const_reverse_iterator(_data.get()-1);
     }
 
 
@@ -208,8 +206,7 @@ public:
     {
         if(_capacity == 0)
         {
-            _data = new T[1];
-            _capacity = 1;
+            reserve(1);
         }
 
         if(_size == _capacity)
@@ -217,7 +214,7 @@ public:
             reserve(2*_capacity);
         }
 
-        _data[_size] = value;
+        _data.get()[_size] = value;
         _size++;
     }
 
@@ -227,8 +224,7 @@ public:
 
         if(_capacity == 0)
         {
-            _data = new T[1];
-            _capacity = 1;
+            reserve(1);
         }
 
         if(_size == _capacity)
@@ -236,12 +232,17 @@ public:
             reserve(2*_capacity);
         }
 
-        _data[_size] = value;
+        _data.get()[_size] = value;
         _size++;
     }
 
     void pop_back()
     {
+        if(_size == 0)
+        {
+            return;
+        }
+
         _size--;
     }
 
@@ -252,30 +253,38 @@ public:
 
     size_type size()
     {
-        return (size_t)_size;
+        return _size;
     }
 
     void clear() noexcept
     {
+
+        _data.release();
+
         _capacity = 0;
         _size = 0;
 
-        delete _data;
     }
 
     void reserve(size_type count)
     {
         if(_capacity == 0)
         {
-            _data = new T[count];
+            _data = std::unique_ptr<T[]>( new T[count]);
             _capacity = count;
             return;
         }
 
         if(count > _capacity)
         {
-            _data = (T *) realloc(_data, count * sizeof(T));
-            _capacity = count;
+            T* new_ptr_data = (T *) realloc(_data.get(), count * sizeof(T));
+
+            if (!new_ptr_data) {
+                throw std::runtime_error("error in reserve:reallocation");
+            }
+
+            _data.release();
+            _data.reset(new_ptr_data);
         }
     }
 
@@ -286,13 +295,25 @@ public:
 
     void resize(size_type newSize)
     {
+        if(newSize == 0)
+        {
+            clear();
+            return;
+        }
+
         if(newSize > _capacity) {
             reserve(newSize);
         }
         else
         {
-            _data = (T *) realloc(_data, newSize * sizeof(T));
-            _capacity = newSize;
+            T* new_ptr_data = (T *) realloc(_data.get(), newSize * sizeof(T));
+
+            if (!new_ptr_data) {
+                throw std::runtime_error("error in resize:reallocation");
+            }
+
+            _data.release();
+            _data.reset(new_ptr_data);
         }
 
         _size = newSize;
@@ -302,15 +323,33 @@ public:
 
     void resize(size_type newSize, const value_type& defaultValue)
     {
+
+        if(newSize == 0)
+        {
+            clear();
+            return;
+        }
+
         if(newSize > _capacity) {
             size_type prev_capacity = _capacity;
             reserve(newSize);
-            std::fill(_data + prev_capacity, _data + newSize, defaultValue);
+
+
+            T* data_ptr = _data.get();
+            std::fill(data_ptr + prev_capacity, data_ptr + newSize, defaultValue);
         }
         else
         {
-            _data = (T *) realloc(_data, newSize * sizeof(T));
-            _capacity = newSize;
+
+            T* new_ptr_data = (T *) realloc(_data.get(), newSize * sizeof(T));
+
+
+            if (!new_ptr_data) {
+                throw std::runtime_error("error in resize:reallocation");
+            }
+
+            _data.release();
+            _data.reset(new_ptr_data);
         }
 
         _size = newSize;
@@ -326,15 +365,13 @@ public:
         return _data[i];
     }
 
-    ~MyVector()
-    {
-        delete[] _data;
-    }
+    virtual ~MyVector()
+    {}
 
 
 private:
 
-    T* _data;
+    std::unique_ptr<T[]> _data;
     size_type _size;
     size_type _capacity;
 
