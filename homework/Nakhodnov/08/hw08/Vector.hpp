@@ -90,7 +90,7 @@ public:
         if (this->_MyIter == this->_MyEnd) {
             throw("iterator get out of range");
         }
-        return (pointer_traits<_T *>::pointer_to(*this->_MyIter));
+        return (std::pointer_traits<_T *>::pointer_to(*this->_MyIter));
     }
 
     const _T& operator*() const {
@@ -104,7 +104,7 @@ public:
         if (this->_MyIter == this->_MyEnd) {
             throw("iterator get out of range");
         }
-        return (pointer_traits<const _T *>::pointer_to(*this->_MyIter));
+        return (std::pointer_traits<const _T *>::pointer_to(*this->_MyIter));
     }
 
 
@@ -121,7 +121,7 @@ public:
     }
 
     bool operator>(const RandomAccessIterator& Iter) const {
-        return !(Iter < *this)
+        return !(Iter < *this);
     }
 
     bool operator<=(const RandomAccessIterator& Iter) const {
@@ -133,7 +133,7 @@ public:
     }
 
 protected:
-    _T *_MyIter, *_MyBeg, *_MyEnd;
+    _T *_MyBeg, *_MyEnd, *_MyIter;
 };
 
 /*
@@ -146,19 +146,19 @@ public:
 
     BiDirectionalIterator() {};
 
-    BiDirectionalIterator(_T *begin, _T *end, off_t off) : RandomAccessIterator(begin, end, off) {};
+    BiDirectionalIterator(_T *begin, _T *end, off_t off) : RandomAccessIterator<_T>(begin, end, off) {};
 
-    RandomAccessIterator& operator+=(size_t off) = delete;
+    RandomAccessIterator<_T>& operator+=(size_t off) = delete;
 
-    RandomAccessIterator& operator-=(size_t off) = delete;
+    RandomAccessIterator<_T>& operator-=(size_t off) = delete;
 
-    RandomAccessIterator operator+(size_t off) = delete;
+    RandomAccessIterator<_T> operator+(size_t off) = delete;
 
-    RandomAccessIterator operator+(size_t off) const = delete;
+    RandomAccessIterator<_T> operator+(size_t off) const = delete;
 
-    RandomAccessIterator operator-(size_t off) = delete;
+    RandomAccessIterator<_T> operator-(size_t off) = delete;
 
-    RandomAccessIterator operator-(size_t off) const = delete;
+    RandomAccessIterator<_T> operator-(size_t off) const = delete;
 
     _T& operator[](size_t off) = delete;
 
@@ -173,11 +173,11 @@ class ForwardIterator :
     public BiDirectionalIterator<_T> {
 public:
 
-    ForwardIterator(_T *begin, _T *end, off_t off) : BiDirectionalIterator(begin, end, off) {};
+    ForwardIterator(_T *begin, _T *end, off_t off) : BiDirectionalIterator<_T>(begin, end, off) {};
 
-    BiDirectionalIterator& operator--() = delete;
+    BiDirectionalIterator<_T>& operator--() = delete;
 
-    BiDirectionalIterator operator--(int) = delete;
+    BiDirectionalIterator<_T> operator--(int) = delete;
 
 };
 
@@ -216,9 +216,9 @@ public:
         return ReverseIterator(this->_MyBeg, this->_MyEnd, this->_MyIter + 1);
     }
 
-    RandomAccessIterator& operator--() = delete;
+    RandomAccessIterator<_T>& operator--() = delete;
 
-    RandomAccessIterator operator--(int) = delete;
+    RandomAccessIterator<_T> operator--(int) = delete;
 
     _T& operator*() {
         if (this->_MyIter == this->_MyEnd) {
@@ -231,7 +231,7 @@ public:
         if (this->_MyIter == this->_MyEnd) {
             throw("iterator get out of range");
         }
-        return (pointer_traits<_T *>::pointer_to(*(this->_MyIter - 1)));
+        return (std::pointer_traits<_T *>::pointer_to(*(this->_MyIter - 1)));
     }
 
     const _T& operator*() const {
@@ -245,7 +245,7 @@ public:
         if (this->_MyIter == this->_MyEnd) {
             throw("iterator get out of range");
         }
-        return (pointer_traits<const _T *>::pointer_to(*(this->_MyIter - 1)));
+        return (std::pointer_traits<const _T *>::pointer_to(*(this->_MyIter - 1)));
     }
 
 };
