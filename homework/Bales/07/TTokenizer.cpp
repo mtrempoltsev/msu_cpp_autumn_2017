@@ -21,7 +21,10 @@ std::pair<std::string, Token> TTokenizer::GetToken() {
             while (const auto n_ch = this->_expr.GetSymbol()) {
                 if ((n_ch >= '0' && n_ch <= '9') || n_ch == '.')
                     str += n_ch;
-                else break;
+                else {
+                    this->ReturnToken();
+                    break;
+                }
             }
             return std::make_pair(str, Token::Number);
         }
@@ -30,7 +33,10 @@ std::pair<std::string, Token> TTokenizer::GetToken() {
             while (const auto n_ch = this->_expr.GetSymbol()) {
                 if ((n_ch >= 'a' && n_ch <= 'z') || (n_ch >= 'A' && n_ch <= 'Z'))
                     str += n_ch;
-                else break;
+                else {
+                    this->ReturnToken();
+                    break;
+                }
             }
             return std::make_pair(str, Token::DefConstant);            
         }

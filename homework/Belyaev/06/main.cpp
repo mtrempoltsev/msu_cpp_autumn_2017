@@ -2,7 +2,9 @@
 #include <unordered_map>
 #include <cstring>
 #include <limits>
-#include <cmath> 
+#include <cmath>
+#include <cfloat> 
+#include <memory>
 
 class Tokenizer {
 public:
@@ -61,115 +63,7 @@ public:
     Token thisToken;
 };
 
-template <class T, class Parser>
-class calculator {
-public:
-    calculator(const char *&text){
-        expression = text;
-    }
 
-    void calculate(){
-        std::cout << expr(expression) << std::endl;
-    }
-
-private:
-    T prim(const char *&text) {
-        bool isPositive = true;
-        thisToken.updateToken(text);
-        --text;
-        if (thisToken.thisToken == Tokenizer::Token::Minus) { //Checking if number is positive/negative
-            isPositive = false;
-            thisToken.updateToken(++text); //Checking what goes after subtraction symbol
-            --text;
-        }
-        if(thisToken.thisToken == Tokenizer::Token::LBrace){//If there are braces - create loop to calculate expr in braces.
-            ++text;
-            T c = expr(text, true);
-            return c * (2 * isPositive - 1);
-        }
-        if (thisToken.thisToken == Tokenizer::Token::End) {
-            return 0;
-        }
-        if (thisToken.thisToken == Tokenizer::Token::Const){
-            int length = 1;
-            ++text ;
-            while ((*text >= 'A' && *text <= 'Z') || (*text >= 'a' && *text <= 'z')) {
-                length += 1;
-                ++text;
-            }
-            auto* var = new std::string();
-            var->assign(text-length, length);
-            return constants.at(*var) * (2 * isPositive - 1);
-        }
-        if (thisToken.thisToken != Tokenizer::Token::Number) {
-            throw std::runtime_error("Syntax error");
-        }
-        T c;
-        //decltype(Parser::parse())
-        /*
-        T c = T(*text - '0');
-        while (*(++text) >= '0' && *text <= '9') {
-            c = c * 10 + T(*text - '0');
-        }*/
-        if(!Parser::parse(text, c))
-    		throw std::runtime_error ("Syntax error: number can not be read");
-
-
-        return c * (2 * isPositive - 1);
-
-
-    }
-
-    T term(const char *&text) {
-        T c = prim(text);
-        thisToken.updateToken(text);
-        while (thisToken.thisToken == Tokenizer::Token::Mul || thisToken.thisToken == Tokenizer::Token::Div) {
-            if (thisToken.thisToken == Tokenizer::Token::Mul) {
-                c = c * prim(text);
-                thisToken.updateToken(text);
-            } else {
-                T divider = prim(text);
-                if (divider) {
-                    c = c / divider;
-                    thisToken.updateToken(text);
-                } else throw std::runtime_error("Division by zero");
-            }
-        }
-        --text;
-        return c;
-    }
-
-
-    T expr(const char *&text, bool fromPrim = false) {
-        T c = term(text);
-        thisToken.updateToken(text);
-        while (thisToken.thisToken != Tokenizer::Token::End && thisToken.thisToken != Tokenizer::Token::RBrace && thisToken.thisToken != Tokenizer::Token::LBrace) {
-            if (thisToken.thisToken == Tokenizer::Token::Plus) {
-                c += term(text);
-                thisToken.updateToken(text);
-            } else if (thisToken.thisToken == Tokenizer::Token::Minus) {
-                c -= term(text);
-                thisToken.updateToken(text);
-            } else
-                throw std::runtime_error("Syntax error");
-        }
-        if (thisToken.thisToken == Tokenizer::Token::LBrace){
-            throw std::runtime_error("Brace syntax error");
-        }
-        if (thisToken.thisToken != Tokenizer::Token::RBrace || fromPrim){
-            return c;
-        }
-        throw std::runtime_error("Brace syntax error");
-    }
-    const char* expression;
-    std::unordered_map<std::string, double> constants =
-            {
-                    { "Pi", 3.14 },
-                    { "e", 2.7 }
-            };
-    Tokenizer thisToken;
-
-};
 template <class T>
 struct Parser
 {
@@ -210,6 +104,13 @@ struct Parser<int>
   value = tmp;
   return true;
   }
+  static long bigType;
+  static bool checkType(long &a){
+  	if(a > NumericTraits<int>::max || a < - NumericTraits<int>::max){
+  		return false;
+  	}
+  	return true;
+  }
 };
 
 template<>
@@ -225,6 +126,13 @@ struct Parser<long>
   	return false;
   value = tmp;
   return true;
+  }
+  static long long bigType;
+  static bool checkType(long long &a){
+  	if(a > NumericTraits<long>::max || a < - NumericTraits<long>::max){
+  		return false;
+  	}
+  	return true;
   }
 };
 
@@ -245,26 +153,218 @@ struct Parser<double>
             	tmp +=  (long double)(*text - '0') * pow(10.0, power);
         	}
     	}
-  if(!std::isfinite(tmp)){//Требуется, потому что в случае проверки NumericTraits 0.0 не пройдет проверку.
-  	return false;
+  	if(!std::isfinite(tmp)){//Требуется, потому что в случае проверки NumericTraits 0.0 не пройдет проверку.
+  		return false;
+  	}
+  	if(tmp > NumericTraits<double>::max){
+  		return false;
+  	}
+  	value = tmp;
+  	return true;
   }
-  value = tmp;
-  return true;
+
+
+  static bool checkType(long double &a){
+  	if(!std::isfinite((double)a)){//Требуется, потому что в случае проверки NumericTraits 0.0 не пройдет проверку.
+  		return false;
+  	}
+  	if(a > NumericTraits<double>::max || a < - NumericTraits<double>::max){
+  		return false;
+  	}
+  	return true;
   }
+  static long double bigType;
 };
+
+
+template <class T, class Parser>
+class calculator {
+public:
+    calculator(char *&text){
+        expression = text;
+    }
+    calculator(){
+
+    }
+
+    T calculate(char *&text){
+    	expression = text;
+    	T result = expr(expression);
+        return result;
+    }
+
+
+private:
+    T prim(const char *&text) {
+        bool isPositive = true;
+        thisToken.updateToken(text);
+        --text;
+        if (thisToken.thisToken == Tokenizer::Token::Minus) { //Checking if number is positive/negative
+            isPositive = false;
+            thisToken.updateToken(++text); //Checking what goes after subtraction symbol
+            --text;
+        }
+        if(thisToken.thisToken == Tokenizer::Token::LBrace){//If there are braces - create loop to calculate expr in braces.
+            ++text;
+            T c = expr(text, true);
+            return c * (2 * isPositive - 1);
+        }
+        if (thisToken.thisToken == Tokenizer::Token::End) {
+            return 0;
+        }
+        if (thisToken.thisToken == Tokenizer::Token::Const){
+            int length = 1;
+            ++text ;
+            while ((*text >= 'A' && *text <= 'Z') || (*text >= 'a' && *text <= 'z')) {
+                length += 1;
+                ++text;
+            }
+            std::string var;
+            var.assign(text-length, length);
+            return constants.at(var) * (2 * isPositive - 1);
+        }
+        if (thisToken.thisToken != Tokenizer::Token::Number) {
+            throw std::runtime_error("Syntax error");
+        }
+        T c;
+        if(!Parser::parse(text, c))
+    		throw std::runtime_error ("Syntax error: number can not be read");
+
+
+        return c * (2 * isPositive - 1);
+
+
+    }
+
+    T term(const char *&text) {
+        T c = prim(text);
+        thisToken.updateToken(text);
+        while (thisToken.thisToken == Tokenizer::Token::Mul || thisToken.thisToken == Tokenizer::Token::Div) {
+
+            decltype(Parser::bigType) test = 0.0;
+            if (thisToken.thisToken == Tokenizer::Token::Mul) {
+ 
+            	test = (decltype(Parser::bigType))c * (decltype(Parser::bigType))prim(text);
+            	if(Parser::checkType(test)){
+            		c = T(test);
+            	}else throw std::runtime_error("Result left type limits");
+
+                thisToken.updateToken(text);
+            } else {
+                T divider = prim(text);
+                if (divider) {
+
+                	test = (decltype(Parser::bigType))c / (decltype(Parser::bigType))divider;
+            		if(Parser::checkType(test)){
+            			c = T(test);
+            		}else throw std::runtime_error("Result left type limits");
+
+                    thisToken.updateToken(text);
+                } else throw std::runtime_error("Division by zero");
+            }
+        }
+        --text;
+        return c;
+    }
+
+
+    T expr(const char *&text, bool fromPrim = false) {
+        T c = term(text);
+        thisToken.updateToken(text);
+        while (thisToken.thisToken != Tokenizer::Token::End && thisToken.thisToken != Tokenizer::Token::RBrace && thisToken.thisToken != Tokenizer::Token::LBrace) {
+        	decltype(Parser::bigType) test = 0.0;
+            if (thisToken.thisToken == Tokenizer::Token::Plus) {
+
+            	test = (decltype(Parser::bigType))c + (decltype(Parser::bigType))term(text);
+            		if(Parser::checkType(test)){
+            			c = T(test);
+            		}else throw std::runtime_error("Result left type limits");
+
+                thisToken.updateToken(text);
+            } else if (thisToken.thisToken == Tokenizer::Token::Minus) {
+
+            	test = (decltype(Parser::bigType))c - (decltype(Parser::bigType))term(text);
+            		if(Parser::checkType(test)){
+            			c = T(test);
+            		}else throw std::runtime_error("Result left type limits");
+
+                thisToken.updateToken(text);
+            } else
+                throw std::runtime_error("Syntax error");
+        }
+        if (thisToken.thisToken == Tokenizer::Token::LBrace){
+            throw std::runtime_error("Brace syntax error");
+        }
+        if (thisToken.thisToken != Tokenizer::Token::RBrace || fromPrim){
+            return c;
+        }
+        throw std::runtime_error("Brace syntax error");
+    }
+    const char* expression;
+    std::unordered_map<std::string, double> constants =
+            {
+                    { "Pi", M_PI },
+                    { "e", M_E }
+            };
+    Tokenizer thisToken;
+
+};
+
+
+void checkErrors(bool a){
+	if(!a)
+		std::cout << "error" << std::endl;
+	return;
+}
+
+bool isEqual(const double &left, const double &right){
+	return fabs(left - right) < DBL_EPSILON;
+}
 
 
 
 
 int main(int argc, char* argv[]) {
 
-    if(argc<2){
-        throw std::runtime_error("No input expression");
-    }
-    const char* expression = argv[1];
-    //calculator<double, Parser<double>>* myCalc = new calculator<double,Parser<double>>(expression);
+    
+    char* Expr1 = new char[255];
+    std::strcpy(Expr1, std::string("3+3").c_str());
+    char* Expr2 = new char[255];
+    std::strcpy(Expr2, std::string("9/2*2").c_str());
+    char* Expr3 = new char[255];
+    std::strcpy(Expr3, std::string("Pi*-e").c_str()); 
+    char* Expr4 = new char[255];
+    std::strcpy(Expr4, std::string("8*Pi").c_str());
 
-    calculator<int, Parser<int>>* myCalc = new calculator<int,Parser<int>>(expression);
-    myCalc->calculate();
+
+    //DOUBLE
+
+    checkErrors(isEqual(calculator<double,Parser<double>>().calculate(Expr1),(double)6));
+    checkErrors(isEqual(calculator<double,Parser<double>>().calculate(Expr2),(double)9));
+    checkErrors(isEqual(calculator<double,Parser<double>>().calculate(Expr3),(double)-M_PI*M_E));
+    checkErrors(isEqual(calculator<double,Parser<double>>().calculate(Expr4),(double)M_PI*8));
+
+    //INT
+
+    checkErrors(calculator<int,Parser<int>>().calculate(Expr1)==6);
+    checkErrors(calculator<int,Parser<int>>().calculate(Expr2)==8);
+    checkErrors(calculator<int,Parser<int>>().calculate(Expr3)==-6);
+    checkErrors(calculator<int,Parser<int>>().calculate(Expr4)==24);
+
+    //LONG
+
+    checkErrors(calculator<long,Parser<long>>().calculate(Expr1)==6);
+    checkErrors(calculator<long,Parser<long>>().calculate(Expr2)==8);
+    checkErrors(calculator<long,Parser<long>>().calculate(Expr3)==-6);
+    checkErrors(calculator<long,Parser<long>>().calculate(Expr4)==24);
+
+    delete [] Expr1;
+    delete [] Expr2;
+    delete [] Expr3;
+    delete [] Expr4;
+    
+    std::cout<< "If no errors above - it works right" << std::endl;
+
+
     return 0;
 }

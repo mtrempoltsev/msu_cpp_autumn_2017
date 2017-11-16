@@ -55,47 +55,72 @@ struct Parser {
 };
 
 template<>
-struct Parser<double> {
-    bool parse(const std::string& text, double& value) {
-        long double tmp = atof(text.c_str());
+struct Parser<double>
+{
+    bool parse(const std::string& text, double& value)
+    {
+        string tmp_value = "";
+        tmp_value += text[0];
         
-        if (tmp < NumericTraits<double>::min || tmp > NumericTraits<double>::max) {
-            value = (double) tmp;
-            return false;
+        for (int i = 1; i < text.length(); i++) {
+            double curr_value = atof(tmp_value.c_str());
+            double max = NumericTraits<double>::max;
+            if (curr_value > max / 10) {
+                throw std::runtime_error("Out of double range");
+            } else {
+                tmp_value += text[i];
+            }
         }
-        value = (double) tmp;
+        value = atof(tmp_value.c_str());
         return true;
     }
 };
 
 template<>
-struct Parser<long> {
-    bool parse(const std::string& text, long& value) {
-        long long tmp = atoll(text.c_str());
+struct Parser<long>
+{
+    bool parse(const std::string& text, long& value)
+    {
+        string tmp_value = "";
+        tmp_value += text[0];
         
-        if (tmp < NumericTraits<long>::min || tmp > NumericTraits<long>::max) {
-            value = (long)tmp;
-            return false;
+        for (int i = 1; i < text.length(); i++) {
+            long curr_value = atol(tmp_value.c_str());
+            long max = NumericTraits<long>::max;
+            if (curr_value > max / 10) {
+                throw std::runtime_error("Out of long range");
+            } else {
+                tmp_value += text[i];
+            }
         }
-        value = (long)tmp;
+        value = atol(tmp_value.c_str());
         return true;
     }
 };
 
 template<>
-struct Parser<int> {
+struct Parser<int>
+{
     bool parse(const std::string& text, int& value) {
-        long long int tmp = atoll(text.c_str());
         
-        if (tmp < NumericTraits<int>::min || tmp > NumericTraits<int>::max) {
-            value = (int) tmp;
-            return false;
+        string tmp_value = "";
+        tmp_value += text[0];
+        
+        for (int i = 1; i < text.length(); i++) {
+            double curr_value = atoi(tmp_value.c_str());
+            double max = NumericTraits<int>::max;
+            if (curr_value > max / 10) {
+                throw std::runtime_error("Out of int range");
+            } else {
+                tmp_value += text[i];
+            }
         }
-        value = (int) tmp;
+        value = atoi(tmp_value.c_str());
         return true;
     }
 };
 ///////////////////////////// Стратегия для Parser /////////////////////////////
+
 
 
 
@@ -192,14 +217,14 @@ T Calculator<T, Parser>::term() {
                 }
                 left /= d;
                 break;
-                case Token::RP:
+            case Token::RP:
                 if (this->num_opened == 0) {
                     throw std::runtime_error("Wrong brackets sequence");
                 }
                 else {
                     return left;
                 }
-                default:
+            default:
                 return left;
         }
     }
@@ -252,6 +277,7 @@ void Calculator<T, Parser>:: getToken() {
         if (c >= '0' && c <= '9') {
             string tmp = "";
             tmp += c;
+            
             while (isdigit(*text)) {
                 tmp += *text;
                 text++;
@@ -264,19 +290,15 @@ void Calculator<T, Parser>:: getToken() {
                     tmp += *text;
                     text++;
                 }
-                
             }
             
             T value;
-            //cout << text << endl;
-            if (!Parser().parse(tmp, value)) {
-                throw std::runtime_error("Out of range error");
-            }
-            this->curr_symbol.number_value = value;
+            //проверим на то что число находится в допустимом диапазоне, заданном в свойствах типов
+            Parser().parse(tmp, value);
             
+            this->curr_symbol.number_value = value;
             this->curr_symbol.tok = Token::Number;
             return;
-            
         }
         if (isalpha(c)) {
             string name = "";
@@ -318,7 +340,8 @@ int main(int argc, char* argv[]) {
                     cout << "All tests completed" << endl;
                 } else {
                     text = argv[1];
-                    Calculator<int, Parser<int> > calc = Calculator<int, Parser<int> >(text);
+                    Calculator<int, Parser<int> > calc =
+                        Calculator<int, Parser<int> >(text);
                     cout << calc.expr() << endl;
                 }
                 break;
@@ -329,6 +352,9 @@ int main(int argc, char* argv[]) {
     }
     catch (const std::runtime_error& error) {
         std::cerr << error.what() << std::endl;
+    }
+    catch (...) {
+        std::cerr << "Unexpected Exception" << endl;
     }
     
     return 0;

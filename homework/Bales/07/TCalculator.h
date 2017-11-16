@@ -1,6 +1,7 @@
 #pragma once
 #include "TTokenizer.h"
 #include "TParser.h"
+#include <stack>
 
 extern const std::unordered_map<std::string, double> Constants;
 
@@ -10,9 +11,9 @@ public:
     static TItem ToCalculate(const char* expr);
     static bool IsValidExpr(const char* expr);
 private:
-    static TItem _Expr(const std::unique_ptr<TTokenizer>& tokenizer) ;
-    static TItem _Term(const std::unique_ptr<TTokenizer>& tokenizer, size_t cntEnter = 0) ;
-    static TItem _Prim(const std::unique_ptr<TTokenizer>& tokenizer) ;
+    static TItem _Expr(const std::unique_ptr<TTokenizer>& tokenizer);
+    static TItem _Term(const std::unique_ptr<TTokenizer>& tokenizer, size_t cntEnter = 0);
+    static TItem _Prim(const std::unique_ptr<TTokenizer>& tokenizer);
 };
 
 template<typename TItem, typename Parser>
@@ -31,21 +32,71 @@ bool TCalculator<TItem, Parser>::IsValidExpr(const char* expr) {
     const char* linkExpr = cpyExpr.c_str();
     
     auto tmpTokenizer = std::make_unique<TTokenizer>(linkExpr);
-    while (true) {
-        const auto token = tmpTokenizer->GetToken();
-        if (token.second == Token::End) {
-            break;
+    std::stack<std::pair<std::string, Token> > s;
+    const auto firstToken = tmpTokenizer->GetToken();
+    int cntBrakets = 0;
+    if (firstToken.second == Token::CloseBracket || firstToken.second == Token::Div 
+        || firstToken.second == Token::Mul || firstToken.second == Token::Plus
+        || firstToken.second == Token::Invalid) {
+        return false;
+    }
+    else s.push(firstToken);
+    if (firstToken.second != Token::End) {
+        while (true) {
+            const auto token = tmpTokenizer->GetToken();
+            if (token.second == Token::End) {
+                break;
+            }
+            if (token.second == Token::Invalid) {
+                return false;
+            }
+            const auto sTop = s.top();
+            if (token.second == Token::OpenBracket 
+                && (sTop.second == Token::Number || sTop.second == Token::CloseBracket 
+                    || sTop.second == Token::DefConstant)) {
+                return false;
+            }
+            if ((token.second == Token::Plus || token.second == Token::Div 
+                || token.second == Token::Mul || token.second == Token::Minus) 
+                && (sTop.second == Token::Plus || sTop.second == Token::Div 
+                    || sTop.second == Token::Mul || sTop.second == Token::Minus)) {
+                return false;
+            }
+            if ((token.second == Token::Plus || token.second == Token::Div || token.second == Token::Mul) 
+                && sTop.second == Token::OpenBracket) {
+                return false;
+            }        
+            if (token.second == Token::Number) {
+                if (sTop.second == Token::Number || sTop.second == Token::DefConstant) {
+                    return false;
+                }
+                // Parser::Parse(token.first);
+            }
+            if (token.second == Token::CloseBracket 
+                && (s.empty() || s.top().second == Token::OpenBracket)) {
+                    return false;
+            }
+            s.push(token);
         }
-        if (token.second == Token::Invalid) {
-            return false;
+    }
+    while (!s.empty()) {
+        if (s.top().second == Token::OpenBracket) {
+            cntBrakets++;
         }
-        if (token.second == Token::Number 
-            || token.second == Token::DefConstant) {
-            auto str = token.second == Token::Number
-                        ? token.first
-                        : std::to_string(Constants.at(token.first));
-            Parser::Parse(str);
+        if (s.top().second == Token::CloseBracket) {
+            cntBrakets--;
         }
+        if (s.top().second == Token::Number) {
+            Parser::Parse(s.top().first);
+        }
+        if (s.top().second == Token::DefConstant) {
+            Parser::Parse(std::to_string(Constants.at(s.top().first)));
+        }
+
+        s.pop();
+    }
+    if (cntBrakets != 0) {
+        return false;
     }
     return true;
 }
