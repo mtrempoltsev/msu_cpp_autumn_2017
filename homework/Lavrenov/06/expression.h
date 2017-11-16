@@ -66,6 +66,7 @@ void Expression<T, Parser>::validateSyntax(std::string& s){
             if(!table.exist(token)){
                 parser.parse(token);
             }
+			i += length - 1;
             prevSymbol = 'T';
             continue;
         }

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 enum lexType
 {
 	LEX_NULL,
