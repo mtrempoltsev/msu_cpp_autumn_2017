@@ -312,7 +312,6 @@ void Calculator<T, Parser>:: getToken()
             tmp += c;
             
             while (isdigit(*text)) {
-                //check_range(tmp, *text);
                 tmp += *text;
                 text++;
             }
@@ -325,11 +324,7 @@ void Calculator<T, Parser>:: getToken()
                     text++;
                 }
             }
-//            else if (atof(tmp.c_str()) > NumericTraits<int>::max) { //если целое число вышло за пределы
-//                cerr << "Out of range" << endl;
-//                exit(1);
-//            }
-            
+
             T value;
             //проверим на то что число находится в допустимом диапазоне, заданном в свойствах типов
             Parser().parse(tmp, value);
