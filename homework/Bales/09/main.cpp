@@ -28,11 +28,13 @@ int main(int argc, char* argv[])
     }
     std::string s;
     std::map<std::string, int> dict;
-    auto countWords = [&](const std::string& word) { dict[word]++; };
+    // При помощи std::map подсчитываем частоту вхождения каждого слова в текст
     std::for_each(std::istream_iterator<std::string>(in), 
-                std::istream_iterator<std::string>(), countWords);
+                std::istream_iterator<std::string>(), [&](const std::string& word) { dict[word]++; });
     std::vector<pair> vecCountDict;
+    // Копируем пары ключ-значение (слово-частота) в вектор для дальнейшей сорт-ки
     std::copy(dict.begin(), dict.end(), std::back_inserter(vecCountDict));
+    // Ф-ия сравнения для метода std::sort
     auto cmp = [](const pair& x, const pair& y) 
     { 
         if (x.second == y.second) 
@@ -46,7 +48,8 @@ int main(int argc, char* argv[])
         printError(__LINE__);
         return 1;
     }
-    auto print = [&](const pair& p) { out << p.second << " " << p.first << "\n"; };
-    std::for_each(vecCountDict.begin(), vecCountDict.end(), print);
+    // Выводим частоты слов в порядке невозрастания в результирующий файл
+    std::for_each(vecCountDict.begin(), vecCountDict.end(), 
+                [&](const pair& p) { out << p.second << " " << p.first << "\n"; });
     return 0;
 }
