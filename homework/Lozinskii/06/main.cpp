@@ -187,6 +187,9 @@ class Computer
                 throw std::invalid_argument("bad number");
             }                                             
             nt.value *= sign;
+            if (value1 > 0 && (nt.value + value1) - (T)(nt.value + value1) > 1e-7) {
+                throw std::invalid_argument("Double num in not double calc"); 
+            }
             nt.value += value1;
             if (nt.isCorrectValue()) {
                 return nt.value;                                 
@@ -319,8 +322,7 @@ main(int argc, char *argv[])
             std::cout << e.what() << std::endl;
             return c.ErrorCode;
         }
-    }
-    if (argv[2][0] == 'l') {
+    } else if (argv[2][0] == 'l') {
         Computer<long> c = Computer<long>();
         try {
             std::cout << c.compute(str) << std::endl;
@@ -328,8 +330,7 @@ main(int argc, char *argv[])
             std::cout << e.what() << std::endl;
             return c.ErrorCode;
         }
-    }
-    if (argv[2][0] == 'd') {
+    } else if (argv[2][0] == 'd') {
         Computer<double> c = Computer<double>();
         try {
             std::cout << c.compute(str) << std::endl;
@@ -337,6 +338,9 @@ main(int argc, char *argv[])
             std::cout << e.what() << std::endl;
             return c.ErrorCode;
         }
+    } else {
+        std::cout<<"Unknown calculator type"<<std::endl;
+        return 1;
     }
 
 
