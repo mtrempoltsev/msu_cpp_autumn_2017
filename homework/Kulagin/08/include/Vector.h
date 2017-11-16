@@ -105,14 +105,6 @@ public:
 	// DESTRUCTOR ENDS
 
 
-	friend std::ostream& operator<<(std::ostream& out, const Vector<T>& vector) {
-		for (auto x : vector) {
-			out << x << " ";
-		}
-		out << "\n*************************************";
-		return out;
-	}
-
 private:
 	T* data_;
 
