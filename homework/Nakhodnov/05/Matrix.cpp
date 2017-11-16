@@ -395,4 +395,3 @@ int main()
     mch_comp.prepare_tests();
     return 0;
 }
-
