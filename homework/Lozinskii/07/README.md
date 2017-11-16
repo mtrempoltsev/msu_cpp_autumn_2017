@@ -1,4 +1,4 @@
-# HW06: Простой калькулятор
+# HW07: Простой калькулятор
 
 Данная программа вычисляет значение арифметического выражения в определенном формате, позволяя выполнять операции сложения, вычитания, умножения и целочисленного деления.
 ## Использование
@@ -32,6 +32,6 @@ make
 
     <expr> ::= <term>|<expr> + <term>|<expr> - <term>
     <term> ::= <prim>|<term> * <prim>|<term> / <prim>
-    <prim> ::= <number>|-<number>
-    <number> ::= <digit>.<digit>|<digit>|<number><digit>|(<expr>)|Pi|e
+    <prim> ::= <number>|-<number>|<number>.<number>
+    <number> ::= <digit>|<number><digit>|(<expr>)|Pi|e
     <digit> ::= 0|1|2|3|4|5|6|7|8|9
