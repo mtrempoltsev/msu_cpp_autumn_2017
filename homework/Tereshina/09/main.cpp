@@ -5,75 +5,76 @@
 #include <unordered_map>
 #include <algorithm>
 
-void read_words(const char* path, 
-                std::unordered_map<std::string, size_t>& frequencyDictionary) {
+class FrequencyDict {
 
-    std::ifstream ifile(path);
-        if (!ifile) {
-            throw "Can't open input file";
-        }
-    std::string s;
-    ifile >> s;
-    
-    while (!ifile.eof()) {
+    std::unordered_map<std::string, size_t> frequencyDictionary_;
+    std::vector<std::pair<std::string, size_t>> words_;
+
+    void read_words_(const char* path) {
+
+        std::ifstream ifile(path);
+            if (!ifile) {
+                throw "Can't open input file";
+            }
+        std::string s;
         ifile >> s;
+        
+        while (!ifile.eof()) {
+            ifile >> s;
 
-        auto it = frequencyDictionary.find(s);
-        if (it == frequencyDictionary.end()) {
-            frequencyDictionary[s] = 1;
-        } else {
-            it->second++;
+            auto it = frequencyDictionary_.find(s);
+            if (it == frequencyDictionary_.end()) {
+                frequencyDictionary_[s] = 1;
+            } else {
+                it->second++;
+            }
         }
+
+        ifile.close();
     }
 
-    ifile.close();
-}
+    void sort_frequencies_() {
+        
+        for(auto it : frequencyDictionary_) {
+            words_.push_back(it);
+        }
 
-void sort_frequencies(std::unordered_map<std::string, size_t>& 
-                                frequencyDictionary,
-                      std::vector<std::pair<std::string, size_t>>& 
-                                words) {
-    
-    for(auto it : frequencyDictionary) {
-        words.push_back(it);
+        std::sort(words_.begin(), 
+                  words_.end(), 
+                  [](std::pair<std::string, size_t> x, std::pair<std::string, size_t> y) 
+                        {return x.second > y.second;}
+                 );
     }
 
-    std::sort(words.begin(), 
-              words.end(), 
-              [](std::pair<std::string, size_t> x, std::pair<std::string, size_t> y) 
-                    {return x.second > y.second;}
-             );
-}
+    void write_frequencies_(const char* path) {
 
-void write_frequencies(const char* path, 
-                       std::vector<std::pair<std::string, size_t>>& words) {
+        std::ofstream ofile(path);
+        if (!ofile) {
+            throw "Can't open output file";
+        }
 
-    std::ofstream ofile(path);
-    if (!ofile) {
-        throw "Can't open output file";
+        for(auto it : words_) {
+            ofile << it.second << ' ' << it.first << std::endl;
+        }
+        ofile.close();
+
     }
 
-    for(auto it : words) {
-        ofile << it.second << ' ' << it.first << std::endl;
+public:
+    void make_frequency_dictionary(const char* inpath, const char* outpath) {
+
+        read_words_(inpath);
+        sort_frequencies_();
+        write_frequencies_(outpath);
     }
-    ofile.close();
-
-}
-
+};
 int main(int argc, char* argv[]) {
     try {
         if (argc != 3) {
             throw "Wrong number of arguments";
         }
         
-        std::unordered_map<std::string, size_t> frequencyDictionary;
-        std::vector<std::pair<std::string, size_t>> words;
-    
-        read_words(argv[1], frequencyDictionary);
-
-        sort_frequencies(frequencyDictionary, words);
-
-        write_frequencies(argv[2], words);
+        FrequencyDict().make_frequency_dictionary(argv[1], argv[2]);
 
     } catch (const char* expression) {
         std::cerr << expression << std::endl;
