@@ -111,6 +111,7 @@ class calc{
 	        if (current != Token::Right_bracket){
                     throw std::invalid_argument("No right bracket are available");
                 }
+                current = getToken(text);
                 return result;
             }
             case Token::Constant: {
@@ -142,8 +143,9 @@ class calc{
                     break;
                 }
                 case Token::Right_bracket:{
+                    Flag = false;
                     return left;
-                    Flag=false;
+                    
                 }
                 default:
                     return left;
