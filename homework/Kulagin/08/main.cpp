@@ -40,7 +40,7 @@ void check_push_pop() {
     is_ok(v.size() == 5, "v.size() == 5");
 
     for (int i = 0; i < 5; i++) {
-        is_ok(v[i] == i, "v[" + std::to_string(i) + "] == i");
+        is_ok((int)v[i] == i, "v[" + std::to_string(i) + "] == i");
     }
 
     int i = 5;
@@ -50,7 +50,7 @@ void check_push_pop() {
 
         i--;
 
-        is_ok(v.size() == i, "v.size() == " + std::to_string(i));
+        is_ok((int)v.size() == i, "v.size() == " + std::to_string(i));
     }
 
     is_ok(v.size() == 0, "v.size() == 0");
