@@ -118,13 +118,7 @@ void Vector<T>::clear() {
 
 // ITERATORS BEGINS
 template<class T>
-using iterator = Iterator<T>;
-
-template<class T>
-using const_iterator = Iterator<const T>;
-
-template<class T>
-iterator<T> Vector<T>::begin() noexcept {
+Iterator<T> Vector<T>::begin() noexcept {
 	return Iterator<T>(data_);
 }
 
