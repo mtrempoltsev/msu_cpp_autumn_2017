@@ -4,17 +4,17 @@
     ./vec
 
 Поддерживаемые методы:
--operator[]
--push_back
--pop_back
--empty
--size
--clear
--begin
--end
--rbegin
--rend
--resize
+- operator[]
+- push_back
+- pop_back
+- empty
+- size
+- clear
+- begin
+- end
+- rbegin
+- rend
+- resize
 
 Для итератора реализованы итераторы it++ и ++it
 
