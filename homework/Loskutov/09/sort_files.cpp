@@ -37,7 +37,7 @@ void sortFiles(const std::string input, const std::string output) {
 
 int main(int argc, const char* argv[]) {
     if (argc != 3) {
-        std::cout << "Bad arguments! " << argv[1] << std::endl;
+        std::cout << "Bad arguments!" << std::endl;
         return -1;
     }
     
