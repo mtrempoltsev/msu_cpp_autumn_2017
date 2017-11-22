@@ -1,0 +1,6 @@
+5 tree
+3 forest
+2 mountain
+2 stones
+2 village
+1 house
