@@ -1,0 +1,5 @@
+aa b ab a b z a z b cc dd aa 
+cc z a
+a b
+dd b
+dd

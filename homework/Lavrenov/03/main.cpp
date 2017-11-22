@@ -8,13 +8,13 @@ using namespace std;
 int main(int argc, char** argv)
 {
     
-    //if(argc < 2){
-        //cerr<<"no expression\n";
-        //exit(1);
-    //}
-    //string expression = argv[1];
+    if(argc < 2){
+        cerr<<"no expression\n";
+        exit(1);
+    }
+    string expression = argv[1];
     
-    string expression = "3 * - Pi + - ((4 * 6) - 9)";
+    //string expression = "3 * - Pi + - ((4 * 6) - 9)";
     Expression* expr = new Expression(expression);
     cout << expr->execute() << endl;
     delete expr;
