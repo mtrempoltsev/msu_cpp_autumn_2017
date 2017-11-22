@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -26,7 +26,7 @@ private:
     string input;
     string output;
     vector<pair<string, int>> dict;
-    unordered_map <string, int> m_dict;
+    map <string, int> m_dict;
     
     void read_words();
     void sort_dict();
