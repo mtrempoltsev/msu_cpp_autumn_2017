@@ -7,23 +7,23 @@
 #include <functional>
 #include <vector>
 
-void printError(int line = -1) 
+void printError(const std::string& s = "", int line = -1) 
 {
-    std::cerr << "Erro: " << line << std::endl;
+    std::cerr << "Erro: " << s << " [:" << line << "]\n";
 }
 
 int main(int argc, char* argv[]) 
 {
     using pair = std::pair<std::string, int>;
-    if (argc != 3) 
+    if (argc != 3)
     {
-        printError(__LINE__);
+        printError("number of params is incorrect", __LINE__);
         return 1;
     }
     std::ifstream in(argv[1]);
     if (!in.good()) 
     {
-        printError(__LINE__);
+        printError("can`t open file for reading input data", __LINE__);
         return 1;
     }
     std::string s;
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     std::ofstream out(argv[2]);
     if (!out.good()) 
     {
-        printError(__LINE__);
+        printError("can`t open file to writing output data", __LINE__);
         return 1;
     }
     // Выводим частоты слов в порядке невозрастания в результирующий файл
