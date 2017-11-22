@@ -34,7 +34,7 @@ public:
 
         data_.pop_back();
 
-        sort();
+        group_identic();
     }
 
     void write_to_file(string _outfile) {
@@ -51,25 +51,24 @@ public:
         std::for_each(data_.begin(), data_.end(), write_elem);
     }
 
-    void sort() {
-        auto get_counts = [this](TIntString & is_tmp) {
+    void group_identic() {
+        auto get_count = [this](TIntString & is_tmp) {
             auto cnt = count_if(data_.begin(), data_.end(),
             [&is_tmp](TIntString & is) {
                 return is.second == is_tmp.second;
-            }
-                               );
+            });
 
             is_tmp.first = (int)cnt;
         };
 
-        auto sort = [](TIntString & x, TIntString & y) {
+        auto gt = [](TIntString & x, TIntString & y) {
             return x > y;
         };
 
-        std::for_each(data_.begin(), data_.end(), get_counts);
-        std::sort(data_.begin(), data_.end(), sort);
+        std::for_each(data_.begin(), data_.end(), get_count);
+        std::sort(data_.begin(), data_.end(), gt);
 
-        const auto uniq = unique(data_.begin(), data_.end());
+        auto uniq = unique(data_.begin(), data_.end());
 
         data_.erase(uniq, data_.end());
     }
