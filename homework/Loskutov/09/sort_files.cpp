@@ -20,7 +20,7 @@ void sortFiles(const std::string input, const std::string output) {
         ++map[s];
     }
     
-    std::vector<std::pair<std::string, std::size_t>> v;
+    std::vector<pair> v;
     auto make_pair = [&v](pair x) mutable { v.push_back(x); };
     auto conditions = [](pair x, pair y) { return x.second > y.second; };
     
