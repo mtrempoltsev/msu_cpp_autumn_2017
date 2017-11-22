@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <stdexcept>
 
+using pair = std::pair<std::string, std::size_t>;
+
 void sortFiles(const std::string input, const std::string output) {
     std::map<std::string, std::size_t> map;
     std::ifstream input_file(input);
@@ -19,10 +21,10 @@ void sortFiles(const std::string input, const std::string output) {
     }
     
     std::vector<std::pair<std::string, std::size_t>> v;
-    auto make_tuple = [&v](std::pair<std::string, std::size_t> x) mutable { v.push_back(x); };
-    auto conditions = [](std::pair<std::string, std::size_t> x, std::pair<std::string, std::size_t> y) { return x.second > y.second; };
+    auto make_pair = [&v](pair x) mutable { v.push_back(x); };
+    auto conditions = [](pair x, pair y) { return x.second > y.second; };
     
-    std::for_each(map.begin(), map.end(), make_tuple);
+    std::for_each(map.begin(), map.end(), make_pair);
     std::sort(v.begin(), v.end(), conditions);
     
     std::ofstream output_file(output);
