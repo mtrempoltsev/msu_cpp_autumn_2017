@@ -3,28 +3,71 @@
 #include <cstring>
 #include <limits>
 #include <cmath>
-#include <cfloat> 
+#include <cfloat>
 #include <memory>
 #include "vector.h"
 
+void shout_error(bool not_error)
+{
+	if(!not_error)
+		cout << "error!" << endl;
+}
+void ch_push_back_pop_back() { //Also checks []
+		_vector<int> a;
+		a.push_back(3);
+		shout_error(a.size() == 1 && a[0] == 3);
+		auto b = a.pop_back();
+		shout_error(a.size() == 0 && b == 3);
+}
 
+
+void ch_empty(){
+	_vector<double> a = {1,2,3,4};
+	shout_error(!a.empty());
+	_vector<double> b;
+	shout_error(b.empty());
+}
+
+
+void ch_clear(){
+		_vector<int> a = {1,2,3,4};
+		shout_error(!a.empty());
+		a.clear();
+		shout_error(a.empty());
+}
+
+void ch_iterators(){ //Also checks ++, --, *iterator, a[iterator]
+		_vector<long> a(15,1100);
+		long long fw = 0;
+		long long rv = 0;
+		for(auto it1 = a.begin();it1 != a.end(); ++it1){
+			fw += *it1;
+		}
+		for(auto it1 = a.rend();it1 != a.rbegin(); --it1){
+			rv += a[it1];
+		}
+		shout_error(fw == 16500);
+		shout_error(rv == 16500);
+}
+
+void ch_resize(){
+	_vector<int> a(1027);
+	a.resize(1028,105);
+	shout_error(a[1026] == 0 && a[1027] == 105);
+}
 
 
 
 int main(int argc, char* argv[]) {
-	_vector<int> a;
-	a.push_back(3);
-	_vector<int> b(5);
-	_vector<int> c(5,6);
-	_vector<int> d = {1,2,3,4};
-	std::cout << d[3] << " " << c[2] << " " << b[1] << " " << a[0] << std::endl;
-	std::cout << d.pop_back() << std::endl << d;
-	auto z = d.begin();
-	for(auto it1 = d.begin();it1 < d.end(); ++it1){
-		std::cout << *it1 << " " << std::endl;
+	try{
+	ch_push_back_pop_back();
+	ch_empty();
+	ch_clear();
+	ch_iterators();
+	ch_resize();
+	cout << "End of tests" << endl;
+	}catch(...){
+			cout << "Unexpected exceptions" << endl;
 	}
-	for(auto it1 = d.rbegin();it1 < d.rend(); ++it1){
-		std::cout << *it1 << " " << std::endl;
-	}
-    return 0;
+  return 0;
 }
