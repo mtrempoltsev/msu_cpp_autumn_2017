@@ -66,7 +66,11 @@ int main(int argc, char* argv[]) {
 	ch_iterators();
 	ch_resize();
 	cout << "End of tests" << endl;
-	}catch(...){
+	}
+	catch(const std::out_of_range &err){
+			cout << err.what() << endl;
+	}
+	catch(...){
 			cout << "Unexpected exceptions" << endl;
 	}
   return 0;
