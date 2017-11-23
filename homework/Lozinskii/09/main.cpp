@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     std::vector<std::pair<std::string, unsigned>> vwords;
     std::copy(dict.begin(), dict.end(), std::back_inserter(vwords));
     std::sort(vwords.begin(), vwords.end(), cmp);
-    auto write = [&fout](std::pair<std::string, unsigned int> a) {fout << a.first << " " << a.second << std::endl;};
+    auto write = [&fout](std::pair<std::string, unsigned int> a) {fout << a.second << " " << a.first << std::endl;};
     std::for_each(vwords.rbegin(), vwords.rend(), write);
     fin.close();
     fout.close();
