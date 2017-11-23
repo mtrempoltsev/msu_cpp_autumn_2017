@@ -37,7 +37,7 @@ const BinaryOperation<T>* BinaryGrammarElement<T, NextElementType, operations>::
 template<typename T, typename NextElementType, const BinaryOperations<T>* operations>
 void BinaryGrammarElement<T, NextElementType, operations>::Parse_()
 {
-	if (this->string_[this->shift_] == '\0') { return; } //Разбор дошел до конца
+	if (this->string_[this->shift_] == '\0') { return; } //ГђГ Г§ГЎГ®Г° Г¤Г®ГёГҐГ« Г¤Г® ГЄГ®Г­Г¶Г 
 	const BinaryOperation<T>* current_operation = nullptr;
 
 	while (true)
@@ -45,7 +45,7 @@ void BinaryGrammarElement<T, NextElementType, operations>::Parse_()
 		this->subelements_.push_back(std::make_unique<NextElementType>(this->string_, this->shift_));
 		this->shift_ = this->subelements_ [this->subelements_.size()-1]->GetShift();
 
-		if (this->string_[this->shift_] == '\0') { break; } //Дошли до конца строки
+		if (this->string_[this->shift_] == '\0') { break; } //Г„Г®ГёГ«ГЁ Г¤Г® ГЄГ®Г­Г¶Г  Г±ГІГ°Г®ГЄГЁ
 
 		current_operation = GetOperationFromSymbol_(this->string_[this->shift_]);
 		if (current_operation == nullptr) { break; }
@@ -58,7 +58,7 @@ void BinaryGrammarElement<T, NextElementType, operations>::Parse_()
 	}
 }
 
-//Обычный прямой порядок
+//ГЋГЎГ»Г·Г­Г»Г© ГЇГ°ГїГ¬Г®Г© ГЇГ®Г°ГїГ¤Г®ГЄ
 template<typename T, typename NextElementType, const BinaryOperations<T>* operations>
 T BinaryGrammarElement<T, NextElementType, operations>::GetValue() const
 {
@@ -84,7 +84,7 @@ AtomicExpression<T, lowest_rule_decorator>::AtomicExpression(const char* str, in
 template<typename T, typename lowest_rule_decorator>
 void AtomicExpression<T, lowest_rule_decorator>::Parse_()
 {
-	//Если скобка
+	//Г…Г±Г«ГЁ Г±ГЄГ®ГЎГЄГ 
 	if (this->string_[this->shift_] == '(')
 	{
 		this->shift_++;
@@ -99,7 +99,7 @@ void AtomicExpression<T, lowest_rule_decorator>::Parse_()
 		return;
 	}
 
-	// Если число
+	// Г…Г±Г«ГЁ Г·ГЁГ±Г«Г®
 	this->value_ = NumberParser<T>::GetNumber(this->string_, this->shift_);
 }
 
@@ -111,8 +111,8 @@ T AtomicExpression<T, lowest_rule_decorator>::GetValue() const
 
 //=========================================================================================
 
-//Для степени: обратный порядок
-//Костыль, но шаблонная специализация не получается. Возможно, из-за псевдонима.
+//Г„Г«Гї Г±ГІГҐГЇГҐГ­ГЁ: Г®ГЎГ°Г ГІГ­Г»Г© ГЇГ®Г°ГїГ¤Г®ГЄ
+//ГЉГ®Г±ГІГ»Г«Гј, Г­Г® ГёГ ГЎГ«Г®Г­Г­Г Гї Г±ГЇГҐГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї Г­ГҐ ГЇГ®Г«ГіГ·Г ГҐГІГ±Гї. Г‚Г®Г§Г¬Г®Г¦Г­Г®, ГЁГ§-Г§Г  ГЇГ±ГҐГўГ¤Г®Г­ГЁГ¬Г .
 #define POW_SPECIALIZATION(type) template<> type Pow<type>::GetValue() const\
 								 {\
 								 	 CALC_ASSERT(this->subelements_.size() > 0);\
@@ -130,10 +130,10 @@ POW_SPECIALIZATION(double)
 //=========================================================================================
 
 template<typename T>
-T GetAnyNumber(const char* str, const char* scanf_str, int& shift, T& value, std::function<bool(T)> validation_func)
+void GetAnyNumber(const char* str, const char* scanf_str, int& shift, T& value, std::function<bool(T)> validation_func)
 {
 	int count_readed = 0;
-	//Запретить унарный плюс
+	//Г‡Г ГЇГ°ГҐГІГЁГІГј ГіГ­Г Г°Г­Г»Г© ГЇГ«ГѕГ±
 	if (str[shift] == '+')
 	{
 		throw std::logic_error("Unary plus is prohibited");
@@ -189,19 +189,19 @@ long NumberParser<long>::GetNumber(const char* str, int& shift)
 template<typename T>
 int Calculator<T>::GetValue(std::string& expr)
 {
-	expr.erase(std::remove(expr.begin(), expr.end(), ' '), expr.end()); //Игнорируем пробелы
+	expr.erase(std::remove(expr.begin(), expr.end(), ' '), expr.end()); //Г€ГЈГ­Г®Г°ГЁГ°ГіГҐГ¬ ГЇГ°Г®ГЎГҐГ«Г»
 	for (auto pair : constants_c)
 	{
 		expr = std::regex_replace(expr, std::regex(pair.first), pair.second);
 	}
 
 	int final_position = 0;
-	try //Могут быть исключения!
+	try //ГЊГ®ГЈГіГІ ГЎГ»ГІГј ГЁГ±ГЄГ«ГѕГ·ГҐГ­ГЁГї!
 	{
 		typename Calculator<T>::lowest_rule grammar(expr.c_str(), 0);
 		final_position = grammar.GetShift();
 
-		if (final_position != expr.length()) //Разбор не дошел до конца - вероятно, встретился неизвестный символ
+		if (final_position != expr.length()) //ГђГ Г§ГЎГ®Г° Г­ГҐ Г¤Г®ГёГҐГ« Г¤Г® ГЄГ®Г­Г¶Г  - ГўГҐГ°Г®ГїГІГ­Г®, ГўГ±ГІГ°ГҐГІГЁГ«Г±Гї Г­ГҐГЁГ§ГўГҐГ±ГІГ­Г»Г© Г±ГЁГ¬ГўГ®Г«
 		{
 			std::cout << expr << std::endl;
 			std::cout << std::string(final_position, ' ') << '^' << std::endl;

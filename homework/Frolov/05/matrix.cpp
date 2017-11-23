@@ -89,11 +89,7 @@ public:
 		}
 		delete[] matrix;
 		columns = 1;
-		matrix = new T[rows*columns];
-		for (size_t i = 0; i < rows; i++){
-			matrix[i] = temp[i];
-		}
-		delete[] temp;
+                matrix = temp;
 		return *this;
 	}
 	//Matrix assignment

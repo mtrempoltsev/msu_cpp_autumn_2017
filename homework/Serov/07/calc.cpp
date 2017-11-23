@@ -4,6 +4,18 @@
 #include "Parser.h"
 using namespace std;
 
+class Error {
+public:
+    Error(std::string msg, int code): msg(msg), code(code) {}
+
+    void print() const {
+        printf("Code: %d. %s\n", this->code, this->msg.c_str());
+    }
+
+    std::string msg;
+    int code;
+};
+
 std::unordered_map<std::string, double> constants =
     {
         { "Pi", 3.14 },
@@ -76,20 +88,20 @@ symbol Calculator<T, Parser>::next(){  //смотрим какой объект 
 			case ')': return symbol::close_br;
 			case '+': {
 					if (s_prev==symbol::open_br){
-						throw("5Wrong input (+");
+						throw Error("Wrong input (+", 5);
 					}
 					return symbol::plus;
 			}
 			case '-': return symbol::minus;
 			case '*': {
 					if (s_prev==symbol::open_br){
-						throw("5Wrong input (*");
+						throw Error("Wrong input (*", 5);
 					}
 					return symbol::multiply;
 			}
 			case '/': {
 					if (s_prev==symbol::open_br){
-						throw("5Wrong input (/");
+						throw Error("Wrong input (/", 5);
 					}
 					return symbol::divide;
 			}
@@ -99,14 +111,14 @@ symbol Calculator<T, Parser>::next(){  //смотрим какой объект 
 				if (curr=='i')
 					return symbol::Pi;
 				else{
-					throw("3Wrong input");
+					throw Error("Wrong input", 3);
 				}				 
 			}
 		}
 		if ((curr>='0')&&(curr<='9'))
 			return symbol::number;
 		else{
-			throw("3Wrong input"); //проверяем, что введены только цифры или +,-,*,/	
+			throw Error("Wrong input", 3); //проверяем, что введены только цифры или +,-,*,/	
 		}
 		}
 	return symbol::end;
@@ -146,7 +158,7 @@ T Calculator<T, Parser>::term(int inverse) //разбиваем на множи�
 
 			if (check==0)//проверка деления на ноль
 			{
-				throw("1Zero division error");
+				throw Error("Zero division error", 1);
 			}	
 
 			if (flag){
@@ -186,14 +198,14 @@ T Calculator<T, Parser>::prim() //считывание числа
 	string number_as_str;
 	if ((s_prev!=symbol::close_br)&&(s_prev!=symbol::open_br)){
 		if ((s==symbol::plus)||(s==symbol::divide)||(s==symbol::multiply)){ 
-			throw("Two or more operations is a row"); //проверяем, что подряд не идут операции, или операция и )
+			throw Error("Two or more operations is a row", 4); //проверяем, что подряд не идут операции, или операция и )
 		}
 		if (s==symbol::close_br){
-			throw("5Operation and ) in a row");
+			throw Error("Operation and ) in a row", 5);
 		}
 	}
 	if ((s_prev==symbol::open_br)&&(s==symbol::close_br)){
-		throw("6Nothing in brackets");
+		throw Error("Nothing in brackets", 6);
 	}
 	if (s==symbol::number) {
 		input--;
@@ -206,11 +218,11 @@ T Calculator<T, Parser>::prim() //считывание числа
 		}
 		res = pars.str_to_d(number_as_str);
 		if (!pars.check(number_as_str)){
-			throw("8Wrong type");
+			throw Error("Wrong type", 8);
 		}
 		NumericLimits<T> lim;
 		if ((res > lim.max)||(res< lim.min)){
-			throw("7Number is out of range");
+			throw Error("Number is out of range", 7);
 		}	
 		return res;
 	}
@@ -219,14 +231,14 @@ T Calculator<T, Parser>::prim() //считывание числа
 		if (pars.check("2.7"))
 			return constants["e"];
 		else{
-			throw("8Wrong type");
+			throw Error("Wrong type", 8);
 		}
 	}
 	if (s==symbol::Pi){
 		if (pars.check("3.14"))
 			return constants["Pi"];
 		else{
-			throw("8Wrong type");
+			throw Error("Wrong type", 8);
 		}
 	}
 	if (s==symbol::open_br)  {bracket_count++;res=expr(); return res;}
@@ -251,14 +263,16 @@ int main(int argc, const char* argv[])
 		auto result=calc.expr();
 
 		if (calc.check_brackets() != 1)
-			throw("4Wrong number of brackets");
+			throw Error("Wrong number of brackets", 4);
 
 		std::cout << result << std::endl;
 	}
-	catch (const char* error_message){ // в сообщении об ошибке первый символ - номер ошибки
-		const int error_code = *error_message;
-		std::cout << ++error_message << std:: endl;
-		return error_code;
+	catch (const Error& error){ // в сообщении об ошибке первый символ - номер ошибки
+		error.print();
+	}
+	catch (...){
+		std::cout << "Some error" << std::endl;
+		return 10;
 	}
 	
 	return 0;
