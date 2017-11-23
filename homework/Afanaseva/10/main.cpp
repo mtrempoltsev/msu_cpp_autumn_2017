@@ -1,15 +1,9 @@
-#include <condition_variable>
-#include <mutex>
-#include <thread>
-#include <iostream>
-#include <queue>
-#include <chrono>
-
 #include <iostream>
 #include <string>
 
 #include <thread>
 #include <mutex>
+#include <chrono>
 #include <condition_variable>
 
 using namespace std;
@@ -19,7 +13,6 @@ std::mutex mux;
 std::condition_variable cond_var;
 bool notified = false;
 bool done = false;
-
 
 void say(std::string word, size_t times)
 {
