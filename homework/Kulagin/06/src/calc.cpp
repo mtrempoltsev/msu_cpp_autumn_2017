@@ -384,6 +384,6 @@ T Calculator<T>::eval(char* expr) {
 	}
 
 	return result;
-};
+}
 
 #endif
