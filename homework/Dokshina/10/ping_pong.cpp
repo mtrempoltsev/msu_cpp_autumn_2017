@@ -15,7 +15,7 @@ void ping() {
     while (true) {
         m.lock();
         if (turn == Turn::PING) {
-            std::cout << "ping" << std::endl;
+            std::cout << "ping" << ' ';
             turn = Turn::PONG;
         }
         m.unlock();
@@ -27,7 +27,7 @@ void pong() {
     while (true) {
         m.lock();
         if (turn == Turn::PONG) {
-            std::cout << "pong" << std::endl;
+            std::cout << "pong" << ' ';
             turn = Turn::PING;
         }
         m.unlock();
