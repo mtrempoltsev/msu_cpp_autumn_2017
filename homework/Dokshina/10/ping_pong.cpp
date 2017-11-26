@@ -13,23 +13,21 @@ void start_ping_pong_game() {
 
 void ping() {
     while (true) {
-        m.lock();
+        std::lock_guard<std::mutex> lock(m);
         if (turn == Turn::PING) {
             std::cout << "ping" << ' ';
             turn = Turn::PONG;
         }
-        m.unlock();
     }
 }
 
 
 void pong() {
     while (true) {
-        m.lock();
+        std::lock_guard<std::mutex> lock(m);
         if (turn == Turn::PONG) {
             std::cout << "pong" << ' ';
             turn = Turn::PING;
         }
-        m.unlock();
     }
 }
