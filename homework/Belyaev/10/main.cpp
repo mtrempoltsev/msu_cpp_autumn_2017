@@ -13,7 +13,7 @@ bool second_notified = false;
 
 void ping(){
 	while(true){
-        std::unique_lock<std::mutex> lock(m);
+        	std::unique_lock<std::mutex> lock(m);
 		cout << "ping" << endl;
 		second_thread.notify_one();
 		first_notified = false;
@@ -26,7 +26,7 @@ void ping(){
 
 void pong(){
 	while(true){
-        std::unique_lock<std::mutex> lock(m);
+        	std::unique_lock<std::mutex> lock(m);
 		cout << "pong" << endl;
 		first_notified = true;
 		second_notified = false;
