@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 #include <iterator>
 using namespace std;
 
@@ -12,8 +12,8 @@ class fwdIter:
     using value_type = T;
         fwdIter(){
         }
-        fwdIter(T* data){
-            it = data;
+        fwdIter(T* data_){
+            it = data_;
         }
         fwdIter(fwdIter&& copied){
             it = copied.it;
@@ -29,15 +29,13 @@ class fwdIter:
             --it;
             return *this;
         }
-        fwdIter operator++(int) {
-            fwdIter tmp(*this); 
-            operator++(); 
-            return tmp;
+        fwdIter& operator++(int) {
+            operator++();
+            return *this;
         }
-        fwdIter operator--(int) {
-            fwdIter tmp(*this); 
-            operator--(); 
-            return tmp;
+        fwdIter& operator--(int) {
+            operator--();
+            return *this;
         }
         bool operator==(fwdIter rval){
             return it == rval.it;
@@ -82,20 +80,20 @@ class fwdIter:
 ////REVERSE ITERATOR
 template<class T>
 class rvsIter:
-        public std::iterator<reverse_iterator<T>, T>
+        public std::iterator<std::random_access_iterator_tag, T>
     {
     public:
     using size_type = size_t;
     using value_type = T;
         rvsIter(){
         }
-        rvsIter(T* data){
-            it = data;
+        rvsIter(T* data_){
+            it = data_;
         }
         rvsIter(rvsIter&& copied){
             it = copied.it;
         }
-        rvsIter operator=(rvsIter&& copied){
+        void operator=(rvsIter&& copied){
             it = copied.it;
         }
         rvsIter& operator++() {
@@ -106,15 +104,13 @@ class rvsIter:
             ++it;
             return *this;
         }
-        rvsIter operator++(int) {
-            rvsIter tmp(*this); 
-            operator++(); 
-            return tmp;
+        rvsIter& operator++(int) {
+            operator++();
+            return (*this);
         }
-        rvsIter operator--(int) {
-            rvsIter tmp(*this); 
-            operator--(); 
-            return tmp;
+        rvsIter& operator--(int) {
+            operator--();
+            return (*this);
         }
         bool operator==(rvsIter rval){
             return it == rval.it;
@@ -166,6 +162,20 @@ public:
     using size_type = size_t;
     using value_type = T;
 
+    void enlarge(const Alloc& a = Alloc()){
+        T* tmpdata = Alloc(a).allocate(capacity * 2);
+        memcpy(tmpdata, data_, sizeof(T) * capacity);
+        Alloc(a).deallocate(data_, capacity);
+        data_ = tmpdata;
+        capacity *= 2;
+    }
+private:
+    void oversizecheck(size_type count){
+        while(count > capacity){
+            enlarge();
+        }
+    }
+public:
     explicit _vector(const Alloc& a = Alloc()){
         data_ = Alloc(a).allocate(capacity);
         size_ = 0;
@@ -173,11 +183,13 @@ public:
 
     explicit _vector(size_type count, const Alloc& a = Alloc()){
         data_ = Alloc(a).allocate(capacity);
+        oversizecheck(count);
         size_ = count;
     }
 
     explicit _vector(size_type count, const value_type& defaultValue, const Alloc& a = Alloc()){
         data_ = Alloc(a).allocate(capacity);
+        oversizecheck(count);
         size_ = count;
         for(size_type i = 0; i < count; i++){
             *(data_ + i) = defaultValue;
@@ -188,6 +200,7 @@ public:
     _vector(initializer_list<value_type> init, const Alloc& a = Alloc()){
         data_ = Alloc(a).allocate(capacity);
         size_ = init.size();
+        oversizecheck(size_);
         size_t i = 0;
         auto current = init.begin();
         const auto end = init.end();
@@ -195,14 +208,6 @@ public:
         {
             data_[i++] = *current++;
         }
-    }
-
-    void enlarge(const Alloc& a = Alloc()){
-        T* tmpdata = Alloc(a).allocate(capacity * 2);
-        memcpy(tmpdata, data_, sizeof(T) * capacity);
-        data_ = Alloc(a).deallocate(capacity);
-        data_ = tmpdata;
-        capacity *= 2;
     }
 
     fwdIter<T> begin() noexcept{
@@ -222,15 +227,21 @@ public:
 
     value_type& operator[](size_type index){
         if(index >= size_){
-            throw std::out_of_range("My error is here");
+            throw std::out_of_range("Range of vector exceeded");
         }
         return *(data_ + index);
     }
     const value_type& operator[](size_type index) const{
         if(index >= size_){
-            throw std::out_of_range("My error is here");
+            throw std::out_of_range("Range of vector exceeded");
         }
         return *(data_ + index);
+    }
+    value_type& operator[](rvsIter<T> &index){
+        return *index;
+    }
+    value_type& operator[](fwdIter<T> &index){
+        return *index;
     }
 
 
@@ -255,16 +266,15 @@ public:
     }
 
     void resize(size_type count){
-        if(count > capacity){
-            throw std::logic_error("Count > capacity");
+        while(count > capacity){
+            enlarge();
         }
+
         size_ = count;
     }
 
     void resize(size_type count, const value_type& value){
-        if(count > capacity){
-            throw std::logic_error("Count > capacity");
-        }
+        oversizecheck(count);
         if(count > size_){
             for(size_type i = size_; i < count; i++){
                 data_[i] = value;
@@ -278,7 +288,7 @@ public:
 private:
     value_type* data_;
     size_type size_;
-    const size_type capacity = 1024;
+    size_type capacity = 1024;
 };
 
 

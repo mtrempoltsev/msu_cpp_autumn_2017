@@ -1,0 +1,4 @@
+2 tree
+2 grass
+1 common
+1 forest
