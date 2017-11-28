@@ -17,7 +17,6 @@ enum class Turn
 
 std::mutex mux;
 std::condition_variable dataReady;
-bool notified = false;
 auto turnType = Turn::toSay;
 
 void say(std::string word, bool infinite, int times)
@@ -27,12 +26,10 @@ void say(std::string word, bool infinite, int times)
         std::unique_lock<std::mutex> lock(mux);
         std::cout << word << ' ';
         turnType = Turn::toAnswer;
-        notified = true;
         dataReady.notify_one();
-        dataReady.wait(lock, []{return !notified;}); // condition to avoid spurious wakeups
+        dataReady.wait(lock, []{return (turnType == Turn::toSay);}); // condition to avoid spurious wakeups
     }
     turnType = Turn::toEnd;
-    notified = true;
     dataReady.notify_one();
 }
 
@@ -41,14 +38,13 @@ void listen_and_answer(std::string word)
     std::unique_lock<std::mutex> lock(mux);
     while (!(turnType == Turn::toEnd))
     {
-        dataReady.wait(lock, []{return notified;}); // condition to avoid spurious wakeups
+        dataReady.wait(lock, []{return !(turnType == Turn::toSay);}); // condition to avoid spurious wakeups
 
         while (turnType == Turn::toAnswer)
         {
             std::cout << word << ' ';
             turnType = Turn::toSay;
         }
-        notified = false;
         dataReady.notify_one();
     }
     std::cout << std::endl;
