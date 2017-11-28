@@ -29,7 +29,7 @@ void say(std::string word, bool infinite, int times)
         turnType = Turn::toAnswer;
         notified = true;
         dataReady.notify_one();
-        dataReady.wait(lock);
+        dataReady.wait(lock, []{return !notified;}); // condition to avoid spurious wakeups
     }
     turnType = Turn::toEnd;
     notified = true;
