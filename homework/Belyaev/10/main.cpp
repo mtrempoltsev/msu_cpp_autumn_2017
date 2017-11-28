@@ -41,4 +41,5 @@ int main(){
 	thread uno(ping);
 	thread duo(pong);
 	uno.join();
+	return 0;
 }
