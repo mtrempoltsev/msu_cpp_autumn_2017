@@ -22,7 +22,7 @@ enum class Token {
 	Invalid
 };
 
-// Шаблоны свойств
+// ГГ ГЎГ«Г®Г­Г» Г±ГўГ®Г©Г±ГІГў
 template <class T> struct NumericTraits{};
 
 template <> struct NumericTraits <double> {
@@ -169,8 +169,8 @@ template <class T> Calculator<T>::Calculator(const char*& inp) {
 	bracket_count = 0;
 }
 
-/* считывает токен, меняет позицию прочитанного текста
-   и записывает число в глобальную переменную */
+/* Г±Г·ГЁГІГ»ГўГ ГҐГІ ГІГ®ГЄГҐГ­, Г¬ГҐГ­ГїГҐГІ ГЇГ®Г§ГЁГ¶ГЁГѕ ГЇГ°Г®Г·ГЁГІГ Г­Г­Г®ГЈГ® ГІГҐГЄГ±ГІГ 
+   ГЁ Г§Г ГЇГЁГ±Г»ГўГ ГҐГІ Г·ГЁГ±Г«Г® Гў ГЈГ«Г®ГЎГ Г«ГјГ­ГіГѕ ГЇГҐГ°ГҐГ¬ГҐГ­Г­ГіГѕ */
 template <class T> Token Calculator<T>::nextToken() {
 	
 	while (auto c = *input++) {
@@ -240,7 +240,7 @@ template <class T> T Calculator<T>::expression () {
 	return result;
 }
 
-// Слагаемые
+// Г‘Г«Г ГЈГ ГҐГ¬Г»ГҐ
 template <class T> T Calculator<T>::term () {
 	
 	T result = primary();
@@ -296,7 +296,7 @@ template <class T> T Calculator<T>::term () {
   	return result;
 }
 
-// Множители
+// ГЊГ­Г®Г¦ГЁГІГҐГ«ГЁ
 template <class T> T Calculator<T>::primary () {
   	
 	token = nextToken();
@@ -395,4 +395,3 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 }
-
