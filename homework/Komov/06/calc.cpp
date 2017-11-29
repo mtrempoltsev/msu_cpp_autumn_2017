@@ -1,7 +1,9 @@
 #include <iostream>
 #include <map>
 #include <limits>
- 
+
+// Tabs = 4 spaces
+
 using namespace std;
 
 map <string, double> constants = { { "e", 2.73 }, { "Pi", 3.14 } };
@@ -22,7 +24,7 @@ enum class Token {
 	Invalid
 };
 
-// Øàáëîíû ñâîéñòâ
+// Numeric limits
 template <class T> struct NumericTraits{};
 
 template <> struct NumericTraits <double> {
@@ -43,6 +45,7 @@ template <> struct NumericTraits <long> {
 	static constexpr long max = numeric_limits<long>::max();
 };
 
+// Parser for every type
 template <class T> struct Parser {};
 
 template <> struct Parser <int> {
@@ -169,8 +172,6 @@ template <class T> Calculator<T>::Calculator(const char*& inp) {
 	bracket_count = 0;
 }
 
-/* ñ÷èòûâàåò òîêåí, ìåíÿåò ïîçèöèþ ïðî÷èòàííîãî òåêñòà
-   è çàïèñûâàåò ÷èñëî â ãëîáàëüíóþ ïåðåìåííóþ */
 template <class T> Token Calculator<T>::nextToken() {
 	
 	while (auto c = *input++) {
@@ -240,7 +241,7 @@ template <class T> T Calculator<T>::expression () {
 	return result;
 }
 
-// Ñëàãàåìûå
+// Summands
 template <class T> T Calculator<T>::term () {
 	
 	T result = primary();
@@ -296,7 +297,7 @@ template <class T> T Calculator<T>::term () {
   	return result;
 }
 
-// Ìíîæèòåëè
+// Factors
 template <class T> T Calculator<T>::primary () {
   	
 	token = nextToken();
