@@ -110,13 +110,7 @@ void checkMoving()
 {
     Matrix<double> m1 = Matrix<double>::ones(3);
 
-
-//    std::cout<<"m1:\n"<<m1;
-//    std::cout<<"move m1 to m2"<<std::endl;
     Matrix<double> m2 = std::move(m1);
-
-//    std::cout<<"m1:\n"<<m1;
-//    std::cout<<"m2:\n"<<m2;
 
     check(m1.isEmpty());
     check(!m2.isEmpty());
@@ -126,9 +120,6 @@ void checkMoving()
     check(m2[1][1] == 1);
 
     m1 = std::move(m2);
-//    std::cout<<"move m2 to m1"<<std::endl;
-//    std::cout<<"m1:\n"<<m1;
-//    std::cout<<"m2:\n"<<m2;
 
     check(m2.isEmpty());
     check(!m1.isEmpty());
@@ -149,18 +140,6 @@ int main() {
     checkMatrixEq();
     checkMoving();
 
-//    Matrix mat = Matrix::ones(3);
-//    mat[0][0] = 2;
-//
-//    std::vector<double> vec = {1,0,0};
-//
-//    std::cout<<mat;
-//    std::cout<<mat*10;
-//    std::cout<< mat * vec;
-//    std::cout<< vec * mat;
-//
-//    mat *= vec;
-//    std::cout<< mat;
 
     return 0;
 }
