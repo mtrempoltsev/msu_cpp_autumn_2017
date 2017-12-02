@@ -20,8 +20,8 @@ class vector
     }
 
     T* array_;
-    size_t size_;
-    size_t capacity_;
+    size_t size_=0;
+    size_t capacity_=0;
 
     template<bool is_reversed, typename reference>
     class Iterator : public std::iterator<std::bidirectional_iterator_tag, T>
