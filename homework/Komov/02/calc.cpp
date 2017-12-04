@@ -55,7 +55,7 @@ Token next(const char*& input, int& n) {
         
         else {
         	
-		cerr << "Invalid input expression (tokens)" << endl;
+		cout << "Invalid input expression (tokens)" << endl;
 
 		exit(3);
 	}
@@ -77,7 +77,7 @@ int number(const char*& input) {
 	
 	else {
 		
-		cerr << "Invalid input expression (number)" << endl;
+		cout << "Invalid input expression (number)" << endl;
 		
 		exit(3);
 	}	
@@ -100,7 +100,7 @@ int term(Token& last_token, const char*& input) {
 			
 			if (n == 0) {
 				
-				cerr << "ZeroDivisionError" << endl;
+				cout << "ZeroDivisionError" << endl;
 				
 				exit(3);
 			}
@@ -111,7 +111,7 @@ int term(Token& last_token, const char*& input) {
 
 		else
 		{
-			cerr << "Invalid input expression (term)" << endl;
+			cout << "Invalid input expression (term)" << endl;
 			
 			exit(3);
 		}
@@ -136,7 +136,7 @@ int expr(const char*& input) {
 			result -= term(last_token, input);
 		
 		else {
-			cerr << "Invalid input expression (expr)" << endl;
+			cout << "Invalid input expression (expr)" << endl;
 			
 			exit(3);
 		}
@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
 	if (argc != 2) {
 		
-		cerr << "Invalid input expression (argc)" << endl;
+		cout << "Invalid input expression (argc)" << endl;
 		
 		return 1;
 	}
