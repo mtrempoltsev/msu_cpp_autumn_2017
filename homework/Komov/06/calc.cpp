@@ -365,7 +365,7 @@ int main(int argc, char* argv[])
 	
 	if (argc != 2) {
 		
-		cerr << "Invalid input expression (argc)" << endl;
+		cout << "Invalid input expression (argc)" << endl;
 		
 		return 1;
 	}
@@ -380,7 +380,7 @@ int main(int argc, char* argv[])
 	
 	    if (calc.bracket_count != 0) {
 	      	
-			cerr << "Incorrect number of brackets" << endl;
+			cout << "Incorrect number of brackets" << endl;
 	      	
 			return 1;
 	    }
