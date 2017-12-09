@@ -9,12 +9,10 @@ bool ping_time = true;
 
 void thread0_ping() {
     while (true) {
-        std::unique_lock<std::mutex> lock(mutex);  // critical section
-                                                   // (exclusive access to
-                                                   // std::cout signaled by
-                                                   // lifetime of lock): (as
-                                                   // said in cplusplus.com
-                                                   // unique_lock example)
+        std::unique_lock<std::mutex>
+            lock(mutex); /*critical section (exclusive access to std::cout
+                            signaled by lifetime of lock) (thanks to
+                            cplusplus.com unique_lock example for wording)*/
         std::cout << "ping ";
         ping_time = false;
         cond_var.notify_one();
@@ -27,8 +25,9 @@ void thread0_ping() {
 void thread1_pong() {
     while (true) {
         std::unique_lock<std::mutex> lock(mutex);
-        while (ping_time) {  // loop to avoid spurious wakeups as said in
-                             // cppreference.com conditional variable example
+        while (ping_time) { /* loop to avoid spurious wakeups as said in
+                               (thanks to cppreference.com condition_variable
+                               example for wording)*/
             cond_var.wait(lock);
         }
 
