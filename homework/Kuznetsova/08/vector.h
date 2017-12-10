@@ -27,7 +27,7 @@ class Vector {
             buffer_[i] = default_value;
         }
     }
-    // explicit Vector(const Vector &other) : buffer_(other.buffer_) {}
+   
 
     ~Vector() { delete[] buffer_; }
 
@@ -125,11 +125,8 @@ class Vector {
     }
 
     void clear() {
-       
-        for (size_t i = 0; i < size_; i++)
-            (buffer_[i]).~value_type();
+        for (size_t i = 0; i < size_; i++) (buffer_[i]).~value_type();
         size_ = 0;
-    
     }
 
     friend std::ostream &operator<<(std::ostream &out,

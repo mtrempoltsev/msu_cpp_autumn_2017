@@ -10,8 +10,18 @@ void check_push_back();
 void check_resize();
 void check_clear();
 void check_iterators();
+void tests();
 
 int main() {
+    try {
+        tests();
+    } catch (...) {
+        std::cerr << "Unexpected error!" << std::endl;
+        return -1;
+    }
+    return 0;
+}
+void tests() {
     std::cout << "Test" << std::endl;
     std::cout << "Empty" << std::endl;
     check_empty();
@@ -30,9 +40,7 @@ int main() {
     check_clear();
     std::cout << "Iterators" << std::endl;
     check_iterators();
-    return 0;
 }
-
 void check(bool value) {
     if (!value) std::cout << "test failed" << std::endl;
 }
