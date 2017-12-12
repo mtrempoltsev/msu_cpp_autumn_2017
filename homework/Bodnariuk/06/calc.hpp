@@ -147,7 +147,6 @@ T Parser<T>::parse(char* data, int start, int len) {
 
 template<typename T>
 T Calc<T>::calculate(char* data) {
-    // std::cout << (std::numeric_limits<long>::max()) << '\n';
     _data = data;
     _expr_level = 0;
     _end_pointer = 0;
