@@ -6,6 +6,7 @@
 #include <exception>
 #include <unordered_map>
 #include <algorithm>
+#include <vector>
 
 
 class FreqDictionary {
