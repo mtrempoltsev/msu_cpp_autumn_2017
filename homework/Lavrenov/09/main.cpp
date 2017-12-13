@@ -30,6 +30,8 @@ int main(int argc, char** argv)
     while (input.good()){
         std::string tmp;
         input >> tmp;
+		if(tmp.empty())
+			continue;
         auto where = find_if(dictionary.begin(), dictionary.end(),[tmp](pair<string, size_t> p){return p.first == tmp;});
         if(where == dictionary.end()){
             dictionary.push_back(pair<string, size_t>(tmp, 1));

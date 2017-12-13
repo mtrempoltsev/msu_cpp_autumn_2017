@@ -6,12 +6,13 @@
 #include <exception>
 #include <unordered_map>
 #include <algorithm>
+#include <vector>
 
 
 class FreqDictionary {
-    typedef std::unordered_map <std::string, size_t>  MapDictionary;
-    typedef std::vector<std::pair <std::string, size_t>> Dictionary;
     typedef std::pair<std::string, size_t> Word;
+    typedef std::unordered_map <std::string, size_t>  MapDictionary;
+    typedef std::vector<Word> Dictionary;
 public:
     FreqDictionary(const char* input_file_name, const char* output_file_name);
     void make_dictionary();

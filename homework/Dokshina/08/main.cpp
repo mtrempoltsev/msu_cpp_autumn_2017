@@ -53,7 +53,7 @@ void test_vector() {
 
     // clear
     vect.clear();
-    ans = std::move(Vector<int>(0));
+    ans = Vector<int>();
 
     num_of_errors += check(vect.capacity() == 10 && vect == ans);
 
