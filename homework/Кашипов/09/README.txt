@@ -1,0 +1,1 @@
+g++ main.cpp -o proga —std=c++11
