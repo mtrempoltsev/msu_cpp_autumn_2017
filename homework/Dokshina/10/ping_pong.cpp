@@ -1,7 +1,7 @@
 #include "ping_pong.hpp"
 
 std::mutex m;
-int turn;
+int turn = Turn::PING;
 
 void start_ping_pong_game() {
     std::thread t_ping(ping);
