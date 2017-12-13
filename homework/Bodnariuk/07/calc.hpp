@@ -20,7 +20,7 @@ enum errors {
     ERR_LIMITS_ABUSE,
 };
 
-std::unordered_map<errors, string> error_text = {
+std::unordered_map<int, std::string> error_text = {
    { ERR_ZERO_DIV, "zero division" },
    { ERR_UNBALANCED_PAR, "arentheses unbalanced" },
    { ERR_BAD_STRUCTURE, "not an arithmetic expression of integers" },
