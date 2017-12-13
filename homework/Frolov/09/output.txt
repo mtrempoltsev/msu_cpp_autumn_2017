@@ -1,4 +1,8 @@
-2 tree
-2 grass
-1 common
-1 forest
+4 ryba
+2 ochen
+1 som
+1 paltus
+1 semga
+1 skumbria
+1 ya
+1 lublu
