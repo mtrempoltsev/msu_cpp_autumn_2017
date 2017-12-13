@@ -7,7 +7,7 @@ std::mutex mutex;
 std::condition_variable cond_var;
 bool is_ping = true;
 
-void ping_pong(int ping_action)
+void ping_pong(bool ping_action)
 {
     while (true)
     {
