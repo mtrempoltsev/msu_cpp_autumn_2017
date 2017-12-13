@@ -106,7 +106,7 @@ public:
 };
 
 template <class t>
-class MyVector
+class Vector
 {
 private:
 
@@ -122,21 +122,21 @@ public:
 	using const_reverse_iterator = Reverse_iterator<const t>;
 
 
-	MyVector(initializer_list<t> init):size_(init.size()),capacity_(init.size()){
+	Vector(initializer_list<t> init):size_(init.size()),capacity_(init.size()){
 		vect_ = make_unique<t[]>(size_);
 		copy(init.begin(), init.end(), vect_.get());
 	}
 
-	MyVector(const MyVector& copied):size_(copied.size_),capacity_(copied.capacity_){
+	Vector(const Vector& copied):size_(copied.size_),capacity_(copied.capacity_){
 		vect_ = make_unique<t[]>(capacity_);
 		copy(copied.vect_.get(), copied.vect_.get()+size_, vect_.get());
 	}
 
-	MyVector(size_t size = 0):size_(size),capacity_(size){
+	Vector(size_t size = 0):size_(size),capacity_(size){
 		vect_ = make_unique<t[]>(size_);
 	}
 
-	~MyVector(){
+	~Vector(){
 		size_ = 0;
 		capacity_ = 0;
 	}
@@ -149,9 +149,9 @@ public:
 
 	void resize(int new_size){
 		if (new_size < 0){
-			throw runtime_error("MyVector size can't be less than zero");
+			throw runtime_error("Vector size can't be less than zero");
 		}
-		if (new_size > capacity_){
+		if (size_t(new_size) > capacity_){
 			reshape(new_size);
 		}
 		size_ = new_size;
@@ -195,14 +195,14 @@ public:
 
 	t& get_elem(size_t pos){
 		if (pos >= size_){
-			throw runtime_error("MyVector out of range");
+			throw runtime_error("Vector out of range");
 		}
 		return vect_[pos];
 	}
 
 	t& operator[](size_t pos) {
 		if ((pos >= size_) || (pos < 0)){
-			throw runtime_error("MyVector out of range");
+			throw runtime_error("Vector out of range");
 		}
 		return vect_[pos];
 	}
@@ -218,7 +218,7 @@ public:
 
 	void pop_back(){
 		if (size_ < 1){
-			throw runtime_error("MyVector is empty");
+			throw runtime_error("Vector is empty");
 		}
 		vect_[size_ - 1] = 0;
 		size_--;
@@ -249,15 +249,15 @@ public:
 
 int main()
 {
-	//MyVector creation	
-	cout<<"Initialization MyVector"<<endl;
-	MyVector<int> a = { 1,1,1,1,1 };
+	//Vector creation	
+	cout<<"Initialization Vector"<<endl;
+	Vector<int> a = { 1,1,1,1,1 };
 	a.print();
-	cout<<"Resize MyVector"<<endl;
+	cout<<"Resize Vector"<<endl;
 	a.resize(6,2);
 	a.print();
 	
-	cout<<"Clear MyVector"<<endl;
+	cout<<"Clear Vector"<<endl;
 	a.clear();
 	a.resize(5);
 	a.print();
@@ -267,7 +267,7 @@ int main()
 	a.print();
 
 	cout<<"Iterators"<<endl;
-	MyVector<int> b = {10,20};
+	Vector<int> b = {10,20};
 	for(auto it = b.begin(); it != b.end(); it++){
 		*it *= 2;
 	}
