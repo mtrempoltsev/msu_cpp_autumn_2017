@@ -16,7 +16,6 @@ while(true)
 			{
 				std::cout << "ping"<< std::endl;
                                 flag = true;
-				//RELEASE_FENCE;
 			}
 	} 
 }
@@ -30,7 +29,6 @@ while(true)
 			{
 				std::cout << "pong"<< std::endl;
 				flag = false;
-				//RELEASE_FENCE;
 			}
 	} 
 }
