@@ -24,7 +24,7 @@ void checkGetSet()
     check(m[1][1] == 5);
     check(m[1][2] == 6);
     
-    m[1][2] = 100;
+    m[1][2] = 100; 
     
     check(m[1][2] == 100);
 }

@@ -6,7 +6,7 @@
 using namespace std;
 
 template<class T>
-class vector
+class my_vector
 {
     void expand(size_t new_capacity_)
     {
@@ -62,23 +62,23 @@ public:
     using const_iterator = Iterator<false, const T&>;
     using const_reverse_iterator = Iterator<true, const T&>;
 
-    vector(): capacity_(8), size_(0)
+    my_vector(): capacity_(8), size_(0)
     {
         array_ = new T[capacity_];
     }
 
-    vector(size_t size): capacity_(size), size_(size)
+    my_vector(size_t size): capacity_(size), size_(size)
     {
         array_ = new T[capacity_];
     }
 
-    vector(size_t size, const T& default_value): vector(size)
+    my_vector(size_t size, const T& default_value): my_vector(size)
     {
         for (size_t i = 0; i < size_; i++)
             array_[i] = default_value;
     }
 
-    vector(const std::initializer_list<T>& init) : vector(init.size())
+    my_vector(const std::initializer_list<T>& init) : my_vector(init.size())
     {
         std::copy(init.begin(), init.end(), array_);
     }
@@ -198,13 +198,13 @@ public:
     void pop_back()
     {
         if (size_ == 0)
-            throw std::invalid_argument("cannot pop element from empty vector");
+            throw std::invalid_argument("cannot pop element from empty my_vector");
 
         size_--;
         (array_ + size_)->~T();
     }
 
-    ~vector()
+    ~my_vector()
     {
         delete []array_;
     }
@@ -212,7 +212,7 @@ public:
 
 int main()
 {
-    vector<int> a={10,9,8,7,6};
+    my_vector<int> a={10,9,8,7,6};
     cout<<a[3]<<endl;;
     a.push_back(8);
     cout<<a[a.size()-1]<<endl;

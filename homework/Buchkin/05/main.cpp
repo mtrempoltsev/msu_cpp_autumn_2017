@@ -9,7 +9,7 @@ void check(bool value)
 
 void checkGetSet()
 {
-    Matrix m(2, 3);
+    Matrix<double> m(2, 3);
     m[0][0] = 1;
     m[0][1] = 2;
     m[0][2] = 3;
@@ -29,7 +29,7 @@ void checkGetSet()
     check(m[1][2] == 100);
 }
 
-void checkFirst(Matrix& m)
+void checkFirst(Matrix<double>& m)
 {
 	check(m[0][0] == 100);
 	check(m[0][1] == 500);
@@ -42,7 +42,7 @@ void checkFirst(Matrix& m)
 	check(m[2][2] == -3000);
 }
 
-void checkSecond(Matrix& m)
+void checkSecond(Matrix<double>& m)
 {
 	check(m[0][0] == 10);
 	check(m[0][1] == 20);
@@ -59,7 +59,7 @@ int
 main()
 {
 	checkGetSet();
-	Matrix m1(3, 3), m2(3, 3);
+	Matrix<double> m1(3, 3), m2(3, 3);
 	m1[0][0] = 1; m2[0][0] = 1;
 	m1[0][1] = -100; m2[0][1] = -100;
 	if (m1 != m2) {
@@ -78,5 +78,21 @@ main()
 		m2[i][j] = 3*i + j + 1;
 
 	checkSecond(m2 *= 10);
+
+	for (int i = 0; i < 3; ++i)
+	for (int j = 0; j < 3; ++j)
+		m2[i][j] = 3*i + j + 1;
+
+	{
+		Matrix<double> m3(3, 3);
+
+		for (int i = 0; i < 3; ++i)
+		for (int j = 0; j < 3; ++j)
+			m3[i][j] = 3*i + j + 1;
+
+		m1 = m3;
+	}
+
+	check(m1 == m2);
 	return 0;
 }

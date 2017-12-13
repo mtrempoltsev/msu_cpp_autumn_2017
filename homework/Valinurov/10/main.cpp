@@ -5,27 +5,31 @@
 
 std::mutex mutex;
 std::condition_variable cond_var;
-int is_ping = 1;
+bool is_ping = true;
 
-void ping_pong(int action)
+void ping_pong(bool ping_action)
 {
     while (true)
     {
-        std::unique_lock<std::mutex> lock(mutex);
+        {
+            // дополнительный блок для того, чтобы mutex разлочился перед notify_one
+            // хотя работает и без этого, но без этого скорей всего будет тормозить wait при попытке залочить mutex
+            std::unique_lock<std::mutex> lock(mutex);
 
-        while (is_ping * action == -1)
-            cond_var.wait(lock);
+            while (is_ping != ping_action)
+                cond_var.wait(lock);
 
-        std::cout << ((action == 1)? "ping" : "pong") << std::endl;
-        is_ping *= -1;
+            std::cout << ((ping_action)? "ping" : "pong") << std::endl;
+            is_ping = !is_ping;
+        }
 
         cond_var.notify_one();
     }
 }
 
 int main(){
-    std::thread t1(ping_pong, 1);
-    std::thread t2(ping_pong, -1);
+    std::thread t1(ping_pong, true);
+    std::thread t2(ping_pong, false);
     t1.join();
     t2.join();
     return 0;
