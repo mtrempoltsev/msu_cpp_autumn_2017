@@ -7,5 +7,9 @@ all: clean
 clean:
 	rm -rf *.o pingpong
 
-tests: 
+run: 
 	./pingpong
+
+
+run10: 
+	./pingpong 10

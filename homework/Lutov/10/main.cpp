@@ -8,19 +8,19 @@ std::mutex ready[2];
 std::atomic<bool> quit(false);
 
 void
-ping(std::string message, bool current) {
+pingpong(std::string message, bool current) {
   try {
     while (true) {
-      ready[current].lock();
+      ready[current].lock(); // Lock own mutex
 
       std::cout << message << " ";
       std::cout.flush();
 
       if (quit) { // Catch ^C
-        ready[!current].unlock();
+        ready[!current].unlock(); // Unlock other mutex and exit
         return;
       } else {
-        ready[!current].unlock();
+        ready[!current].unlock(); // Unlock other mutex and resume
       }
 
     }
@@ -43,12 +43,12 @@ main(int argc, char **argv)
     ready[0].lock();
     ready[1].lock();
 
-    std::thread t1(ping, "ping", 0);
-    std::thread t2(ping, "pong", 1);
+    std::thread t1(pingpong, "ping", 0);
+    std::thread t2(pingpong, "pong", 1);
 
     ready[0].unlock();
 
-    t1.join();
+    t1.join(); // Wait for ^C
     t2.join();
 
     return 0;

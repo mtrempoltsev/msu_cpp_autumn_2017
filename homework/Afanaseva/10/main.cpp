@@ -8,51 +8,59 @@
 
 using namespace std;
 
-int num = 0;
-std::mutex mux;
-std::condition_variable cond_var;
-bool notified = false;
-bool done = false;
-
-void say(std::string word, size_t times)
+enum class Turn
 {
-    for (size_t i = 0; i < times; ++i)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        std::unique_lock<std::mutex> lock(mux);
-        std::cout << word << ' ' << i << ' ';
-        num++;
-        notified = true;
-        cond_var.notify_one();
-    }
+    toSay = 0,
+    toAnswer = 1,
+    toEnd = 2
+};
 
-    done = true;
-    num = 1;
-    cond_var.notify_one();
+std::mutex mux;
+std::condition_variable dataReady;
+auto turnType = Turn::toSay;
+
+void say(std::string word, bool infinite, int times)
+{
+    for (int i = 0; i < times || infinite; ++i)
+    {
+        std::unique_lock<std::mutex> lock(mux);
+        std::cout << word << ' ';
+        turnType = Turn::toAnswer;
+        dataReady.notify_one();
+        dataReady.wait(lock, []{return (turnType == Turn::toSay);}); // condition to avoid spurious wakeups
+    }
+    turnType = Turn::toEnd;
+    dataReady.notify_one();
 }
 
 void listen_and_answer(std::string word)
 {
     std::unique_lock<std::mutex> lock(mux);
-    while (!done)
+    while (!(turnType == Turn::toEnd))
     {
-        while (!notified) // loop to avoid spurious wakeups
+        dataReady.wait(lock, []{return !(turnType == Turn::toSay);}); // condition to avoid spurious wakeups
+
+        while (turnType == Turn::toAnswer)
         {
-            cond_var.wait(lock);
+            std::cout << word << ' ';
+            turnType = Turn::toSay;
         }
-        while (num == 1)
-        {
-            std::cout << word << endl;
-            num--;
-        }
-        notified = false;
+        dataReady.notify_one();
     }
+    std::cout << std::endl;
 }
 
-
-int main()
+int main(int argc, char *argv[])
 {
-    std::thread t1(say, "ping", 10);
+    bool infinite = true;
+    int times = 10;
+    if(argc > 1)
+    {
+        times = atoi(argv[1]);
+        if(times > 0)
+            infinite = false;
+    }
+    std::thread t1(say, "ping", infinite, times);
     std::thread t2(listen_and_answer, "pong");
 
     t1.join();
