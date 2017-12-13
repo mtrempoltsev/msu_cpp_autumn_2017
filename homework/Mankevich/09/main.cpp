@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <map>
 #include <algorithm>
+#include <vector>
 
 void parse(const char* fin, const char* fout){
     std::map<std::string, int> dict;
