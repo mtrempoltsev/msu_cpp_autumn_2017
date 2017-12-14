@@ -11,9 +11,17 @@ int a[ARR_SIZE][ARR_SIZE];
 int
 main()
 {
-    Timer time = Timer();
     for (int i = 0; i < ARR_SIZE; i++) {
         for (int j = 0; j < ARR_SIZE; j++)
-            a[j][i] = i + j;
+            a[i][j] = i + j;
     }
+
+    Timer time = Timer();
+
+    unsigned sum = 0;
+    for (int i = 0; i < ARR_SIZE; i++) {
+        for (int j = 0; j < ARR_SIZE; j++)
+            sum += a[j][i];
+    }
+    std::cout<<sum<<std::endl;
 }
