@@ -1,17 +1,11 @@
-TARGET = main
-CC = g++
-OPTIONS = -std=c++14 -O2 -Wall
+all: prog
 
-all: $(TARGET)
-
-$(TARGET): main.o matrix.o
-	$(CC) $(OPTIONS) -o $(TARGET) matrix.o main.o
+prog: main.o
+	g++ -std=c++14 -o prog main.o -std=c++11
 
 main.o: main.cpp
-	$(CC) $(OPTIONS) -c -o main.o main.cpp
-
-matrix.o: matrix.cpp
-	$(CC) $(OPTIONS) -c -o matrix.o matrix.cpp
+	g++ -std=c++14 -o main.o -c main.cpp -std=c++11
 
 clean:
-	rm -rf $(TARGET) *.o
+	rm *.o
+	rm prog

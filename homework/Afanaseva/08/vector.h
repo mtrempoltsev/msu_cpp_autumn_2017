@@ -6,11 +6,11 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <string>
-#include <math.h>
+#include <cmath>
 
 #include "iterator.h"
 
-using namespace std;
+//using namespace std;
 //template<typename T, typename... Args>
 //std::unique_ptr<T> std::make_unique(Args&&... args) {
 //    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
@@ -320,7 +320,7 @@ template <typename T>
 std::ostream& operator <<(std::ostream &os, const Vector<T> &vect){
     for (size_t i = 0; i < (size_t)vect.size(); ++i)
         os << vect[i] << ' ';
-    os << endl;
+    os << std::endl;
     return os;
 }
 
