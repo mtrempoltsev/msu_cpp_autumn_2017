@@ -1,221 +1,276 @@
-#include <memory>
-#include <string>
-#include <cstdio>
 #include <iostream>
+#include <string>
+#include <memory>
+#include <initializer_list>
 
 using namespace std;
-
-template<class T>
-class my_vector
-{
-    void expand(size_t new_capacity_)
-    {
-        T* new_array_ = new T[new_capacity_];
-
-        for (size_t i = 0; i < size_; i++)
-            new_array_[i] = std::move(array_[i]);
-        delete []array_;
-        array_ = new_array_;
-        capacity_ = new_capacity_;
-    }
-
-    T* array_;
-    size_t size_=0;
-    size_t capacity_=0;
-
-    template<bool is_reversed, typename reference>
-    class Iterator : public std::iterator<std::bidirectional_iterator_tag, T>
-    {
-        T* ptr_;
-        public:
-            Iterator(T* ptr)
-                : ptr_(ptr)
-            {
-            }
-
-            bool operator==(const Iterator& other) const
-            {
-                return ptr_ == other.ptr_;
-            }
-
-            bool operator!=(const Iterator& other) const
-            {
-                return !(*this == other);
-            }
-
-            reference operator*() const
-            {
-                return *ptr_;
-            }
-
-            Iterator& operator++()
-            {
-                (is_reversed) ? --ptr_: ++ ptr_;
-                return *this;
-            }
-    };
+template <class t>
+class Iterator{
+private:
+	t* ptr;
 
 public:
+	Iterator(t* ptr_old) :ptr(ptr_old){}
 
-    using iterator = Iterator<false, T&>;
-    using reverse_iterator = Iterator<true, T&>;
-    using const_iterator = Iterator<false, const T&>;
-    using const_reverse_iterator = Iterator<true, const T&>;
+	t& operator*() const{
+		return *ptr;
+	}
 
-    my_vector(): capacity_(8), size_(0)
-    {
-        array_ = new T[capacity_];
-    }
+	bool operator==(const Iterator& right) const{
+		return right.ptr == ptr;
+	}
+	
+	bool operator!=(const Iterator& right) const{
+		return !(*this == right);
+	}
+	
+	Iterator& operator++(){
+		ptr++;
+		return *this;
+	}
+	
+	Iterator& operator++(int){
+		ptr++;
+		return *this;
+	}
 
-    my_vector(size_t size): capacity_(size), size_(size)
-    {
-        array_ = new T[capacity_];
-    }
-
-    my_vector(size_t size, const T& default_value): my_vector(size)
-    {
-        for (size_t i = 0; i < size_; i++)
-            array_[i] = default_value;
-    }
-
-    my_vector(const std::initializer_list<T>& init) : my_vector(init.size())
-    {
-        std::copy(init.begin(), init.end(), array_);
-    }
-
-    void push_back(const T& elem)
-    {
-        if (size_ == capacity_)
-            expand(capacity_ * 2);
-
-        array_[size_++] = elem;
-    }
-
-    void push_back(T&& elem)
-    {
-        if (size_ == capacity_)
-            expand(capacity_ * 2);
-
-        array_[size_++] = std::move(elem);
-    }
-
-    T& operator [](size_t index)
-    {
-        if (index >= size_)
-            throw std::invalid_argument("index is out of range");
-
-        return array_[index];
-    }
-
-    void resize(size_t new_size_)
-    {
-        if (new_size_ > capacity_)
-            expand(new_size_);
-
-        for (size_t i = new_size_; i < capacity_; i++)
-            (array_ + i)->~T();
-
-        size_ = new_size_;
-    }
-
-    void resize(size_t new_size_, const T& value)
-    {
-        if (new_size_ > capacity_)
-            expand(new_size_);
-
-        for (size_t i = size_; i < new_size_; i++)
-            array_[i] = value;
-
-        for (size_t i = new_size_; i < capacity_; i++)
-            (array_ + i)->~T();
-
-        size_ = new_size_;
-    }
-
-    bool empty() const
-    {
-        return size_ == 0;
-    }
-
-    iterator begin() noexcept
-    {
-        return iterator(array_);
-    }
-
-    iterator end() noexcept
-    {
-        return iterator(array_ + size_);
-    }
-
-    reverse_iterator rbegin() noexcept
-    {
-        return reverse_iterator(array_ + size_ - 1);
-    }
-
-    reverse_iterator rend() noexcept
-    {
-        return reverse_iterator(array_ - 1);
-    }
-
-    const_iterator cbegin() const noexcept
-    {
-        return const_iterator(array_);
-    }
-
-    const_iterator cend() const noexcept
-    {
-        return const_iterator(array_ + size_);
-    }
-
-    const_reverse_iterator crbegin() const noexcept
-    {
-        return const_reverse_iterator(array_ + size_ - 1);
-    }
-
-    const_reverse_iterator crend() const noexcept
-    {
-        return const_reverse_iterator(array_ - 1);
-    }
-
-    void clear()
-    {
-        for (size_t i = 0; i < size_; i++)
-            (array_ + i)->~T();
-
-        size_= 0 ;
-    }
-
-    
-    
-    size_t size() const
-    {
-        return size_;
-    }
-
-    size_t capacity() const
-    {
-        return capacity_;
-    }
-
-    void pop_back()
-    {
-        if (size_ == 0)
-            throw std::invalid_argument("cannot pop element from empty my_vector");
-
-        size_--;
-        (array_ + size_)->~T();
-    }
-
-    ~my_vector()
-    {
-        delete []array_;
-    }
+	Iterator& operator--(){
+		ptr--;
+		return *this;
+	}
+	
+	Iterator& operator--(int){
+		ptr--;
+		return *this;
+	}
+	
+	Iterator& operator+ (size_t len){
+		ptr += len;
+		return *this;
+	}
+	
+	Iterator& operator- (size_t len){
+		ptr -= len;
+		return *this;
+	}
 };
+
+template <class t>
+class Reverse_iterator{
+private:
+	t* ptr;
+
+public:
+	Reverse_iterator(t* ptr_old) :ptr(ptr_old){}
+	
+	bool operator==(const Reverse_iterator& right) const{
+		return right.ptr == ptr;
+	}
+	
+	bool operator!=(const Reverse_iterator& right) const{
+		return !(*this == right);
+	}
+
+	t& operator*() const{
+		return *ptr;
+	}
+	
+	Reverse_iterator& operator++(){
+		ptr--;
+		return *this;
+	}
+	
+	Reverse_iterator& operator++(int){
+		ptr--;
+		return *this;
+	}
+
+	Reverse_iterator& operator--(){
+		ptr++;
+		return *this;
+	}	
+	
+	Reverse_iterator& operator--(int){
+		ptr++;
+		return *this;
+	}
+	Reverse_iterator& operator+ (size_t len){
+		ptr -= len;
+		return *this;
+	}
+	
+	Reverse_iterator& operator- (size_t len){
+		ptr += len;
+		return *this;
+	}
+};
+
+template <class t>
+class Vector
+{
+private:
+
+	unique_ptr<t[]> vect_;
+	size_t size_;
+	size_t capacity_;
+public:
+
+	using iterator = Iterator<t>;
+	using const_iterator = Iterator<const t>;
+
+	using reverse_iterator = Reverse_iterator<t>;
+	using const_reverse_iterator = Reverse_iterator<const t>;
+
+
+	Vector(initializer_list<t> init):size_(init.size()),capacity_(init.size()){
+		vect_ = make_unique<t[]>(size_);
+		copy(init.begin(), init.end(), vect_.get());
+	}
+
+	Vector(const Vector& copied):size_(copied.size_),capacity_(copied.capacity_){
+		vect_ = make_unique<t[]>(capacity_);
+		copy(copied.vect_.get(), copied.vect_.get()+size_, vect_.get());
+	}
+
+	Vector(size_t size = 0):size_(size),capacity_(size){
+		vect_ = make_unique<t[]>(size_);
+	}
+
+	~Vector(){
+		size_ = 0;
+		capacity_ = 0;
+	}
+
+	void clear(){
+		vect_.reset();
+		size_ = 0;
+		capacity_ = 0;
+	}
+
+	void resize(int new_size){
+		if (new_size < 0){
+			throw runtime_error("Vector size can't be less than zero");
+		}
+		if (size_t(new_size) > capacity_){
+			reshape(new_size);
+		}
+		size_ = new_size;
+	}
+
+	void resize(size_t new_size, t default_val){
+		size_t old_size = size_;
+		resize(new_size);
+		for (size_t i = old_size; i < size_; i++){
+			vect_[i] = default_val;
+		}
+	}
+
+	void reshape(size_t new_capacity)
+	{
+		if (new_capacity < size_){
+			throw runtime_error("You loss data. New capacity is less than old");
+		}
+		if (new_capacity == capacity_){
+			return;
+		}
+
+		auto tmp = make_unique<t[]>(new_capacity);
+		copy(vect_.get(), vect_.get() + size_, tmp.get());
+		vect_ = move(tmp);
+		capacity_ = new_capacity;
+	}
+
+	constexpr size_t size() const noexcept{
+		return size_;
+	}
+
+	constexpr size_t capacity() const noexcept{
+		return capacity_;
+	}
+
+	constexpr bool empty() const noexcept{
+		if (size_ == 0)	return true;
+		else return false;
+	}
+
+	t& get_elem(size_t pos){
+		if (pos >= size_){
+			throw runtime_error("Vector out of range");
+		}
+		return vect_[pos];
+	}
+
+	t& operator[](size_t pos) {
+		if ((pos >= size_) || (pos < 0)){
+			throw runtime_error("Vector out of range");
+		}
+		return vect_[pos];
+	}
+
+	void push_back(const t& buf){
+		if (capacity_ == size_){
+			if (capacity_ == 0) reshape(1);
+			else reshape(size_ * 2);
+		}
+		vect_[size_] = buf;
+		size_++;
+	}
+
+	void pop_back(){
+		if (size_ < 1){
+			throw runtime_error("Vector is empty");
+		}
+		vect_[size_ - 1] = 0;
+		size_--;
+	}
+
+	iterator begin() const{
+		return iterator(vect_.get());
+	}
+	
+	iterator end() const{
+		return iterator(vect_.get() + size_);
+	}
+
+	reverse_iterator rbegin() const{
+		return reverse_iterator(vect_.get() + size_ - 1);
+	}
+	
+	reverse_iterator rend() const{
+		return reverse_iterator(vect_.get() - 1);
+	}
+	
+	void print(){
+		for (size_t i = 0; i < size_; i++) cout << vect_[i] << " ";
+		cout << endl;
+	}
+};
+
 
 int main()
 {
-    my_vector<int> a={11,2,3,4,5};
-    cout<<a[4]<<endl;;
-    a.push_back(15);
-    cout<<a[a.size()-1]<<endl;
+	//Vector creation	
+	cout<<"Initialization Vector"<<endl;
+	Vector<int> a = { 1,1,1,1,1 };
+	a.print();
+	cout<<"Resize Vector"<<endl;
+	a.resize(6,2);
+	a.print();
+	
+	cout<<"Clear Vector"<<endl;
+	a.clear();
+	a.resize(5);
+	a.print();
+	cout<<"Get elements"<<endl;
+	a[0] = 1;
+	a.get_elem(1) = 2;
+	a.print();
+
+	cout<<"Iterators"<<endl;
+	Vector<int> b = {10,20};
+	for(auto it = b.begin(); it != b.end(); it++){
+		*it *= 2;
+	}
+	b.print();
+	return 0;
 }
