@@ -15,10 +15,10 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     if (argc <= 2){
         cout << "Pls give more arguments" << endl;
+        return 0;
     }
-    cout << argv[1] << argv[2] << endl;
     unordered_map<string, int> dict;
-    string word;
+    string word,s;
     std::ifstream file(argv[1]);
     if (!file)
     {
@@ -28,11 +28,25 @@ int main(int argc, const char * argv[]) {
     
     while (file.good())
     {
-        std::getline(file, word, ' ');
-        cout << word << endl;
-        if (!(dict.insert(make_tuple(word,1)).second)){
-            (dict.find(word)->second)++;;
+        std::getline(file,s);
+        for (int i=0; i<s.size(); i++){
+            if (s[i]==' ' || i == (s.size()-1)){
+                if (s[i]!=' '){
+                    word.push_back(s[i]);
+                }
+                if (word[0]){
+                    cout << word << endl;
+                    if (!(dict.insert(make_tuple(word,1)).second)){
+                        (dict.find(word)->second)++;;
+                    }
+                    word.clear();
+                }
+            }
+            else {
+                word.push_back(s[i]);
+            }
         }
+        
     }
     
     pair<int, string>* mass = new pair<int, string>[dict.size()];
