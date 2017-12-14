@@ -286,10 +286,10 @@ void check_long(){
 }
 
 int main(int argc, char* argv[]){
+    const char* txt = argv[1];
+    Calc<double, Parser<double>> calc(txt);
     try{
-        check_int();
-        check_double();
-        check_long();
+        std::cout << calc.calculate() << std::endl;
     }
     catch (const std::invalid_argument& ia){
         std::cout << ia.what() << std::endl;
