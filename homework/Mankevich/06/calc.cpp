@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <limits>
 #include <cstring>
+#include <math.h>
 
 
 enum class Token{
@@ -90,7 +91,6 @@ struct Parser<long>{
 template <class T, class Parser>
 class Calc{
 public:
-    Calc(char*& str): text(str), is_sub_text(0) {};
     Calc(const char*& str): text(str), is_sub_text(0) {};
     Calc(const char*& str, bool check): text(str), is_sub_text(1) {};
     ~Calc() {};
@@ -166,7 +166,7 @@ T Calc<T, Parser>::prim(){
             } 
             current_token = getToken();
             return num;
-        }
+        }   
         case Token::Minus:{
             return -prim();
         }
@@ -238,33 +238,57 @@ void check(bool value){
 }
 
 void check_int(){
-    std::string str = "20 + 3 - 700*-9";
-    const char *txt = &str[0];
-    Calc<int, Parser<int>> text(txt);
-    check (text.calculate() == 6323);
+    const char *test1 = "20 + 3 - 5";
+    const char *test2 = "20 * 3 / 10";
+    const char *test3 = "10 - (-7 + 5) * (-1)";
+    const char *test4 = "2 * Pi + (Pi - 7 * 11) * -2";
+    Calc<int, Parser<int>> text1(test1);
+    Calc<int, Parser<int>> text2(test2);
+    Calc<int, Parser<int>> text3(test3);
+    Calc<int, Parser<int>> text4(test4);
+    
+    check (text1.calculate() == 18);
+    check (text2.calculate() == 6);
+    check (text3.calculate() == 8);
+    check (text4.calculate() == 154);
 }
 
 void check_double(){
-    std::string str = "2.5 + 3.5 - 7.5 * -9";
-    const char *txt = &str[0];
-    Calc<double, Parser<double>> text(txt); 
-    check (text.calculate() == 73.5);
+    const char *test1 = "20.7 + 3.12 - 5.77";
+    const char *test2 = "20.6 * 3.2 / 10";
+    const char *test3 = "10.22 - (-7 + 5) * (-1)";
+    const char *test4 = "2 * Pi + (Pi - 7 * 11) * -2 * e";
+    Calc<double, Parser<double>> text1(test1);
+    Calc<double, Parser<double>> text2(test2);
+    Calc<double, Parser<double>> text3(test3);
+    Calc<double, Parser<double>> text4(test4);
+    
+    check (fabs(text1.calculate() - 18.05) < 1e-6);    
+    check (fabs(text2.calculate() - 6.592) < 1e-6);
+    check (fabs(text3.calculate() - 8.22) < 1e-6);
+    check (fabs(text4.calculate() - 405.124) < 1e-6);
 }
 
 void check_long(){
-    std::string str = "2000000000000 + 35 - 705*-9";
-    const char *txt = &str[0];
-    Calc<long, Parser<long>> text(txt); 
-    check (text.calculate() == 2000000006380);
+    const char *test1 = "3000000000 + 7 - 5";
+    const char *test2 = "20 * 3 / 10";
+    const char *test3 = "10 - (-7 + 5) * (-1)";
+    const char *test4 = "2 * Pi + (Pi - 7 * 11) * -2";
+    Calc<long, Parser<long>> text1(test1);
+    Calc<long, Parser<long>> text2(test2);
+    Calc<long, Parser<long>> text3(test3);
+    Calc<long, Parser<long>> text4(test4);
+    
+    check (text1.calculate() == 3000000002);
+    check (text2.calculate() == 6);
+    check (text3.calculate() == 8);
+    check (text4.calculate() == 154);
 }
 
 int main(int argc, char* argv[]){
     try{
-        std::cout << "Check int values: " << std::endl;
         check_int();
-        std::cout << "Check double values: " << std::endl;
         check_double();
-        std::cout << "Check long values: " << std::endl;
         check_long();
     }
     catch (const std::invalid_argument& ia){
