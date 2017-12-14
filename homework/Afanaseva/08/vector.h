@@ -6,7 +6,7 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <string>
-#include <math.h>
+#include <cmath>
 
 #include "iterator.h"
 
@@ -320,7 +320,7 @@ template <typename T>
 std::ostream& operator <<(std::ostream &os, const Vector<T> &vect){
     for (size_t i = 0; i < (size_t)vect.size(); ++i)
         os << vect[i] << ' ';
-    os << endl;
+    os << std::endl;
     return os;
 }
 
