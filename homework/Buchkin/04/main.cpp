@@ -29,6 +29,32 @@ void checkGetSet()
     check(m[1][2] == 100);
 }
 
+void checkFirst(Matrix& m)
+{
+	check(m[0][0] == 100);
+	check(m[0][1] == 500);
+	check(m[0][2] == -1000);
+	check(m[1][0] == 200);
+	check(m[1][1] == 1000);
+	check(m[1][2] == -2000);
+	check(m[2][0] == 300);
+	check(m[2][1] == 1500);
+	check(m[2][2] == -3000);
+}
+
+void checkSecond(Matrix& m)
+{
+	check(m[0][0] == 10);
+	check(m[0][1] == 20);
+	check(m[0][2] == 30);
+	check(m[1][0] == 40);
+	check(m[1][1] == 50);
+	check(m[1][2] == 60);
+	check(m[2][0] == 70);
+	check(m[2][1] == 80);
+	check(m[2][2] == 90);
+}
+
 int
 main()
 {
@@ -39,9 +65,18 @@ main()
 	if (m1 != m2) {
 		std::cout << "error2" << std::endl;
 	}
-	std::vector<double> d1 = {100, 500, -1000};
-	std::vector<double> d2 = {0.1, 1.5436, 5.6574};
-	(m1 *= d1) *= d2;
-	(m2 *= 0.4) *= -500;
+
+	std::vector<double> d = {100, 500, -1000};
+	for (int i = 0; i < 3; ++i)
+	for (int j = 0; j < 3; ++j)
+		m1[i][j] = i + 1;
+
+	checkFirst(m1 *= d);
+
+	for (int i = 0; i < 3; ++i)
+	for (int j = 0; j < 3; ++j)
+		m2[i][j] = 3*i + j + 1;
+
+	checkSecond(m2 *= 10);
 	return 0;
 }

@@ -10,6 +10,7 @@ void check(bool value)
 
 void checkGetSet()
 {
+    std::cout<<"checkGetSet"<< std::endl;
     Matrix<double> m(2, 3);
     m[0][0] = 1;
     m[0][1] = 2;
@@ -32,6 +33,7 @@ void checkGetSet()
 
 void checkDoubleMult()
 {
+    std::cout<<"checkDoubleMult"<< std::endl;
     Matrix<double> m(2, 3);
     m[0][0] = 1;
     m[0][1] = 1;
@@ -52,6 +54,7 @@ void checkDoubleMult()
 
 void checkVectorLeftMul()
 {
+    std::cout<<"checkVectorLeftMul"<< std::endl;
     Matrix<double> mat = Matrix<double>::ones(2);
     mat[0][1] = -1;
     mat[1][0] = -1;
@@ -69,6 +72,7 @@ void checkVectorLeftMul()
 
 void checkVectorRightMul()
 {
+    std::cout<<"checkVectorRightMul"<< std::endl;
     Matrix<double> mat = Matrix<double>::ones(2);
     mat[0][1] = -1;
     mat[1][0] = -1;
@@ -86,6 +90,7 @@ void checkVectorRightMul()
 
 void checkMatrixEq()
 {
+    std::cout<<"checkMatrixEq"<< std::endl;
     Matrix<double> mat1 = Matrix<double>::ones(2);
     mat1[0][1] = -1;
     mat1[1][0] = -1;
@@ -108,15 +113,10 @@ void checkMatrixEq()
 
 void checkMoving()
 {
+    std::cout<<"checkMoving"<< std::endl;
     Matrix<double> m1 = Matrix<double>::ones(3);
 
-
-//    std::cout<<"m1:\n"<<m1;
-//    std::cout<<"move m1 to m2"<<std::endl;
     Matrix<double> m2 = std::move(m1);
-
-//    std::cout<<"m1:\n"<<m1;
-//    std::cout<<"m2:\n"<<m2;
 
     check(m1.isEmpty());
     check(!m2.isEmpty());
@@ -126,9 +126,6 @@ void checkMoving()
     check(m2[1][1] == 1);
 
     m1 = std::move(m2);
-//    std::cout<<"move m2 to m1"<<std::endl;
-//    std::cout<<"m1:\n"<<m1;
-//    std::cout<<"m2:\n"<<m2;
 
     check(m2.isEmpty());
     check(!m1.isEmpty());
@@ -149,18 +146,6 @@ int main() {
     checkMatrixEq();
     checkMoving();
 
-//    Matrix mat = Matrix::ones(3);
-//    mat[0][0] = 2;
-//
-//    std::vector<double> vec = {1,0,0};
-//
-//    std::cout<<mat;
-//    std::cout<<mat*10;
-//    std::cout<< mat * vec;
-//    std::cout<< vec * mat;
-//
-//    mat *= vec;
-//    std::cout<< mat;
 
     return 0;
 }

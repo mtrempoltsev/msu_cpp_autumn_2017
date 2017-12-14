@@ -43,7 +43,7 @@ void ch_iterators(){ //Also checks ++, --, *iterator, a[iterator]
 		for(auto it1 = a.begin();it1 != a.end(); ++it1){
 			fw += *it1;
 		}
-		for(auto it1 = a.rend();it1 != a.rbegin(); --it1){
+		for(auto it1 = a.rbegin();it1 != a.rend(); ++it1){
 			rv += a[it1];
 		}
 		shout_error(fw == 16500);
@@ -66,7 +66,11 @@ int main(int argc, char* argv[]) {
 	ch_iterators();
 	ch_resize();
 	cout << "End of tests" << endl;
-	}catch(...){
+	}
+	catch(const std::out_of_range &err){
+			cout << err.what() << endl;
+	}
+	catch(...){
 			cout << "Unexpected exceptions" << endl;
 	}
   return 0;

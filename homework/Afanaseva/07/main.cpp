@@ -3,7 +3,7 @@
 #include <math.h>
 #include <string.h>
 
-#include "calculator.h"
+#include "calculator.hpp"
 using namespace std;
 
 // ======================================================================================

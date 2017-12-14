@@ -66,6 +66,9 @@ public:
 
 
     Vector& operator=(const Vector& other) {
+        if (this == &other) {
+            return *this;
+        }
         size_ = (other.size_);
         capacity_ = (other.capacity_);
         data_ = std::make_unique<T[]>(size_);
@@ -75,6 +78,9 @@ public:
 
 
     Vector& operator=(Vector&& movied) {
+        if (this == &movied) {
+            return *this;
+        }
         size_ = (movied.size_);
         capacity_ = (movied.capacity_);
         data_ = std::move(movied.data_);

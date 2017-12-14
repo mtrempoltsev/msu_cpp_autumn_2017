@@ -3,6 +3,8 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <vector>
+#include <iterator>
 
 class Frequency_Calc
 {
