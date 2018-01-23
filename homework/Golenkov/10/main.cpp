@@ -3,30 +3,46 @@
 #include <mutex>
 #include <condition_variable>
 
+std::condition_variable cond_var;
 std::mutex m;
-std::condition_variable dataReady;
 
-void thread(std::string data)
+bool isPonged = true;
+int N = 100;
+
+void printPing()
 {
-    while(true)
+    for (int i = 0; i < N; i++)
     {
         std::unique_lock<std::mutex> lock(m);
-        std::cout << data;
-        dataReady.notify_one();
-        dataReady.wait(lock);
+        while (!isPonged)
+        {
+            cond_var.wait(lock);
+        }
+        std::cout << "ping" << std::endl;
+        isPonged = false;
+        cond_var.notify_one();
     }
 }
 
-void printPingPong()
+void printPong()
 {
-    std::thread t1(thread, "ping ");
-    std::thread t2(thread, "pong ");
-    t1.join();
-    t2.join();
+    for (int i = 0; i < N; i++)
+    {
+        std::unique_lock<std::mutex> lock(m);
+        while (isPonged)
+        {
+            cond_var.wait(lock);
+        }
+        std::cout << "pong" << std::endl;
+        isPonged = true;
+        cond_var.notify_one();
+    }
 }
 
-int main()
-{
-    printPingPong();
+int main() {
+    std::thread t1(printPing);
+    std::thread t2(printPong);
+    t1.join();
+    t2.join();
     return 0;
 }

@@ -1,6 +1,8 @@
-5 tree
-3 forest
-2 mountain
-2 stones
-2 village
-1 house
+4 ryba
+2 ochen
+1 lublu
+1 ya
+1 skumbria
+1 semga
+1 paltus
+1 som
