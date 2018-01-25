@@ -14,6 +14,7 @@ public:
 		
 		assert(cols * rows > 0);
 		assert(cols < std::numeric_limits<std::size_t>::max() / rows); // overflow 
+		// Destroys the object currently managed by the unique_ptr (if any) and takes ownership of p.
 		data.reset(new double[cols * rows]);
 	}
 
@@ -54,7 +55,7 @@ public:
 	}
 
 	bool operator==(const Matrix & other) {
-		
+		// firstly to equalize dimensions
 		assert(cls == other.cls);
 		assert(rws == other.rws);
 		
@@ -72,9 +73,10 @@ public:
 };
 
 std::vector<double> operator*(const Matrix & lhs, const std::vector<double> & rhs) {
-	assert(lhs.rows() == rhs.size()); // vector matches and "eats" rightmost dimension
-
-	std::vector<double> ret(lhs.cols()); // and the leftmost dimension is left
+	// vector matches and "eats" rightmost dimension
+	assert(lhs.rows() == rhs.size());
+	// and the leftmost dimension is left
+	std::vector<double> ret(lhs.cols()); 
 
 	for (std::size_t i = 0; i < lhs.cols(); i++) {
 		ret[i] = 0;
@@ -86,9 +88,10 @@ std::vector<double> operator*(const Matrix & lhs, const std::vector<double> & rh
 }
 
 std::vector<double> operator*(const std::vector<double> & lhs, const Matrix & rhs) {
-	assert(lhs.size() == rhs.cols()); // vector matches leftmost dimension
-
-	std::vector<double> ret(rhs.rows()); // result is of rightmost dimension
+	// vector matches leftmost dimension
+	assert(lhs.size() == rhs.cols()); 
+	// result is of rightmost dimension
+	std::vector<double> ret(rhs.rows()); 
 
 	for (std::size_t i = 0; i < rhs.rows(); i++) {
 		ret[i] = 0;
@@ -138,7 +141,6 @@ int main() {
 	> r %*% m
 		 [,1] [,2] [,3]
 	[1,]   30   70  110
-	-- R has different opinion about cols & rows
 	*/
 	assert(lp[0] == 38);
 	assert(lp[1] == 44);
