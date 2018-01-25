@@ -34,9 +34,10 @@ int main() {
 	auto proc = [&m, &cv, &curstate](const char* msg, enum state mystate, enum state otherstate) {
 		
 		for(;;) {
+			// parameter is the type of the mutex to lock.
 			std::unique_lock<std::mutex> lk(m);
 			// ждет, пока другой поток все сделает и разбудит
-			cv.wait(lk, [&curstate,&mystate]{ return curstate == mystate; });
+			cv.wait(lk, [&curstate, &mystate]{ return curstate == mystate; });
 			std::cout << msg << std::endl;
 			curstate = otherstate;
 			// all для случая, когда потоков > 2
@@ -51,6 +52,7 @@ int main() {
 	std::thread tping(proc, "ping", ping, pong), tpong(proc, "pong", pong, ping);
 	// будит первый поток
 	cv.notify_all();
+	// ожидание завершения потоков
 	tping.join();
 	tpong.join();
 	
