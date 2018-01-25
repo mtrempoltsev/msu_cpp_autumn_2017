@@ -31,20 +31,21 @@ public:
 	}
 
 	Matrix& operator=(const Matrix & other) {
-		
+		// is it the same
 		if (this == &other) 
 			return *this;
 		
 		cls = other.cls;
 		rws = other.rws;
 		data.reset(new T[cls*rws]);
+		// std::memcpy(destptr, srcptr, number of bytes)
 		std::memcpy(data.get(), other.data.get(), cls*rws*sizeof(T));
 		
 		return *this;
 	}
 
 	Matrix& operator=(Matrix && other) {
-		
+		// is it the same
 		if (this == &other) 
 			return *this;
 
@@ -94,7 +95,8 @@ public:
 		assert(rws == other.rws);
 		
 		for (std::size_t i = 0; i < rws*cls; i++)
-			if (data[i] != other.data[i]) return false;
+			if (data[i] != other.data[i]) 
+				return false;
 
 		return true;
 	}
@@ -107,11 +109,12 @@ public:
 
 template<typename T>
 std::vector<T> operator*(const Matrix<T> & lhs, const std::vector<T> & rhs) {
-	
-	assert(lhs.rows() == rhs.size()); // vector matches and "eats" rightmost dimension
+	// vector matches and "eats" rightmost dimension
+	assert(lhs.rows() == rhs.size()); 
 
 	std::vector<T> ret;
-	ret.resize(lhs.cols()); // and the leftmost dimension is left
+	// and the leftmost dimension is left
+	ret.resize(lhs.cols()); 
 
 	for (std::size_t i = 0; i < lhs.cols(); i++) {
 		ret[i] = 0;
@@ -125,11 +128,12 @@ std::vector<T> operator*(const Matrix<T> & lhs, const std::vector<T> & rhs) {
 
 template<typename T>
 std::vector<T> operator*(const std::vector<T> & lhs, const Matrix<T> & rhs) {
-	
-	assert(lhs.size() == rhs.cols()); // vector matches leftmost dimension
+	// vector matches leftmost dimension
+	assert(lhs.size() == rhs.cols()); 
 
 	std::vector<T> ret;
-	ret.resize(rhs.rows()); // result is of rightmost dimension
+	// result is of rightmost dimension
+	ret.resize(rhs.rows()); 
 
 	for (std::size_t i = 0; i < rhs.rows(); i++) {
 		ret[i] = 0;
@@ -223,12 +227,14 @@ int main() {
 	n *= 2;
 	assert(m == n);
 
+	// copy
 	Matrix<double> k{m};
 	assert(k == m);
 	n *= 2;
 	k = n;
 	assert(k == n);
 
+	// move
 	{
 		Matrix<double> l(2,3);
 		l[0][0] = 1;
