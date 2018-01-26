@@ -31,9 +31,12 @@ int main(int argc, char** argv)
 	// частоты, очевидно, не уникальны, поэтому multimap
 	std::multimap<std::size_t, std::string, std::greater<std::size_t>> flipped;
 	
+	// Применяет заданную функцию к одному диапазону и сохраняет результат в другой диапазон.
 	std::transform(
 		freq.begin(), freq.end(),
+		// A std::insert_iterator which can be used to insert elements into the container c at the position indicated by i.
 		std::inserter(flipped, flipped.end()),
+		// если скобки пустые - обычная функция, иначе - объект
 		[](const std::pair<std::string, std::size_t> & p) -> std::pair<std::size_t, std::string> {
 			
 			return {p.second, p.first};
