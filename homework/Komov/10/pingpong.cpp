@@ -27,24 +27,44 @@ int main() {
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
 #endif
+	// ПС, который может использоваться для защиты разделяемых данных от одновременного доступа нескольких потоков.
+	// чтобы не ломиться в ресурс, который можно использовать только в одиночку
+	
+	// Вызывающий поток владеет мьютексом со времени успешного вызова lock или try_lock, и до момента вызова unlock.
+	// Пока поток владеет мьютексом, все остальные потоки при попытке завладения им блокируются на вызове lock 
+	// или получают значение false при вызове try_lock.
 	std::mutex m;
+	// ПС, который может быть использован для блокирования потока или нескольких потоков одновременно, пока не произойдет любое из событий.
+	// чтобы поток дождался условия
 	std::condition_variable cv;
 	// можно добавить peng & другие состояния
-	enum state { ping, pong } curstate = ping;
+	enum state 
+	{ 
+		ping, 
+		pong 
+	} curstate = ping;
+	
 	auto proc = [&m, &cv, &curstate](const char* msg, enum state mystate, enum state otherstate) {
 		
-		for(;;) {
-			// parameter is the type of the mutex to lock.
+		for(;;) 
+		{
+			// Любой поток, который намерен ждать на std::condition_variable должен сначала приобрести std::unique_lock. 
+			// Операция ожидания атомарно освобождает мьютекс и приостанавливает выполнение потока. 
+			// Когда переменная условия уведомляется, поток пробуждается, и мьютекс снова приобретается.
 			std::unique_lock<std::mutex> lk(m);
-			// ждет, пока другой поток все сделает и разбудит
-			cv.wait(lk, [&curstate, &mystate]{ return curstate == mystate; });
+			// ждет, пока другой поток все сделает и разбудит/ wait until notified
+			// Параметры: 1. A unique_lock object whose mutex object is currently locked by this thread.
+			// 2. A callable object or function that takes no arguments and returns a value that can be evaluated as a bool.
+			// This is called repeatedly until it evaluates to true.
+			cv.wait(lk, [&curstate, &mystate]{ return curstate == mystate; /* ожидаемое условие */});
 			std::cout << msg << std::endl;
 			curstate = otherstate;
 			// all для случая, когда потоков > 2
 			cv.notify_all();
 #if 0
 //#if _POSIX_VERSION >= 199309L
-			if (terminate) return; // this makes it possible to check for leaks with valgrind
+			// это позволяет проверять утечки с помощью valgrind
+			if (terminate) return; 
 #endif
 		}
 	};
@@ -52,7 +72,7 @@ int main() {
 	std::thread tping(proc, "ping", ping, pong), tpong(proc, "pong", pong, ping);
 	// будит первый поток
 	cv.notify_all();
-	// ожидание завершения потоков
+	// ожидание завершения работы потоков
 	tping.join();
 	tpong.join();
 	
