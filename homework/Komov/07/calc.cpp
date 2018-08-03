@@ -23,7 +23,7 @@ enum class Token {
 	Invalid
 };
 
-// Шаблоны свойств
+// ГГ ГЎГ«Г®Г­Г» Г±ГўГ®Г©Г±ГІГў
 template <class T> struct NumericTraits{};
 
 template <> struct NumericTraits <double> {
@@ -34,8 +34,8 @@ template <> struct NumericTraits <double> {
 
 template <> struct NumericTraits <int> {
 	
-    static constexpr int min = numeric_limits<int>::min();
-    static constexpr int max = numeric_limits<int>::max();
+	static constexpr int min = numeric_limits<int>::min();
+	static constexpr int max = numeric_limits<int>::max();
 };
 
 template <> struct NumericTraits <long> {
@@ -50,21 +50,21 @@ template <> struct Parser <int> {
 
 	static int Get(const char*& input) {
   	
-    	--input;
-	    auto c = *input;
-	    int n = 0;
+		--input;
+		auto c = *input;
+		int n = 0;
 	    
 		while (c >= '0' && c <= '9') {
 		
 			n = 10 * n + (c - '0');
 			++input;
 			c = *input;
-	    }
+		}
 
-	    if (n < NumericTraits<int>::min || n > NumericTraits<int>::max)
-	    	throw "Error (overflow)";
+		if (n < NumericTraits<int>::min || n > NumericTraits<int>::max)
+	    		throw "Error (overflow)";
 
-	    return n;
+		return n;
 	}
 };
 
@@ -73,21 +73,20 @@ template <> struct Parser <long> {
 	static long Get(const char*& input) {
 		
 		--input;
-	    auto c = *input;
-	    long n = 0;
+		auto c = *input;
+		long n = 0;
 	    
 		while (c >= '0' && c <= '9') {
 		
-	    	n = 10 * n + (c - '0');
-	      
+	    		n = 10 * n + (c - '0');
 			++input;
-	    	c = *input;
-	    }
+	    		c = *input;
+		}
 	
-	    if (n < NumericTraits<long>::min || n > NumericTraits<long>::max)
-	    	throw "Error (overflow)";
+		if (n < NumericTraits<long>::min || n > NumericTraits<long>::max)
+	    		throw "Error (overflow)";
 	
-	    return n;
+		return n;
 	}
 };
 
@@ -95,43 +94,40 @@ template <> struct Parser <double> {
 	
 	static double Get(const char*& input) {
 		
-	    double frac = 10;
-	    --input;
-	    
+		double frac = 10;
+		--input;
 		auto c = *input;
-	    double n = 0;
+		double n = 0;
 	    
 		if (c == '.')
-	    	throw "Not a number";
+	    		throw "Not a number";
 	
-	    while (c >= '0' && c <= '9') {
+		while (c >= '0' && c <= '9') {
 
 			n = 10 * n + (c - '0');
-		    ++input;
-			
+			++input;
 			c = *input;
-	    }
+		}
 	
-	    if (c == '.') {
+		if (c == '.') {
 	    	
-	      	++input;
-	      	c = *input;
+	      		++input;
+	      		c = *input;
 	
-	      	if (c >= '0' && c <= '9')
-	        	while (c >= '0' && c <= '9')
-	        	{
-		          	n += (c - '0') / frac;
-		          	frac *= 10;
-		          	
-					++input;
-		          	c = *input;
-	        	}
-	      	else
-	        	throw "There are no numbers after point";
-	    }
+	      		if (c >= '0' && c <= '9')
+	        		while (c >= '0' && c <= '9')
+	        		{
+		          		n += (c - '0') / frac;
+		          		frac *= 10;
+		          		++input;
+		          		c = *input;
+	        		}
+	    		else
+	        		throw "There are no numbers after point";
+		}
 	
-	    if (n < NumericTraits<double>::min || n > NumericTraits<double>::max)
-	    	throw "Error (overflow)";
+		if (n < NumericTraits<double>::min || n > NumericTraits<double>::max)
+			throw "Error (overflow)";
 	    
 		return n;
 	}
@@ -170,25 +166,25 @@ template <class T> Calculator<T>::Calculator(const char*& inp) {
 	bracket_count = 0;
 }
 
-/* считывает токен, меняет позицию прочитанного текста
-   и записывает число в глобальную переменную */
+/* Г±Г·ГЁГІГ»ГўГ ГҐГІ ГІГ®ГЄГҐГ­, Г¬ГҐГ­ГїГҐГІ ГЇГ®Г§ГЁГ¶ГЁГѕ ГЇГ°Г®Г·ГЁГІГ Г­Г­Г®ГЈГ® ГІГҐГЄГ±ГІГ 
+   ГЁ Г§Г ГЇГЁГ±Г»ГўГ ГҐГІ Г·ГЁГ±Г«Г® Гў ГЈГ«Г®ГЎГ Г«ГјГ­ГіГѕ ГЇГҐГ°ГҐГ¬ГҐГ­Г­ГіГѕ */
 template <class T> Token Calculator<T>::nextToken() {
 	
 	while (auto c = *input++) {
   		
-	    switch (c) {
+		switch (c) {
 	    	
-		    case ' ': continue;
-		    case '-': return Token::Minus;
-		    case '+': return Token::Plus;
-		    case '*': return Token::Multiply;
-		    case '/': return Token::Divide;
-		    case '(': return Token::Left_bracket;
-		    case ')': return Token::Right_bracket;
-	    }
+			case ' ': continue;
+			case '-': return Token::Minus;
+			case '+': return Token::Plus;
+			case '*': return Token::Multiply;
+			case '/': return Token::Divide;
+			case '(': return Token::Left_bracket;
+			case ')': return Token::Right_bracket;
+		}
 	    
-	    if (c >= '0' && c <= '9')	    	
-	    	return Token::Number;
+		if (c >= '0' && c <= '9')	    	
+	    		return Token::Number;
 		
 		if (c == 'P') {
 	    	
@@ -197,13 +193,15 @@ template <class T> Token Calculator<T>::nextToken() {
 			if (c == 'i') {
 				
 				return Token::Pi;
-	      	}
-	      	else
-	        	return Token::Invalid;
-	    }
+	      		}
+	      		else
+	        		return Token::Invalid;
+		}
 
-	    if (c == 'e')
-	    	return Token::Exp;
+		if (c == 'e') {
+			
+	    		return Token::Exp;
+		}
 
 		return Token::Invalid;
 	}
@@ -219,29 +217,29 @@ template <class T> T Calculator<T>::expression () {
 
 		switch(token) {
 			
-	    	case Token::Plus: {
+	    		case Token::Plus: {
 	    		
 				result += term();
 				break;
-	      	}
-		    case Token::Minus: {
+	      		}
+			case Token::Minus: {
 		    	
-		    	result -= term();
-		    	break;
-		    }
-		    case Token::End: {
+		    		result -= term();
+		    		break;
+			}
+			case Token::End: {
 		        
 				return result;
-		    }
-		    default:
-		    	return result;
-	    }
+			}
+			default:
+		    		return result;
+		}
 	}
 	
 	return result;
 }
 
-// Слагаемые
+// Г‘Г«Г ГЈГ ГҐГ¬Г»ГҐ
 template <class T> T Calculator<T>::term () {
 	
 	T result = primary();
@@ -250,7 +248,7 @@ template <class T> T Calculator<T>::term () {
     
 		switch(token) {
 			
-	    	case Token::Multiply: {
+	    		case Token::Multiply: {
 	        	
 				result *= primary();
 				break;
@@ -270,10 +268,10 @@ template <class T> T Calculator<T>::term () {
 				  	break;
 				}
 			}
-	        case Token::Plus: {
+	        	case Token::Plus: {
 		  
 		  		return result;
-	        }
+	        	}
 			case Token::Minus: {
 		  	
 				return result;
@@ -285,7 +283,7 @@ template <class T> T Calculator<T>::term () {
 		  	case Token::Right_bracket: {
 		  		
 				bracket_count--;
-		    	return result;
+		    		return result;
 		  	}
 			default:
 		  		throw "Invalid expression (term)";
@@ -297,64 +295,64 @@ template <class T> T Calculator<T>::term () {
   	return result;
 }
 
-// Множители
+// ГЊГ­Г®Г¦ГЁГІГҐГ«ГЁ
 template <class T> T Calculator<T>::primary () {
   	
 	token = nextToken();
   	
 	switch(token) {
 		
-	    case Token::Number: {
+		case Token::Number: {
 	      	
 			T n = Parser<T>::Get(input);
-	      	token = nextToken();
+	      		token = nextToken();
 	      	
 			return n;
-	    }
-	    case Token::Exp: {
+		}
+		case Token::Exp: {
 	    	
 			T n = constants["e"];
-	        token = nextToken();
+	        	token = nextToken();
 	        
 			return n;
-	    }
-	    case Token::Pi: {
+		}
+		case Token::Pi: {
 	        
-	        T n = constants["Pi"];
-	        token = nextToken();
+	        	T n = constants["Pi"];
+	        	token = nextToken();
 	        
 			return n;
-	    }
-	    case Token::Left_bracket: {
+		}
+		case Token::Left_bracket: {
 	        
 			bracket_count++;
-	        T n = expression();
+	        	T n = expression();
 	        
 			if (token != Token::Right_bracket) {
 	        	
 				throw "The right bracket is needed";
 				break;
-	        }
+	        	}
 	        
 			token = nextToken();
 
 			return n;
-	    }
-	    case Token::Null: {
+		}
+		case Token::Null: {
 	        
 			T n = 0;
-	        token = nextToken();
+	        	token = nextToken();
 	        
 			return n;
-	    }
+		}
 	    
-	    // Unary minus
-	    case Token::Minus: {
+		// Unary minus
+		case Token::Minus: {
 	    	
 			return -primary();
-	    }
-	    default:
-	    	throw "Invalid expression (primary)";
+		}
+		default:
+	    		throw "Invalid expression (primary)";
 	      
 		return 1;
   	}
@@ -367,33 +365,27 @@ int main(int argc, char* argv[])
 	if (argc != 2) {
 		
 		cout << "Invalid input expression (argc)" << endl;
-		
 		return 1;
 	}
 
 	try {
 		
-	    const char* input = argv[1];
-
-	    Calculator<double> calc(input);
-
+		const char* input = argv[1];
+		Calculator<double> calc(input);
 		double result = calc.expression();
 
-	    if (calc.bracket_count != 0) {
+		if (calc.bracket_count != 0) {
 	      	
 			cout << "Incorrect number of brackets" << endl;
-	      	
 			return 1;
-	    }
+		}
 
-	    cout << result << endl;
-	    
-	    return 0;
+		cout << result << endl;
+		return 0;
   	}
 	catch (const char* s) {
   		
-    	cout << s << endl;
-    
+    		cout << s << endl;
 		return 1;
 	}
 }
