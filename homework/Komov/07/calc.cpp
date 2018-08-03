@@ -23,7 +23,6 @@ enum class Token {
 	Invalid
 };
 
-// Øàáëîíû ñâîéñòâ
 template <class T> struct NumericTraits{};
 
 template <> struct NumericTraits <double> {
@@ -166,8 +165,6 @@ template <class T> Calculator<T>::Calculator(const char*& inp) {
 	bracket_count = 0;
 }
 
-/* ñ÷èòûâàåò òîêåí, ìåíÿåò ïîçèöèþ ïðî÷èòàííîãî òåêñòà
-   è çàïèñûâàåò ÷èñëî â ãëîáàëüíóþ ïåðåìåííóþ */
 template <class T> Token Calculator<T>::nextToken() {
 	
 	while (auto c = *input++) {
@@ -239,7 +236,6 @@ template <class T> T Calculator<T>::expression () {
 	return result;
 }
 
-// Ñëàãàåìûå
 template <class T> T Calculator<T>::term () {
 	
 	T result = primary();
@@ -295,7 +291,6 @@ template <class T> T Calculator<T>::term () {
   	return result;
 }
 
-// Ìíîæèòåëè
 template <class T> T Calculator<T>::primary () {
   	
 	token = nextToken();
